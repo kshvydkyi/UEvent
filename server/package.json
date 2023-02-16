@@ -1,0 +1,39 @@
+{
+  "name": "uevent",
+  "version": "1.0.0",
+  "description": "UEvent project innovation campus",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kshvydkyi/UEvent.git"
+  },
+  "keywords": [
+    "Events",
+    "Ucode",
+    "Anonymous",
+    "aboba"
+  ],
+  "author": "Kshvydkyi Ddubinin Abondar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kshvydkyi/UEvent/issues"
+  },
+  "homepage": "https://github.com/kshvydkyi/UEvent#readme",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^6.14.3",
+    "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
+    "mysql2": "^3.1.2",
+    "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.20"
+  }
+}
