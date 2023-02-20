@@ -1,4 +1,3 @@
-
 import { Router } from "express";
 import tryCatch from "../../utils/tryCacth.utils.js";
 import themeController from "../../controllers/themeController.js";

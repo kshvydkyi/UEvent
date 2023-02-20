@@ -9,6 +9,5 @@ export default class AuthService {
         const sql = `SELECT users.id, users.login, users.password, roles.title FROM users, roles WHERE users.login = '${login}' AND users.role_id = roles.id`;
         const [row] = await db.execute(sql);
         return row;
-        console.log(login);
     }
 }

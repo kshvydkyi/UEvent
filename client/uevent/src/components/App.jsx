@@ -2,7 +2,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './Auth/Layout';
-
+import { Translation } from "react-i18next";
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 
@@ -17,6 +17,7 @@ function App() {
 		<Routes>
 			<Route path="/" element={<Layout />} >
 				{/* Auth module */}
+				{/* <Translation>{t => <Header t={t} />}</Translation> */}
 				<Route path='login' element={<Login />} />
                 <Route path='register' element={<Register />} />
 			</Route>

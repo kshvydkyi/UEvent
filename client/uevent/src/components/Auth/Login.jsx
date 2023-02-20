@@ -8,7 +8,23 @@ import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 const LOGIN_URL = '/api/auth/login';
 
+
+
 const Login = () => {
+
+    // const state = {
+    //     lang: "ua"
+    //   };
+    // const langChange = e => {
+    //     this.setState({ [e.target.name]: e.target.value }, () => {
+    //       localStorage.setItem("lang", this.state.lang);
+    //       const lang = localStorage.getItem("lang");
+    //       i18n.changeLanguage(lang);
+    //     });
+    //   };
+
+    const lang  = localStorage.getItem('lang');
+    console.log(lang);
     const { setAuth } = useAuth();
     const userRef = useRef();
     const errRef = useRef();
@@ -80,9 +96,9 @@ const Login = () => {
         <div className="form-background p-5 d-flex justify-content-center">
         <section className='login bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>
         <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-        <h1 className="text-center">Вхід</h1>
+        <h1 className="text-center">{ lang === 'ua' ? 'Вхід' : 'Login' }</h1>
         <form onSubmit={handleSubmit} className="d-flex flex-column justify-content-center">
-            <Form.Label className="form_label " htmlFor="login">Логін:</Form.Label>
+            <Form.Label className="form_label " htmlFor="login">{ lang === 'ua' ? 'Логін:' : 'Login:' }</Form.Label>
             <Form.Control
                 type="text"
                 className="bg-dark text-white"
@@ -93,7 +109,7 @@ const Login = () => {
                 value={user}
                 required
             />
-            <Form.Label className="login-lbl mt-3 " htmlFor="password">Пароль:</Form.Label>
+            <Form.Label className="login-lbl mt-3 " htmlFor="password">{ lang === 'ua' ? 'Пароль' : 'Password' }</Form.Label>
             <Form.Control
                 type="password"
                 className="bg-dark text-white"
@@ -102,17 +118,19 @@ const Login = () => {
                 value={pwd}
                 required
             />
-            <Button  variant="secondary" type="submit" className="login-btn rounded mt-4" disabled={isLoading}>{isLoading ? <SpinnerLoading /> : 'Вхід'}</Button >
+            <Button  variant="secondary" type="submit" className="login-btn rounded mt-4" disabled={isLoading}>{isLoading ? <SpinnerLoading /> : 
+            lang === 'ua' ? 'Вхід' : 'Login' }
+            </Button >
         </form>
      
         <div className="d-flex mt-3">
-            <p className="m-1">В тебе немає аккаунту?</p> 
-            <Nav.Link className="m-1" href="/registration">Зареєструватись</Nav.Link>
+            <p className="m-1">{ lang === 'ua' ? 'В тебе немає акаунту?' : 'No account?' }</p> 
+            <Nav.Link className="m-1" href="/registration">{ lang === 'ua' ? 'Зареєструватись' : 'Register' }</Nav.Link>
         </div>
         
         <div  className="d-flex">
-            <p className="m-1">Забули пароль?</p>  
-            <Nav.Link className="m-1" href="/reset-password">Відновити пароль</Nav.Link>
+            <p className="m-1">{ lang === 'ua' ? 'Забули пароль' : 'Forget password?' }</p>  
+            <Nav.Link className="m-1" href="/reset-password">{ lang === 'ua' ? 'Відновити пароль' : 'Reset password' }</Nav.Link>
         </div>
     </section>
     </div>

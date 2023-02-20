@@ -8,6 +8,7 @@ export class UserController {
     async register (req, res) {
         await this.service.registerNewUser(req.body);
     }
+
 }
 
 

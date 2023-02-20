@@ -1,11 +1,12 @@
 import Header from './Header';
 import { Outlet } from 'react-router-dom';
+import { Translation } from "react-i18next";
 
 const Layout = () => {
     return (
         <>
         <header>
-            <Header  />
+            <Translation>{t => <Header t={t} />}</Translation>
         </header>
         <main>
                 <Outlet />
