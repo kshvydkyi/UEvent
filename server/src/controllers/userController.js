@@ -1,12 +1,12 @@
 import UserService from "../services/user.service.js";
 
 export class UserController {
-    constructor (userService) {
-        this.userService = new UserService();
+    constructor (service) {
+        this.service = new UserService();
     }
 
     async register (req, res) {
-        await this.userService.registerNewUser('a', 'b');
+        await this.service.registerNewUser(req.body);
     }
 }
 

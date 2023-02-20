@@ -1,0 +1,29 @@
+import RoleService from "../services/role.service.js";
+
+export class RoleController {
+    constructor (service) {
+        this.service = new RoleService();
+    }
+
+    async selectAll(req, res) {
+        const result = await this.service.selectAll();
+        return result;
+    }
+
+    async selectById(req, res) {
+        await this.service.selectById(req.params.role_id);
+    }
+
+    async create(req, res) {
+        await this.service.create(req.body);
+    }
+
+    async deleteById(req, res) {
+        await this.service.deleteById(req.params.role_id);
+    }
+}
+
+
+
+const roleController = new RoleController(new RoleService());
+export default roleController;

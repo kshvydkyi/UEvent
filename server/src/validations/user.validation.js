@@ -1,4 +1,4 @@
-import { body } from 'express-validator/check';
+import { body } from 'express-validator';
 
 export const registerValidateChainMethod = [
     body('login')
@@ -23,7 +23,14 @@ export const registerValidateChainMethod = [
       if (value !== req.body.password) {
         throw new Error('Passwords do not match');
       }
-    })
+    }),
+    body('email')
+      .isEmail()
+      .withMessage("invalid format"),
+    body('fullName')
+      .exists({ checkFalsy: true })
+      .isString()
+      .withMessage('invalid format')
 ];
 
 export const loginValidateChainMethod = [
