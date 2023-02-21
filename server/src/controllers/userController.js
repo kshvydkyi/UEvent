@@ -5,13 +5,22 @@ export class UserController {
         this.service = new UserService();
     }
 
-    async register (req, res) {
-        await this.service.registerNewUser(req.body);
+    async selectAll(req, res) {
+        await this.service.selectAll();
     }
 
+    async selectById(req, res) {
+        await this.service.selectById(req.params.user_id);
+    }
+
+    async create(req, res) {
+        await this.service.create(req.body);
+    }
+
+    async deleteById(req, res) {
+        await this.service.deleteById(req.params.user_id);
+    }
 }
-
-
 
 const userController = new UserController(new UserService());
 export default userController;

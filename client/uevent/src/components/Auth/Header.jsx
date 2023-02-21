@@ -3,12 +3,30 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { useTranslation } from 'react-i18next'
-import React from "react";
 import i18n from "i18next";
-import { useLocation } from 'react-router-dom';
+import '../../App.css';
+import React, { useState } from 'react';
+import axios from '../../api/axios';
+import route from '../../api/route';
+
+
+const checkToken = async (token, setAuth) => {
+	try {
+		const response = await axios.get(`/api/users/check-token/${token}`);
+		console.log(response.data.status, response.data.values.message);
+	}
+	catch (e) {
+		// console.log(e);
+		if (e?.response.data.status === 401) {
+			localStorage.removeItem('autorized');
+			setAuth(false);
+		}
+	}
+}
 
 class Header extends React.Component {
 
+  
   state = {
     lang: "ua"
   };
@@ -19,16 +37,20 @@ class Header extends React.Component {
       i18n.changeLanguage(lang);
       document.location.reload();
     });
-
   };
 
-  render() {
-    const { t } = this.props;
-    const { lang } = localStorage.getItem("lang");
 
+
+
+  render() {
+    function changeTheme(e) {
+      e.target.checked === false ? localStorage.setItem("theme", 'dark') : localStorage.setItem("theme", 'light');
+    }
+
+    
 
     return (
-      <div>
+      <div className={`Header${localStorage.getItem("theme")}`}>
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
           <Container >
             {/* <img src={logo} height={40} alt='logo' /> */}
@@ -56,6 +78,17 @@ class Header extends React.Component {
                 English
               </option>
             </select>
+
+            {/* <div class="toggle-button-cover">
+            <div class="button-cover">
+              <div class="button r" id="button-1">
+                <input type="checkbox" class="checkbox" onChange={changeTheme}/>
+                <div class="knobs"></div>
+                <div class="layer"></div>
+              </div>
+            </div>
+          </div> */}
+
           </Container>
         </Navbar>
       </div>

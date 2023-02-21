@@ -3,14 +3,12 @@ import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 
-// import axios from 'axios';
-
 import AppRouter from './routes/router.js';
-// import connectDB from './config/database';
+
 import ErrorHandler from './middleware/errorHandler.middleware.js';
 
 const corsOptions = {
-  origin: 'CORS_URL',
+  origin: 'http://localhost:3000',
   credentials: true,
   optionSuccessStatus: 200
 }

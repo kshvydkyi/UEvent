@@ -42,4 +42,10 @@ export default class UserService {
         const [row] = await db.execute(sql);
         return row.length !== 0;
     }
+
+    async initUser(value){
+        const sql = `SELECT id, login FROM users WHERE email = '${value}'`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
 }

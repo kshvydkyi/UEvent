@@ -1,8 +1,19 @@
 import db from '../config/db.connection.js';
+import UserService from "./user.service.js";
 
 export default class AuthService {
     async register(body){
-        console.log(body.login, body.password);
+        const data = {
+            login: body.login,
+            password: body.password,
+            full_name: body.fullName,
+            profile_pic: "default_avatar.png",
+            email: body.email,
+            role_id: 2,
+            status: 1
+        };
+        const service = new UserService();
+        return service.create(data);
     }
 
     async login(login){

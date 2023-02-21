@@ -16,7 +16,7 @@ const REGISTER_URL = '/api/auth/register';
 const Register = () => {
     const userRef = useRef();
     const errRef = useRef();
-
+    const lang  = localStorage.getItem('lang');
     const [user, setUser] = useState('');
     const [validName, setValidName] = useState(false);
     const [userFocus, setUserFocus] = useState(false);
@@ -81,7 +81,7 @@ const Register = () => {
             setLoading(true);
             console.log( user, email, fullName, pwd, matchPwd);
             const response = await axios.post(REGISTER_URL,
-                JSON.stringify({ login: user, email: email, fullName: fullName, password: pwd, passwordConfirmation: matchPwd }),
+                JSON.stringify({ login: user, email: email, fullName: fullName, password: pwd, confirmPassword: matchPwd }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -90,6 +90,7 @@ const Register = () => {
             console.log(response);
             setSuccess(true);
             setLoading(false);
+            console.log(success)
         }
         catch (err) {
             setLoading(false);
@@ -124,10 +125,10 @@ const Register = () => {
             ) : (
                 <section className='registration bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <h1 className="text-center">Реєстрація</h1>
+                    <h1 className="text-center">{ lang === 'ua' ? 'Реєстрація' : 'Sign Up' }</h1>
                     <form onSubmit={handleSubmit} >
                         <Form.Label className="form_label" htmlFor="username">
-                            Логін:
+                        { lang === 'ua' ? 'Логін:' : 'Login:' }
                             <FontAwesomeIcon icon={faCheck} className={validName ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validName || !user ? "hide" : "invalid"} />
                         </Form.Label>
@@ -147,10 +148,13 @@ const Register = () => {
                         />
                         <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
                             <FontAwesomeIcon icon={faInfoCircle} />
-                            4-24 символи. Починається з літери. Дозволено: літери, числа, _ , -
+                            
+                            { lang === 'ua' ? '4-24 символи. Починається з літери. Дозволено: літери, числа, _ , -:' 
+                            : '4-24 symbols' }
                         </p>
                         <Form.Label className="form_label" htmlFor="email">
-                            Елекронна пошта:
+                        { lang === 'ua' ? 'Електрона пошта:' 
+                            : 'Email:' }
                             <FontAwesomeIcon icon={faCheck} className={validEmail ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validEmail || !email ? "hide" : "invalid"} />
                         </Form.Label>
@@ -169,10 +173,14 @@ const Register = () => {
                         />
                         <p id="uidnote" className={emailFocus && email && !validEmail ? "instructions" : "offscreen"}>
                             <FontAwesomeIcon icon={faInfoCircle} />
-                            Ваша пошта для підтвердження.
+                            
+                            { lang === 'ua' ? 'Ваша пошта для підтвердження' 
+                            : 'Your mail to approve' }
                         </p>
                         <Form.Label className="form_label" htmlFor="full-name">
-                            Ваше ім'я або нікнейм:
+                            
+                            { lang === 'ua' ? 'Ваше ім\'я або нікнейм:' 
+                            : 'Your name or nickname' }
                             <FontAwesomeIcon icon={faCheck} className={validFullName ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validFullName || !fullName ? "hide" : "invalid"} />
                         </Form.Label>
@@ -191,10 +199,13 @@ const Register = () => {
                         />
                         <p id="uidnote" className={fullNameFocus && fullName && !validFullName ? "instructions" : "offscreen"}>
                             <FontAwesomeIcon icon={faInfoCircle} />
-                            Тут напишіть як до вас звертатись.
+                            
+                            { lang === 'ua' ? 'Тут напишіть як до вас звертатись.' 
+                            : 'How to name you' }
                         </p>
                         <Form.Label className="form_label" htmlFor="password">
-                            Пароль:
+                        { lang === 'ua' ? 'Пароль:' 
+                            : 'Password:' }
                             <FontAwesomeIcon icon={faCheck} className={validPwd ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? "hide" : "invalid"} />
                         </Form.Label>
@@ -212,7 +223,10 @@ const Register = () => {
                         />
                         <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
                             <FontAwesomeIcon icon={faInfoCircle} />
-                            8-24 символи. Містить маленькі і великі літери, число, і:
+                            
+                            { lang === 'ua' ? '8-24 символи. Містить маленькі і великі літери, число, і:' 
+                            : '8-24 symbols. Lower and upper case letters, numbers and' }
+
                             <span aria-label="exclamation mark"> ! </span>
                             <span aria-label="at symbol">@ </span>
                             <span aria-label="hashtag"># </span>
@@ -222,7 +236,8 @@ const Register = () => {
 
 
                         <Form.Label className="form_label" htmlFor="confirm_pwd">
-                            Підтвердіть пароль:
+                            { lang === 'ua' ? 'Підтвердіть пароль:' 
+                            : 'Repeat passord:' }
                             <FontAwesomeIcon icon={faCheck} className={validMatch && matchPwd ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? "hide" : "invalid"} />
                         </Form.Label>
@@ -240,13 +255,20 @@ const Register = () => {
                         />
                         <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
                             <FontAwesomeIcon icon={faInfoCircle} />
-                            Повинен збігатись з полем вище.
+                            { lang === 'ua' ? ' Повинен збігатись з полем вище.' 
+                            : 'Must be same as a password' }
                         </p>
-                        <Button  type="submit" variant="secondary" className="login-btn rounded" disabled={!validName || !validPwd || !validMatch || !validEmail || !validFullName || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : 'Зареєструватись'}</Button>
+                        <Button  type="submit" variant="secondary" className="login-btn rounded" disabled={!validName || !validPwd || !validMatch || !validEmail || !validFullName || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : 
+                                                     lang === 'ua' ? 'Зареєструватись' 
+                                                    : 'Sign Up' }</Button>
                     </form>
                     <div  className="d-flex">
-                    <p className="m-1">Вже зареєстровані?</p> 
-                    <Nav.Link className="m-1" href="/login">Залогінитись</Nav.Link>
+                    <p className="m-1"> 
+                   { lang === 'ua' ? 'Вже зареєстровані?' 
+                            : 'Already hav an account?' }</p> 
+                    <Nav.Link className="m-1" href="/login">                            
+                    { lang === 'ua' ? 'Залогінітись' 
+                            : 'Sign in' }</Nav.Link>
                     </div>
                 </section>
             )}

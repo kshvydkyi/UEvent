@@ -55,3 +55,7 @@ export const updatePasswordValidateChainMethod = [
         }
       })
   ];
+
+export const emailValidationChainMethod = [
+  body('email').isEmail().withMessage('invalid format')
+]

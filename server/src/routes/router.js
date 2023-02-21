@@ -4,6 +4,7 @@ import roleRouter from './api/role.router.js';
 import themeRouter from './api/theme.router.js';
 import formatRouter from './api/format.router.js';
 import commentRouter from './api/comment.router.js';
+import companyRouter from './api/company.router.js';
 
 class AppRouter {
 	constructor(app) { this.app = app }
@@ -18,6 +19,7 @@ class AppRouter {
 		this.app.use('/api/themes', themeRouter);
 		this.app.use('/api/formats', formatRouter);
 		this.app.use('/api/comments', commentRouter);
+		this.app.use('/api/companies', companyRouter);
 	}
 }
 

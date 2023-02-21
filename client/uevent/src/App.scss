@@ -1,0 +1,322 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans&display=swap');
+
+$primary-color: rgb(56, 56, 56);
+$background-body:  #15171a;
+$backgroun-black: #212529;
+$text-color: white;
+$font-stack: 'PT Sans', sans-serif;
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: #15171a;
+    color: $text-color;
+    font-family: $font-stack;
+}
+html{
+   background-color: #15171a;
+}
+.login-page{
+    margin-top: 200px;
+    width: 75%;
+    padding: 50px;
+}
+.lds-dual-ring {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+  }
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 18px;
+    height: 18px;
+    /* margin: 8px; */
+    border-radius: 50%;
+    border: 2px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+.form-background{
+  background-color: $background-body;
+}
+.page-loading{
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    bottom: 50%;
+}
+.page-loading:after {
+    content: " ";
+    display: block;
+    width: 100px;
+    height: 100px;
+    /* margin: 8px; */
+    border-radius: 50%;
+    border: 2px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .login{
+    padding-top: 150px;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 1rem;
+}
+.errmsg {
+    background-color: rgba(0, 0, 0, 0.185);
+    color: rgb(217, 15, 15);
+    font-weight: bold;
+    transition: 0.5s;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.offscreen>svg{
+    margin-right: 0.25rem;
+}
+
+.offscreen {
+    position:relative;
+    font-size: 12px;
+    bottom: -5px;
+    color: $backgroun-black;
+    transition: 0.5s;
+}
+.form__field {
+    font-family: inherit;
+    width: 100%;
+    border: 0;
+    border: 2px solid #9b9b9b;
+    outline: 0;
+    font-size: 18px;
+    color: #fff;
+    padding-top: 3px;
+    padding-bottom: 7px;
+    background: transparent;
+    transition: border-color 0.2s;
+}
+
+.form__label {
+   
+    /* position: absolute; */
+    display: block;
+    font-size: 18px;
+    color: #9b9b9b;
+}
+
+.form__field:focus {
+    padding-bottom: 7px;
+    font-weight: 400;
+    border-width: 2px;
+    border-radius: 15px;
+    border-image: linear-gradient(to right, rgb(142, 51, 222), rgb(90, 20, 152));
+    border-image-slice: 1;
+}
+.login-btn{
+    margin-top: 30px;
+    padding: 10px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: 'PT Sans', sans-serif;
+    transition: 0.5s;
+    background: rgb(71, 71, 71);
+    color:#2c2c2c;
+    color:whitesmoke;
+    font-size: 18px;
+    border: none;
+    border: 1px solid grey;
+}
+.login-btn:hover{
+    background-color: rgb(66, 15, 112);
+}
+
+.errmsg {
+  background-color: rgba(0, 0, 0, 0.185);
+  color: rgb(217, 15, 15);
+  font-weight: bold;
+  transition: 0.5s;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.instructions>svg {
+  margin-right: 0.25rem;
+}
+.offscreen>svg{
+  margin-right: 0.25rem;
+}
+.hide {
+  display: none;
+}
+
+.valid {
+  color: limegreen;
+  margin-left: 0.25rem;
+}
+.invalid {
+  color: rgb(217, 15, 15);
+  margin-left: 0.25rem;
+}
+
+.instructions {
+  font-size: 12px;
+  border-radius: 0.5rem;
+  transition: 0.5s;
+  background: none;
+  color: rgb(217, 15, 15);
+  position: relative;
+  bottom: -5px;
+}
+
+body::-webkit-scrollbar {
+  width: 5px;              
+}
+body::-webkit-scrollbar-track {
+  background: $background-body;       
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: $primary-color;  
+  border-radius: 10px;   
+}
+.link-header{
+  margin-right: 5px !important;
+}
+
+
+
+
+
+
+
+
+.toggle-button-cover {
+  margin-bottom: 40px;
+  display: table-cell;
+  position: relative;
+  width: 120px;
+  height: 20px;
+  box-sizing: border-box;
+}
+
+.button-cover {
+  height: 30px;
+  margin: 20px;
+  border-radius: 4px;
+}
+
+.button-cover:before {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 12px;
+  line-height: 1;
+  padding: 5px;
+}
+
+.button-cover,
+.knobs,
+.layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.button {
+  position: relative;
+  top: 80%;
+  width: 50px;
+  height: 25px;
+  margin: -20px auto 0 auto;
+  overflow: hidden;
+}
+
+.button.r,
+.button.r .layer {
+  border-radius: 100px;
+}
+
+.button.b2 {
+  border-radius: 2px;
+}
+
+.checkbox {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.knobs {
+  z-index: 2;
+}
+
+.layer {
+  background-color: #15171a;
+  transition: 0.3s ease all;
+  z-index: 1;
+}
+
+/* Button 1 */
+#button-1 .knobs:before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 10px;
+  color: #15171a;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1;
+  padding: 9px 4px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
+}
+
+#button-1 .checkbox:checked + .knobs:before {
+  content: "";
+  left: 28px;
+  background-color: #15171a;
+}
+
+#button-1 .checkbox:checked ~ .layer {
+  background-color: #fcebeb;
+}
+
+#button-1 .knobs,
+#button-1 .knobs:before,
+#button-1 .layer {
+  transition: 0.3s ease all;
+}

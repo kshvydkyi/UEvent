@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export default async function (password) {
+export const hashPassword = async (password) => {
     try {
         const hash = crypto.createHmac('sha512', 'salt');
         hash.update(password);
