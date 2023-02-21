@@ -31,4 +31,10 @@ export default class CommentService {
         const [row] = await db.execute(sql);
         return row;
 	}
+
+    async isExist(field, value) {
+        var sql = `SELECT * FROM comments WHERE ${field} = '${value}'`;
+        const [row] = await db.execute(sql);
+        return row.length !== 0;
+    }
 }

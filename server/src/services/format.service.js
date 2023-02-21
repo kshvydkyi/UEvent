@@ -24,4 +24,10 @@ export default class FormatService {
         const [row] = await db.execute(sql);
         return row;
 	}
+
+    async isExist(field, value) {
+        var sql = `SELECT * FROM formats WHERE ${field} = '${value}'`;
+        const [row] = await db.execute(sql);
+        return row.length !== 0;
+    }
 }

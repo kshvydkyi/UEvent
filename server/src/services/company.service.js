@@ -30,4 +30,10 @@ export default class CompanyService {
         const [row] = await db.execute(sql);
         return row;
 	}
+
+    async isExist(field, value) {
+        var sql = `SELECT * FROM companies WHERE ${field} = '${value}'`;
+        const [row] = await db.execute(sql);
+        return row.length !== 0;
+    }
 }

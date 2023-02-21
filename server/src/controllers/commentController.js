@@ -10,7 +10,7 @@ export class CommentController {
     }
 
     async selectById(req, res) {
-        await this.service.selectById(req.params.role_id);
+        await this.service.selectById(req.params.id);
     }
 
     async create(req, res) {
@@ -18,7 +18,7 @@ export class CommentController {
     }
 
     async deleteById(req, res) {
-        await this.service.deleteById(req.params.role_id);
+        await this.service.deleteById(req.params.id);
     }
 }
 

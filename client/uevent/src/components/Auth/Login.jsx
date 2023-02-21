@@ -60,11 +60,11 @@ const Login = () => {
                 }
             );
             // console.log(response?.data.status, response?.data?.values);
-            const accessToken = response?.data?.values.token;
-            const role = response?.data?.values.role;
-            const userId = response?.data?.values.userId;
-            // console.log(userId);
+            const accessToken = response?.data?.values?.values;
+            const role = response?.data?.values?.values?.userData?.title;
+            const userId = response?.data?.values?.values?.userData?.id;
             setAuth({ user, accessToken, role, userId});
+            console.log(userId)
             localStorage.setItem('autorized', JSON.stringify({user, accessToken, role, userId}))
             setUser('');
             setPwd('');

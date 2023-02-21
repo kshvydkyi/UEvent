@@ -37,12 +37,17 @@ export class AuthController {
                 const token = jwt.sign(
                     {
                         userId: user[0].id,
-                        login: user[0].login
+                        login: user[0].login,
+                        role: user[0].title
                     },
                     'jwt-key',
                     { expiresIn: '30d' }
                 );
-                return token;
+                const data = {
+                    userData: user[0],
+                    token: token
+                }
+                return data;
             }
         }
         return 'password do not match'

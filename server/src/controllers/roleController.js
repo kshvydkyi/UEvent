@@ -11,7 +11,8 @@ export class RoleController {
     }
 
     async selectById(req, res) {
-        await this.service.selectById(req.params.role_id);
+        const result = await this.service.selectById(req.params.id);
+        return result;
     }
 
     async create(req, res) {
@@ -19,7 +20,7 @@ export class RoleController {
     }
 
     async deleteById(req, res) {
-        await this.service.deleteById(req.params.role_id);
+        await this.service.deleteById(req.params.id);
     }
 }
 

@@ -2,6 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
+import path  from 'path'
 
 import AppRouter from './routes/router.js';
 
@@ -23,6 +24,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(ErrorHandler);
 
 router.init();
+
+app.use('/avatars', express.static(`${path.resolve()}/assets/avatars`));
 
 const port = app.get('port');
 
