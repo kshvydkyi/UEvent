@@ -60,7 +60,7 @@ const Login = () => {
                 }
             );
             // console.log(response?.data.status, response?.data?.values);
-            const accessToken = response?.data?.values?.values;
+            const accessToken = response?.data?.values?.values?.token;
             const role = response?.data?.values?.values?.userData?.title;
             const userId = response?.data?.values?.values?.userData?.id;
             setAuth({ user, accessToken, role, userId});

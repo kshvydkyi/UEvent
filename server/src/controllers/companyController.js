@@ -6,11 +6,13 @@ export class CompanyController {
     }
 
     async selectAll(req, res) {
-        await this.service.selectAll();
+        const result = await this.service.selectAll();
+        return result;
     }
 
     async selectById(req, res) {
-        await this.service.selectById(req.params.id);
+        const result = await this.service.selectById(req.params.id);
+        return result;
     }
 
     async create(req, res) {

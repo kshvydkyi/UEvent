@@ -12,6 +12,7 @@ export default class AuthService {
             role_id: 2,
             status: 1
         };
+        
         const service = new UserService();
         return service.create(data);
     }

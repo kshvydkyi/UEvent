@@ -9,10 +9,10 @@ export const isRoleExist = (Service) => async (req, res, next) => {
     next();
 }
 
-export const isRoleNotExist = (Service) => async (req, res, next) => {
+export const isNotExistById = (Service) => async (req, res, next) => {
     const isRole = await isExistUtils(Service, 'id', req.params.id);
     if(!isRole) {
-        return response(409, {message: "role with such title not exist"}, res)
+        return response(404, {message: "Data not exist"}, res)
     }
     next();
 }

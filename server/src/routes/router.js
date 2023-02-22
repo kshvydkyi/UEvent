@@ -5,6 +5,8 @@ import themeRouter from './api/theme.router.js';
 import formatRouter from './api/format.router.js';
 import commentRouter from './api/comment.router.js';
 import companyRouter from './api/company.router.js';
+import eventRouter from './api/event.router.js';
+import eventItemRouter from './api/eventItem.router.js';
 
 class AppRouter {
 	constructor(app) { this.app = app }
@@ -16,6 +18,8 @@ class AppRouter {
 		this.app.use('/api/auth', authRouter);
 		this.app.use('/api/users', userRouter);
 		this.app.use('/api/roles', roleRouter);
+		this.app.use('/api/events', eventRouter);
+		this.app.use('/api/events-items', eventItemRouter);
 		this.app.use('/api/themes', themeRouter);
 		this.app.use('/api/formats', formatRouter);
 		this.app.use('/api/comments', commentRouter);

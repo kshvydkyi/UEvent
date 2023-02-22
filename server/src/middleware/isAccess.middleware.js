@@ -15,7 +15,7 @@ export const isAccess = (Service) => async (req, res, next) => {
     const service = new Service();
     const result = await service.selectById(req.params.id);
     const userData = jwt.verify(req.params.token, 'jwt-key');
-    if (result.user_id !== userData.userId) {
+    if (result.author_id !== userData.userId) {
         return response(403, { message: 'access denied' }, res);
     }
     next();

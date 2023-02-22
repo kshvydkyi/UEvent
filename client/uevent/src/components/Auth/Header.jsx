@@ -42,7 +42,7 @@ function Header() {
   useEffect(() => {
 		if (currentUser.currentUser !== 'guest') {
 			if (auth) {
-				checkToken(currentUser.accessToken, setAuth);
+				// checkToken(currentUser.accessToken, setAuth);
 				if (currentUser) {
 					setAuth({ ...currentUser });
 				} else {
@@ -76,11 +76,28 @@ function Header() {
             {/* <img src={logo} height={40} alt='logo' /> */}
             <Navbar.Brand href="/" target={'_blank'}>Concertik</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse id="responsive-navbar-nav">
+            {/* <Navbar.Collapse id="responsive-navbar-nav"> */}
             {auth.user ?
 								<>
-									<div className='float-right'>
-										<div className='d-flex '>
+                <Nav.Link href="/events">{localStorage.getItem("lang") === 'ua' ? 'Подїї' : 'Events'}</Nav.Link>
+                <Nav.Link  href="/tickets">{localStorage.getItem("lang") === 'ua' ? 'Квитки' : 'Tickets'}</Nav.Link>
+                <Nav.Link href="/notifications">{localStorage.getItem("lang") === 'ua' ? 'Повідомлення' : 'Notifications'}</Nav.Link>
+                
+                <select style = {{marginLeft: '400px'}}
+                  className="selectBox"
+                  onChange={langChange}
+                  name="lang"
+                  value={localStorage.getItem("lang")}
+                  >
+                    <option className="optionsMenu" value="ua">
+                      Українська
+                    </option>
+                  <option className="optionsMenu" value="en">
+                    English
+                  </option>
+                </select>
+									<div className='d-flex align-items-center'>
+										<div className='d-flex align-items-center'>
 											<Nav.Link className='link-header' href={`/user/${currentUser.userId}`}>{currentUser.user}</Nav.Link>
 											<img src={userAvatar && userAvatar !== 'undefined' && userAvatar !== undefined ? `${route.serverURL}/avatars/${userAvatar}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle' height={40} width={40} alt='avatar' />
 										</div>
@@ -89,27 +106,29 @@ function Header() {
 									</div>
 								</>
 								:
-								<>
-									<Nav.Link href="/login">{localStorage.getItem("lang") === 'ua' ? 'Вхід' : 'Login'}</Nav.Link>
-									<Nav.Link eventKey={2} href="/registration">
+                <>
+								<Navbar.Collapse id="responsive-navbar-nav">
+									<Nav.Link style = {{marginLeft: '30px'}} href="/login">{localStorage.getItem("lang") === 'ua' ? 'Вхід' : 'Login'}</Nav.Link>
+									<Nav.Link eventKey={2} href="/registration" style = {{marginLeft: '20px'}}>
                   {localStorage.getItem("lang") === 'ua' ? 'Реєстрація' : 'Register'}
 									</Nav.Link>
-								</>}
-            </Navbar.Collapse>
-            <select
-              className="selectBox"
-              onChange={langChange}
-              name="lang"
-              value={localStorage.getItem("lang")}
-            >
-              
-                <option className="optionsMenu" value="ua">
-                  Українська
-                </option>
-              <option className="optionsMenu" value="en">
-                English
-              </option>
-            </select>
+                  </Navbar.Collapse>
+                  <select
+                  className="selectBox"
+                  onChange={langChange}
+                  name="lang"
+                  value={localStorage.getItem("lang")}
+                  >
+                    <option className="optionsMenu" value="ua">
+                      Українська
+                    </option>
+                  <option className="optionsMenu" value="en">
+                    English
+                  </option>
+                </select>
+                            </>
+                }
+
 
             {/* <div class="toggle-button-cover">
             <div class="button-cover">
