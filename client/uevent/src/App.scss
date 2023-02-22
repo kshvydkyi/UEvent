@@ -320,3 +320,19 @@ body::-webkit-scrollbar-thumb {
 #button-1 .layer {
   transition: 0.3s ease all;
 }
+
+
+// logo
+
+.mainLogo {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(1rem, 2vw, 2rem);
+  color: white;
+  padding: 0rem clamp(1rem, 2vw, 3rem);
+  border-radius: clamp(0.4rem, 0.75vw, 1rem);
+}
+
+.mainLogo:hover {
+  background-color: white;
+  color: black;
+}
