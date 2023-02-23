@@ -15,8 +15,16 @@ export class CompanyController {
         return result;
     }
 
+    async selectByUserId(req, res) {
+        const result = await this.service.selectByUserId(req.params.id);
+        return result;
+    }
+
     async create(req, res) {
         await this.service.create(req.body);
+    }
+    async update(req, res){
+        await this.service.update(req.body, req.params.id);
     }
 
     async deleteById(req, res) {

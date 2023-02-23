@@ -110,10 +110,19 @@ function Header() {
             {/* <Navbar.Collapse id="responsive-navbar-nav"> */}
             {auth.user ?
 								<>
+                <div style={{width: '40%', float:'left'}}> 
                 <Nav.Link href="/events">{localStorage.getItem("lang") === 'ua' ? 'Подїї' : 'Events'}</Nav.Link>
+                </div>
+                <div style={{width: '40%', float:'left'}}>
                 <Nav.Link  href="/tickets">{localStorage.getItem("lang") === 'ua' ? 'Квитки' : 'Tickets'}</Nav.Link>
+                </div>
+                <div style={{width: '40%', float:'left'}}>
                 <Nav.Link href="/notifications">{localStorage.getItem("lang") === 'ua' ? 'Повідомлення' : 'Notifications'}</Nav.Link>
-                
+                </div>
+                <div style={{width: '40%', float:'left', marginLeft: '20px'}}>
+                <Nav.Link href="/companies">{localStorage.getItem("lang") === 'ua' ? 'Мої компанії' : 'My companies'}</Nav.Link>
+                </div>
+
                 <select style = {{marginLeft: '400px'}}
                   className="selectBox"
                   onChange={langChange}
@@ -127,7 +136,7 @@ function Header() {
                     English
                   </option>
                 </select>
-									<div className='d-flex align-items-center'>
+									<div className='d-flex align-items-center' style={{marginLeft: '20px'}}>
 										<div className='d-flex align-items-center'>
 											<Nav.Link className='link-header' href={`/user/${currentUser.userId}`}>{currentUser.user}</Nav.Link>
 											<img src={userAvatar && userAvatar !== 'undefined' && userAvatar !== undefined ? `${route.serverURL}/avatars/${userAvatar}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle' height={40} width={40} alt='avatar' />

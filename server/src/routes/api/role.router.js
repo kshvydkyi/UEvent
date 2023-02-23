@@ -4,9 +4,10 @@ import roleController from "../../controllers/roleController.js";
 import { roleValidationChainMethod } from "../../validations/role.validation.js";
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
 import RoleService from "../../services/role.service.js";
-import { isRoleExist, isNotExistById } from "../../scripts/roleChecking.script.js";
+import { isTitleExist, isNotExistById } from "../../scripts/roleChecking.script.js";
 import { isAdmin } from "../../middleware/isAccess.middleware.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
+import { titleValidationChainMethod } from "../../validations/company.validation.js";
 
 const roleRouter = Router();
 
@@ -25,10 +26,18 @@ roleRouter.post(
     isAdmin,
     roleValidationChainMethod,
     validateRequestSchema,
-    isRoleExist(RoleService),
+    isTitleExist(RoleService),
     tryCatch(roleController.create.bind(roleController))
 );
-
+roleRouter.patch(
+    '/:id/:token',
+    isAutorised, 
+    isAdmin,
+    isTitleExist(RoleService),
+    titleValidationChainMethod,
+    validateRequestSchema,
+    tryCatch(roleController.update.bind(roleController))
+);
 roleRouter.delete(
     '/:id/:token',
     isAutorised,

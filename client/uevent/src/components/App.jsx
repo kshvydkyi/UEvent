@@ -11,6 +11,7 @@ import RequreAuth from './Auth/RequireAuth';
 import ChangeUserAvatar from './Users/ChangeAvatar'
 import ChangeProfile from './Users/ChangeProfile';
 import CreateCompany from './Companies/CreateCompany';
+import Company from './Companies/Company';
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
 					<Route path='change-avatar' element={<ChangeUserAvatar />} />
 					<Route path='change-profile' element={<ChangeProfile />} />
 					<Route path='createCompany' element={<CreateCompany />} />
+					<Route path='companies' element={<Company />} />
 				</Route>
 				<Route element={<RequreAuth allowedRoles={['admin']} />} >
 				</Route>

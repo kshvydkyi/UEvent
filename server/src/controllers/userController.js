@@ -25,7 +25,9 @@ export class UserController {
         const userData = jwt.verify(token, "jwt-key");
         await this.service.update_avatar(pathFile, userData.userId);
     }
-
+    async update(req, res){
+        await this.service.update(req.body, req.params.id);
+    }
     async deleteById(req, res) {
         await this.service.deleteById(req.params.id);
     }

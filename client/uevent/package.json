@@ -19,6 +19,7 @@
     "react-bootstrap": "^2.7.2",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.1.5",
+    "react-paginate": "^8.1.4",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
     "sass": "^1.58.3",

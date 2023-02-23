@@ -5,7 +5,7 @@ import userController from "../../controllers/userController.js";
 import { isAccessUserService, isAdmin } from "../../middleware/isAccess.middleware.js";
 import UserService from "../../services/user.service.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
-import { registerValidateChainMethod } from "../../validations/user.validation.js";
+import { registerValidateChainMethod, updateProfileDataValidationChainMethod } from "../../validations/user.validation.js";
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
 import { isNotExistById } from "../../scripts/roleChecking.script.js";
 
@@ -34,6 +34,14 @@ userRouter.patch(
     isAccessUserService(UserService),
     uploadAvatarImage.single('image'),
     tryCatch(userController.update_avatar.bind(userController))
+);
+userRouter.patch(
+    '/:id/:token',
+    isAutorised,
+    isAccessUserService(UserService),
+    updateProfileDataValidationChainMethod,
+    validateRequestSchema,
+    tryCatch(userController.update.bind(userController))
 );
 userRouter.delete(
     '/:id/:token',

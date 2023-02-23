@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 
-const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_\.]{3,23}$/;
+const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 const CreateCompany = () => {
@@ -45,11 +45,11 @@ const CreateCompany = () => {
         e.preventDefault();
         try {
             setLoading(true);
-            const response = await axios.post(`/api/companies/${currentUser.accessToken}`, JSON.stringify({ description: companyDescr, title: companyName}), {
+            const response = await axios.post(`/api/companies/${currentUser.accessToken}`, JSON.stringify({ description: companyDescr, title: companyName, userId: currentUser.userId}), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             }) 
-            console.log(companyDescr, companyName)
+            console.log(response);
             setLoading(false);
             navigate(`/`);
             document.location.reload();

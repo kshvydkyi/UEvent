@@ -18,7 +18,9 @@ export class FormatController {
     async create(req, res) {
         await this.service.create(req.body);
     }
-
+    async update(req, res){
+        await this.service.update(req.body, req.params.id);
+    }
     async deleteById(req, res) {
         await this.service.deleteById(req.params.id);
     }

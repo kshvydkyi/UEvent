@@ -13,8 +13,14 @@ export default class CompanyService {
         return row[0];
     }
 
+    async selectByUserId(id) {
+        const sql = `SELECT * FROM companies WHERE user_id = ${id}`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
+
     async create(body) {
-        var sql = `INSERT INTO companies (title, description) VALUES ('${body.title}', '${body.description}')`;
+        var sql = `INSERT INTO companies (title, description, user_id) VALUES ('${body.title}', '${body.description}', '${body.userId}')`;
         const [row] = await db.execute(sql);
         return row;
     }
@@ -25,8 +31,16 @@ export default class CompanyService {
         }
 	}
 
+    // async update(body, id) {
+	// 		let sql = `UPDATE companies SET title = '${body.title}', description = '${body.description}' WHERE id = '${id}'`;
+	// 		const [row] = await db.execute(sql);
+    //         return row;
+	// }
+
+
+
     async deleteById(id) {
-        var sql = `DELETE FROM companies WHERE id = ${id}`;
+        const sql = `DELETE FROM companies WHERE id = '${id}'`;
         const [row] = await db.execute(sql);
         return row;
 	}

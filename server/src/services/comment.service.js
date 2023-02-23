@@ -17,7 +17,7 @@ export default class CommentService {
     async selectByEventId(id) {
         let sql = `SELECT * FROM comments WHERE event_id = ${id}`;
         const [row] = await db.execute(sql);
-        return row[0];
+        return row;
     }
 
     async create(body) {
