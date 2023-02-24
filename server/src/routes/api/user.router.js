@@ -8,6 +8,7 @@ import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { registerValidateChainMethod, updateProfileDataValidationChainMethod } from "../../validations/user.validation.js";
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
 import { isNotExistById } from "../../scripts/roleChecking.script.js";
+import { isSameUserData } from "../../scripts/userChecking.script.js";
 
 const userRouter = Router();
 
@@ -41,6 +42,7 @@ userRouter.patch(
     isAccessUserService(UserService),
     updateProfileDataValidationChainMethod,
     validateRequestSchema,
+    isSameUserData(UserService),
     tryCatch(userController.update.bind(userController))
 );
 userRouter.delete(

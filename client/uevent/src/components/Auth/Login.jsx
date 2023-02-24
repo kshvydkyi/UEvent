@@ -92,8 +92,13 @@ const Login = () => {
         }
 
     }
+
+
+
     return (
         <div className="form-background p-5 d-flex justify-content-center">
+        
+
         <section className='login bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>
         <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
         <h1 className="text-center">{ lang === 'ua' ? 'Вхід' : 'Login' }</h1>
@@ -122,7 +127,7 @@ const Login = () => {
             lang === 'ua' ? 'Вхід' : 'Login' }
             </Button >
         </form>
-     
+        
         <div className="d-flex mt-3">
             <p className="m-1">{ lang === 'ua' ? 'В тебе немає акаунту?' : 'No account?' }</p> 
             <Nav.Link className="m-1" href="/registration">{ lang === 'ua' ? 'Зареєструватись' : 'Register' }</Nav.Link>

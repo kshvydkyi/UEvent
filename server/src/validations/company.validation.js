@@ -24,3 +24,16 @@ export const titleValidationChainMethod = [
     .isLength({min: 3, max: 23})
     .withMessage('Invalid format in title'),
 ]
+
+export const updateCompanyValidationChainMethod = [
+    body('title')
+    .exists({checkFalsy: true})
+    .isString()
+    .isLength({min: 3, max: 23})
+    .withMessage('Invalid format in company title'),
+    body('description')
+    .exists({checkFalsy: true})
+    .isString()
+    .isLength({min: 10, max: 100})
+    .withMessage('Invalid format in company description'),
+]

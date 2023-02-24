@@ -8,6 +8,7 @@ import { isTitleExist, isNotExistById } from "../../scripts/roleChecking.script.
 import { isAdmin } from "../../middleware/isAccess.middleware.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { titleValidationChainMethod } from "../../validations/company.validation.js";
+import { isSameTitle } from "../../scripts/titleChecking.js";
 
 const roleRouter = Router();
 
@@ -33,9 +34,9 @@ roleRouter.patch(
     '/:id/:token',
     isAutorised, 
     isAdmin,
-    isTitleExist(RoleService),
     titleValidationChainMethod,
     validateRequestSchema,
+    isSameTitle(RoleService),
     tryCatch(roleController.update.bind(roleController))
 );
 roleRouter.delete(
