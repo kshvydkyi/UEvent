@@ -95,12 +95,18 @@ const Event = () => {
     return (
         <>
         <br/>
+        <section>
         <div class="leftBox">
             <div class="content">
-            <h1>Events And Shows</h1>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+            <h1>{ lang === 'ua' ? 'Події Кампуса' : 'Campus Events' }</h1>
+            <p>
+            { lang === 'ua' ? 
+            'На даній сторінці будуть викладатися усі події, що відбуваються у закладі Innovation Campus, який знаходиться за адресою - вулиця Алчевських, 48а, м.Харків. Сподіваємось ви залишетесь задоволеними після подій' : 
+            'On this page, all events taking place at the Innovation Campus institution, which is located at 48a Alchevskih Street, Kharkiv, will be presented. We hope you will be satisfied after the events' }
+            </p>
             </div>
         </div>
+        </section>
             {
                 (events.length !== 0) && (Array.isArray(events))
                 ?
@@ -125,12 +131,15 @@ const Event = () => {
                         <ul>
                         <li>
                             <div class="time">
-                            <h2>24<br/><span>June</span></h2>
+                                <img  src={`${route.}`} alt = 'Шарікс'></img>
+                            {/* <h2>{event.event_pic}<br/><span></span></h2> */}
                             </div>
                             <div class="details">
-                            <h3>Where does it come from</h3>
-                            <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
-                            <a href="https://codepen.io/collection/XdWJOQ/">View Details</a>
+                            <h3 style = {{color: 'black'}}>{event.title}</h3>
+                            <p style = {{color: 'black'}}>{event.description}</p>
+                            <p style = {{color: 'black'}}>{formatedDate}</p>
+                            <p style = {{color: 'black'}}>{event.format_id}</p>
+                            <a href="/">{event.company_id}</a>
                             </div>
                             <div style={{clear: "both"}}></div>
                         </li>

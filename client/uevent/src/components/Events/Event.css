@@ -6,27 +6,6 @@ body {
   font-family: 'Roboto Condensed', sans-serif;
 }
 
-section {
-  display: grid;
-  grid-gap: 0;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-template-areas:
-    "main main"
-    "event event";
-  background-image: url(https://s3.ca-central-1.amazonaws.com/image-web-frankie/Music+show.jpg);
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
-}
-
-@media (min-width: 1200px) {
-  section {
-    grid-template-areas:
-      "main event"
-      "main event";
-  }
-}
 
 .leftBox {
   grid-area: main;
