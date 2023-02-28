@@ -16,7 +16,8 @@ This is a service that helps people broaden their horizons and improve their net
 <img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/users -- get all users <img valign='middle' src='https://readme-swatches.vercel.app/2496f2?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/users/:id -- get specified user data <img valign='middle' src='https://readme-swatches.vercel.app/2496f2?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/users/:token -- create a new user <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>\
-<img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/users/avatar/:token -- update user data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/>\
+<img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/users/avatar/:token -- update user data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/>  <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>
+#### - Role module\
 <img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/users/:id/:token -- update user data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/> <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ec3323?style=circle'/> **DEL** - /api/users/:id/:token -- delete user <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>
 #### - Role module
@@ -58,8 +59,8 @@ This is a service that helps people broaden their horizons and improve their net
 <img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/events-items/:id/:token -- update event-item data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/> <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ec3323?style=circle'/> **DEL** - /api/events-items/:id/:token -- delete event-item <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>
 #### - Promocode module
-<img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/promocodes -- get all promocodes <img valign='middle' src='https://readme-swatches.vercel.app/2496f2?style=round'/>\
-<img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/promocodes/:id -- get specified promocode data <img valign='middle' src='https://readme-swatches.vercel.app/2496f2?style=round'/>\
+<img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/promocodes -- get all promocodes <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/>\
+<img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/promocodes/:id -- get specified promocode data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/promocodes/:token -- create a new promocode <img valign='middle' src='https://readme-swatches.vercel.app/37bca4?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/promocodes/:id/:token -- update promocode data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ec3323?style=circle'/> **DEL** - /api/promocodes/:id/:token -- delete promocode <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>
