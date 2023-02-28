@@ -4,10 +4,10 @@ This is a service that helps people broaden their horizons and improve their net
 ### Endpoints 🎈
 
 #### - Authentication module 🎈
-<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/register -- registration of a new user
-<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/active-email/:token -- active email with a token from email
-<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/login -- log in user
-<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/reset-password -- send a reset link to user email
+<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/register -- registration of a new user\
+<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/active-email/:token -- active email with a token from email\
+<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/login -- log in user\
+<img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/reset-password -- send a reset link to user email\
 <img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/reset-password/:token -- confirm new password with a token from email
 #### - User module 🎈
 <img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/users -- get all users\
