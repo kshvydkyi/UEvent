@@ -1,6 +1,6 @@
 import { Router } from "express";
 import tryCatch from "../../utils/tryCacth.utils.js";
-import themeController from "../../controllers/themeController.js";
+import promocodeController from "../../controllers/promocodeController.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isAdmin } from "../../middleware/isAccess.middleware.js";
 import { titleValidationChainMethod } from "../../validations/company.validation.js";
@@ -8,49 +8,43 @@ import { validateRequestSchema } from "../../middleware/validateRequestSchema.mi
 import { isSameTitle } from "../../scripts/titleChecking.js";
 import ThemeService from "../../services/theme.service.js";
 import { isNotExistById } from "../../scripts/roleChecking.script.js";
-import RoleService from "../../services/role.service.js";
 
-const themeRouter = Router();
+const promocodeRouter = Router();
 
-//Select All(For All)
-themeRouter.get(
+promocodeRouter.get(
     '/',
-    tryCatch(themeController.selectAll.bind(themeController))
+    tryCatch(promocodeController.selectAll.bind(promocodeController))
 );
 
-//Select By Id(For All)
-themeRouter.get(
+promocodeRouter.get(
     '/:id',
-    isNotExistById(RoleService),
-    tryCatch(themeController.selectById.bind(themeController))
+    tryCatch(promocodeController.selectById.bind(promocodeController))
 );
 
-themeRouter.post(
+promocodeRouter.post(
     '/:token',
     isAutorised,
     isAdmin,
-    titleValidationChainMethod,
     validateRequestSchema,
-    tryCatch(themeController.create.bind(themeController))
+    tryCatch(promocodeController.create.bind(promocodeController))
 );
 
-themeRouter.patch(
+promocodeRouter.patch(
     '/:token',
     isAutorised,
     isAdmin,
-    titleValidationChainMethod,
     validateRequestSchema,
     isSameTitle(ThemeService),
-    tryCatch(themeController.update.bind(themeController))
+    tryCatch(promocodeController.update.bind(promocodeController))
 );
 
 //Delete by id (Only for admin)
-themeRouter.delete(
+promocodeRouter.delete(
     '/:id/:token',
     isAutorised,
     isAdmin,
     isNotExistById(ThemeService),
-    tryCatch(themeController.deleteById.bind(themeController))
+    tryCatch(promocodeController.deleteById.bind(promocodeController))
 );
 
-export default themeRouter;
+export default promocodeRouter;

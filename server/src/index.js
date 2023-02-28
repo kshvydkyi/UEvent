@@ -26,6 +26,7 @@ app.use(ErrorHandler);
 router.init();
 
 app.use('/avatars', express.static(`${path.resolve()}/assets/avatars`));
+app.use('/event_pic', express.static(`${path.resolve()}/assets/event_pic`));
 
 const port = app.get('port');
 

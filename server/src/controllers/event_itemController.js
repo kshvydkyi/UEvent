@@ -18,6 +18,7 @@ export class Event_itemController {
     async create(req, res) {
         await this.service.create(req.body);
     }
+
     async update(req, res){
         await this.service.update(req.body, req.params.id);
     }

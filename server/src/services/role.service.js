@@ -19,6 +19,12 @@ export default class RoleService {
         return row;
     }
 
+    async update(body, id) {
+        if(Object.entries(body).length !== 0){
+            await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => db.execute(`UPDATE roles SET ${key} = '${value}' WHERE id = ${id}`))
+        }
+	}
+
     async deleteById(id) {
         var sql = `DELETE FROM roles WHERE id = ${id}`;
         const [row] = await db.execute(sql);

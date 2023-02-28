@@ -1,8 +1,8 @@
-import ThemeService from "../services/theme.service.js";
+import PromocodeService from "../services/promocode.service.js";
 
-export class ThemeController {
+export class PromocodeController {
     constructor (service) {
-        this.service = new ThemeService();
+        this.service = new PromocodeService();
     }
 
     async selectAll(req, res) {
@@ -28,5 +28,5 @@ export class ThemeController {
     }
 }
 
-const themeController = new ThemeController(new ThemeService());
-export default themeController;
+const promocodeController = new PromocodeController(new PromocodeService());
+export default promocodeController;

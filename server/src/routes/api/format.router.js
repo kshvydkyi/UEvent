@@ -11,15 +11,19 @@ import { isSameTitle } from "../../scripts/titleChecking.js";
 
 const formatRouter = Router();
 
+//Select All(For All)
 formatRouter.get(
     '/',
     tryCatch(formatController.selectAll.bind(formatController))
 );
+
+//Select By Id(For All)
 formatRouter.get(
     '/:id',
     isNotExistById(FormatService),
     tryCatch(formatController.selectById.bind(formatController))
 );
+
 formatRouter.post(
     '/:token',
     isAutorised,
@@ -29,6 +33,7 @@ formatRouter.post(
     isTitleExist(FormatService),
     tryCatch(formatController.create.bind(formatController))
 );
+
 formatRouter.patch(
     '/:id/:token',
     isAutorised, 
@@ -38,6 +43,8 @@ formatRouter.patch(
     isSameTitle(FormatService),
     tryCatch(formatController.update.bind(formatController))
 );
+
+//Delete by id (Only for admin)
 formatRouter.delete(
     '/:id/:token',
     isAutorised,

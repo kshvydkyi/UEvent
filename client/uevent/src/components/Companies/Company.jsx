@@ -9,6 +9,7 @@ import { Modal } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import ReactPaginate from 'react-paginate'
+import '../../App.css'
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
@@ -77,11 +78,19 @@ const Company = () => {
                    document.location.reload();
     }
 
+    function toRedirect() {
+        navigate('/createEvent')
+    };
+
 
 
     return (
         <>
         <br/>
+                <div class="upload-btn-wrapper">
+                    <button onClick = {() => toRedirect()} id="btn_create_event" class="btn_create_event">{ lang === 'ua' ? 'Створити Подію' : 'Create Event' }</button>
+                    <input type="button" name="myfile" />
+                </div>
             {
                 (companies.length !== 0) && (Array.isArray(companies))
                 ?
@@ -95,7 +104,7 @@ const Company = () => {
                         <Button onClick = {() => openTheModal(id)} type="button" className="btn btn-warning">{ lang === 'ua' ? 'Змінити' : 'Edit' }</Button>
                     </div>
 
-                    <Modal show={openModal} onHide={() => closeTheModal()}>
+                <Modal show={openModal} onHide={() => closeTheModal()}>
                 <Modal.Header closeButton>
                 <Modal.Title className = "text-black">{ lang === 'ua' ? 'Зміна даних' : 'Change company' }</Modal.Title>
                 </Modal.Header>

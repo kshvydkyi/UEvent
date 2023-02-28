@@ -23,6 +23,11 @@ export class CompanyController {
     async create(req, res) {
         await this.service.create(req.body);
     }
+
+    async addUser(req, res) {
+        await this.service.addUser(req.body);
+    }
+
     async update(req, res){
         await this.service.update(req.body, req.params.id);
     }
@@ -31,8 +36,6 @@ export class CompanyController {
         await this.service.deleteById(req.params.id);
     }
 }
-
-
 
 const companyController = new CompanyController(new CompanyService());
 export default companyController;

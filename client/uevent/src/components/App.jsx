@@ -11,7 +11,9 @@ import RequreAuth from './Auth/RequireAuth';
 import ChangeUserAvatar from './Users/ChangeAvatar'
 import ChangeProfile from './Users/ChangeProfile';
 import CreateCompany from './Companies/CreateCompany';
+import CreateEvent from './Events/CreateEvent';
 import Company from './Companies/Company';
+import Event from './Events/Event';
 
 
 function App() {
@@ -36,11 +38,14 @@ function App() {
 				<Route path='registration' element={<Register />} />
 				<Route path='confirm-email/:token' element={<ConfirmEmail />} />
 
+				<Route path='events' element={<Event />} />
+
 				<Route element={<RequreAuth allowedRoles={['user', 'admin']} />} >
 					<Route path='user/:id' element={<User />} />
 					<Route path='change-avatar' element={<ChangeUserAvatar />} />
 					<Route path='change-profile' element={<ChangeProfile />} />
 					<Route path='createCompany' element={<CreateCompany />} />
+					<Route path='createEvent' element={<CreateEvent />} />
 					<Route path='companies' element={<Company />} />
 				</Route>
 				<Route element={<RequreAuth allowedRoles={['admin']} />} >

@@ -12,16 +12,19 @@ commentRouter.get(
     '/',
     tryCatch(commentController.selectAll.bind(commentController))
 );
+
 commentRouter.get(
     '/:id',
     isNotExistById(CommentService),
     tryCatch(commentController.selectById.bind(commentController))
 );
+
 commentRouter.post(
     '/:token',
     isAutorised,
     tryCatch(commentController.create.bind(commentController))
 );
+
 commentRouter.patch(
     '/:id/:token',
     isAutorised,
@@ -29,6 +32,8 @@ commentRouter.patch(
     isNotExistById(CommentService),
     tryCatch(commentController.update.bind(commentController))
 );
+
+//Delete by id (Only for admin)
 commentRouter.delete(
     '/:id/:token',
     isAutorised,

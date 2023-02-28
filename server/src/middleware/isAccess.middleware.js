@@ -38,3 +38,13 @@ export const isAccessOrAdmin = (Service) => async (req, res, next) => {
     }
     next();
 }
+
+export const isAccessOrAdminUserService = (Service) => async (req, res, next) => {
+    const service = new Service();
+    const result = await service.selectById(req.params.id);
+    const userData = jwt.verify(req.params.token, 'jwt-key');
+    if (result.id !== userData.userId && userData.role !== 'admin') {
+        return response(403, { message: 'access denied' }, res);
+    }
+    next();
+};

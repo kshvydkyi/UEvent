@@ -187,3 +187,32 @@ body{
 #button-1 .layer {
   transition: 0.3s ease all;
 }
+
+
+.upload-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.btn_create_event {
+  cursor: pointer;
+  border: 2px solid gray;
+  color: gray;
+  background-color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+.upload-btn-wrapper input[type=button] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+

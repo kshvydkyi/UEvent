@@ -38,6 +38,7 @@ authRouter.post(
     tryCatch(authController.passwordReset.bind(authController))
 )
 
+//Delete by id (Only for admin)
 authRouter.post(
     '/reset-password/:token',
     updatePasswordValidateChainMethod,

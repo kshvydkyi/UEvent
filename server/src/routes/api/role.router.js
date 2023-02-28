@@ -12,15 +12,19 @@ import { isSameTitle } from "../../scripts/titleChecking.js";
 
 const roleRouter = Router();
 
+//Select All(For All)
 roleRouter.get(
     '/',
     tryCatch(roleController.selectAll.bind(roleController))
 );
+
+//Select By Id(For All)
 roleRouter.get(
     '/:id',
     isNotExistById(RoleService),
     tryCatch(roleController.selectById.bind(roleController))
 );
+
 roleRouter.post(
     '/:token',
     isAutorised,
@@ -30,6 +34,7 @@ roleRouter.post(
     isTitleExist(RoleService),
     tryCatch(roleController.create.bind(roleController))
 );
+
 roleRouter.patch(
     '/:id/:token',
     isAutorised, 
@@ -39,6 +44,8 @@ roleRouter.patch(
     isSameTitle(RoleService),
     tryCatch(roleController.update.bind(roleController))
 );
+
+//Delete by id (Only for admin)
 roleRouter.delete(
     '/:id/:token',
     isAutorised,

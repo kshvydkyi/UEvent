@@ -19,6 +19,12 @@ export default class FormatService {
         return row;
     }
     
+    async update(body, id) {
+        if(Object.entries(body).length !== 0){
+            await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => db.execute(`UPDATE formats SET ${key} = '${value}' WHERE id = ${id}`))
+        }
+	}
+
     async deleteById(id) {
         var sql = `DELETE FROM formats WHERE id = ${id}`;
         const [row] = await db.execute(sql);

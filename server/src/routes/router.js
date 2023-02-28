@@ -7,6 +7,7 @@ import commentRouter from './api/comment.router.js';
 import companyRouter from './api/company.router.js';
 import eventRouter from './api/event.router.js';
 import eventItemRouter from './api/eventItem.router.js';
+import promocodeRouter from './api/promocode.router.js';
 
 class AppRouter {
 	constructor(app) { this.app = app }
@@ -24,6 +25,7 @@ class AppRouter {
 		this.app.use('/api/formats', formatRouter);
 		this.app.use('/api/comments', commentRouter);
 		this.app.use('/api/companies', companyRouter);
+		this.app.use('/api/promocodes', promocodeRouter);
 	}
 }
 

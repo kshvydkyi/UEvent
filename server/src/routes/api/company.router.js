@@ -12,20 +12,25 @@ import { isSameTitle } from "../../scripts/titleChecking.js";
 
 const companyRouter = Router();
 
+//Select All(For All)
 companyRouter.get(
     '/',
     tryCatch(companyController.selectAll.bind(companyController))
 );
+
+//Select ById(For All)
 companyRouter.get(
     '/:id',
     isNotExistById(CompanyService),
     tryCatch(companyController.selectById.bind(companyController))
 );
+
 companyRouter.get(
     '/user-companies/:id',
     isNotExistById(UserService),
     tryCatch(companyController.selectByUserId.bind(companyController))
 );
+
 companyRouter.post(
     '/:token',
     isAutorised,
@@ -33,6 +38,13 @@ companyRouter.post(
     validateRequestSchema,
     isTitleExist(CompanyService),
     tryCatch(companyController.create.bind(companyController))
+);
+
+companyRouter.post(
+    '/addUser/:token',
+    isAutorised,
+    isAccess,
+    tryCatch(companyController.addUser.bind(companyController))
 );
 
 companyRouter.patch(
@@ -44,6 +56,8 @@ companyRouter.patch(
     isSameTitle(CompanyService),
     tryCatch(companyController.update.bind(companyController))
 );
+
+//Delete by id (Only for admin)
 companyRouter.delete(
     '/:id/:token',
     isAutorised,
