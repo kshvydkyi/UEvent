@@ -22,7 +22,7 @@ export class EventController {
     async update(req, res){
         await this.service.update(req.body, req.params.id);
     }
-    
+
     async addPoster(req, res) {
         const data = {pathFile: req.file.filename};
         return data;

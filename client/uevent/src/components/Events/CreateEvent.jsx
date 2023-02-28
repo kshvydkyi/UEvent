@@ -18,7 +18,6 @@ const CreateEvent = () => {
     const lang = localStorage.getItem('lang');
     const errRef = useRef();
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('autorized'));
     const [errMsg, setErrMsg] = useState('');
 
     const [companyName, setCompanyName] = useState('');
@@ -27,16 +26,15 @@ const CreateEvent = () => {
     const [companyDescr, setCompanyDescr] = useState('');
     const [validcompanyDescr, setValidCompanyDescr] = useState(false);
 
-    const [eventPoster, setEventPoster] = useState(null);
-
     const [eventPosterPath, setEventPosterPath] = useState('');
 
     const [allCompanies, setAllCompanies] = useState([]);
     const [chosenCompany, setChosenCompany] = useState('');
 
     const [allFormat, setAllFormats] = useState([]);
+    const [allThemes, setAllThemes] = useState([]);
     const [chosenFormat, setChosenFormat] = useState('');
-
+    const [selectedThemes, setSelectedThemes] = useState([])
     const [startAt, setStartDate] = useState('');
 
     const [isLoading, setLoading] = useState(false);
@@ -52,14 +50,13 @@ const CreateEvent = () => {
     }, [companyDescr]);
 
 
-    const setHidden = () => {
-        setTimeout(() => setErrMsg(''), 5000);
-    }
+    // const setHidden = () => {
+    //     setTimeout(() => setErrMsg(''), 5000);
+    // }
 
     const addImage = async (e) => {
-        setEventPoster(e.target.files[0]);
         const formData = new FormData();
-        formData.append('image', eventPoster);
+        formData.append('image', e.target.files[0]);
         try {
             const response = await axios.post(`/api/events/add-image/${currentUser.accessToken}`, formData,
                 {
@@ -76,18 +73,23 @@ const CreateEvent = () => {
         e.preventDefault();
         try {
             setLoading(true);
-            console.log(companyDescr, companyName, +chosenCompany.value, +chosenFormat.value, startAt)
+            console.log(selectedThemes);
+            const themesId = selectedThemes.map((theme) => theme.value);
             const response = await axios.post(`/api/events/${currentUser.accessToken}`, JSON.stringify({
-                description: companyDescr, title: companyName,
+                title: companyName,
+                description: companyDescr,
                 company_id: +chosenCompany.value,
-                format_id: +chosenFormat.value, dateStart: startAt, event_pic: eventPosterPath 
+                format_id: +chosenFormat.value,
+                dateStart: startAt,
+                event_pic: eventPosterPath.length < 1 ? 'default_event.png' : eventPosterPath,
+                themes_id: themesId
             }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             })
             console.log(response);
             setLoading(false);
-            navigate(`/companies`);
+            navigate(`/events`);
             document.location.reload();
         }
         catch (err) {
@@ -123,10 +125,20 @@ const CreateEvent = () => {
             return data;
         }));
     }
+    const getThemes = async () => {
+        const response = await axios.get(`/api/themes/`);
+        setAllThemes(response.data.values.values.map((value) => {
+            const data = { value: value.id, label: value.title }
+            return data;
+        }));
+    }
+    useEffect(() => {
+        getThemes();
+    }, []);
 
     useEffect(() => {
         getFormat();
-    }, [])
+    }, []);
 
 
     const customStyles = {
@@ -211,7 +223,7 @@ const CreateEvent = () => {
                             autoComplete="off"
                             accept="image/jpeg,image/png,image/jpg"
                             onChange={addImage}
-                            // value={eventPoster}
+                        // value={eventPoster}
                         />
 
 
@@ -242,7 +254,19 @@ const CreateEvent = () => {
                                 setChosenFormat(option);
                             }}
                         />
+                        <label className="form_label" htmlFor="themes">{lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}</label>
 
+                        <Select
+                            styles={customStyles}
+                            placeholder={lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}
+                            id="themes"
+                            options={allThemes}
+                            onChange={(option) => {
+                                setSelectedThemes(option);
+                            }}
+                            isMulti
+                        // isClearable
+                        />
 
                         <label style={{ margin: "10px" }}> {lang === 'ua' ? 'Початок події' : 'Start of Event'}</label>
                         <DatePicker

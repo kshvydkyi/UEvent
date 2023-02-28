@@ -74,7 +74,9 @@ body{
   font-weight: bold;
 }
 
-
+.wrapper-navbar{
+  height: 40px;
+}
 .toggle-button-cover {
   display: table-cell;
   position: relative;

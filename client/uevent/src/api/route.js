@@ -1,6 +1,6 @@
 const apiUrl = "http://localhost:8080"
 
-export const route = {
+export default {
     serverURL: apiUrl,
     authPath: () => [apiUrl, 'auth', 'login'].join('/'),
     getAllUsers: () => [apiUrl, 'users'].join('/'),

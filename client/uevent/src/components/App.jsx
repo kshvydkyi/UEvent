@@ -14,6 +14,8 @@ import CreateCompany from './Companies/CreateCompany';
 import CreateEvent from './Events/CreateEvent';
 import Company from './Companies/Company';
 import Event from './Events/Event';
+import NotFound from './Other/NotFound';
+import ServerError from './Other/ServerError';
 
 
 function App() {
@@ -37,7 +39,8 @@ function App() {
 				<Route path='login' element={<Login />} />
 				<Route path='registration' element={<Register />} />
 				<Route path='confirm-email/:token' element={<ConfirmEmail />} />
-
+				<Route path="*" element={<NotFound />} />
+				<Route path="500" element={<ServerError />} />
 				<Route path='events' element={<Event />} />
 
 				<Route element={<RequreAuth allowedRoles={['user', 'admin']} />} >

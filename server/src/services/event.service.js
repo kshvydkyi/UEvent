@@ -18,10 +18,10 @@ export default class EventService {
         const date1 = toSQLDate(new Date(body.dateStart));
         var sql = `INSERT INTO events (title, description, event_pic, company_id, format_id, dateStart) VALUES ('${body.title}', '${body.description}', '${body.event_pic}', ${body.company_id}, ${body.format_id}, '${date1}' )`; 
         const [row] = await db.execute(sql);
-        // const theme_ids = body.theme_ids.split(", ");
-        // theme_ids.forEach(async (element) => {
-        //     const [row1] = await dbConnection.execute(`INSERT INTO themes_events (theme_id, event_id) VALUES (${element}, ${row.insertId})`);
-        // });
+        const theme_ids = body.themes_id;
+        theme_ids.forEach(async (element) => {
+            const [row1] = await dbConnection.execute(`INSERT INTO themes_events (theme_id, event_id) VALUES (${element}, ${row.insertId})`);
+        });
         return row;
     }
 

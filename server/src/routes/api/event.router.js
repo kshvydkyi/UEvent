@@ -31,9 +31,10 @@ eventRouter.post(
 );
 
 eventRouter.post(
-    '/event-image/:token',
+    '/add-image/:token',
     isAutorised,
-    uploadEventImage.single('image')
+    uploadEventImage.single('image'),
+    tryCatch(eventController.addPoster.bind(eventController))
 );
 
 eventRouter.patch(
@@ -51,13 +52,6 @@ eventRouter.patch(
 //     uploadEventImage.single('image'),
 //     tryCatch(eventController.update_event_pic.bind(eventController))
 // );
-
-eventRouter.post(
-    '/add-image/:token',
-    isAutorised,
-    uploadEventImage.single('image'),
-    tryCatch(eventController.addPoster.bind(eventController))
-);
 
 //Delete by id (Only for admin)
 eventRouter.delete(
