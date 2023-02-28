@@ -2,7 +2,10 @@
 This is a service that helps people broaden their horizons and improve their networkingskills. 
 ## API 🎈
 ### Endpoints 🎈
-
+<img valign='middle' src='https://readme-swatches.vercel.app/2496f2?style=round'/> -- Public\
+<img valign='middle' src='https://readme-swatches.vercel.app/37bca4?style=round'/> -- For authorized users\
+<img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/> -- For the users themselves\
+<img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/> -- For Admins
 #### - Authentication module 🎈
 <img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/register -- registration of a new user\
 <img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/auth/active-email/:token -- active email with a token from email\
