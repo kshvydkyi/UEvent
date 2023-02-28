@@ -10,6 +10,7 @@ import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import ReactPaginate from 'react-paginate'
 import '../../App.css'
+import './Event.css'
 import moment from 'moment';
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
@@ -112,23 +113,32 @@ const Event = () => {
                             <Button  onClick = {() => toDeleteCompany(event.id)}  type="button" className="btn btn-danger" style = {{marginRight: '10px'}}>{ lang === 'ua' ? 'Видалити' : 'Delete' }</Button>
                             <Button onClick = {() => openTheModal(event.id)} type="button" className="btn btn-warning">{ lang === 'ua' ? 'Змінити' : 'Edit' }</Button>
                     </div> */}
-
+                    <div>
+                    <section>
+                    <div class="leftBox">
+                        <div class="content">
+                        <h1>Events And Shows</h1>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                        </div>
+                    </div>
                     <div class="events">
                         <ul>
                         <li>
                             <div class="time">
-                            <h2>24<br/><span>June</span></h2>
+                            <h2>24<br><span>June</span></h2>
                             </div>
                             <div class="details">
                             <h3>Where does it come from</h3>
                             <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
                             <a href="https://codepen.io/collection/XdWJOQ/">View Details</a>
                             </div>
-                            <div style={{clear: "both"}}></div>
+                            <div style="clear: both;"></div>
                         </li>
                         </ul>
-                    <div>
                         </div>
+                        </section>
+                        </div>
+
     
                     <Modal show={openModal} onHide={() => closeTheModal()}>
                     <Modal.Header closeButton>
