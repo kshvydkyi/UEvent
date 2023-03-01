@@ -37,7 +37,7 @@ section .leftBox .content p {
 }
 
 section .events {
-  grid-area: event;
+  /* grid-area: event; */
   background-color: rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
 }
@@ -45,32 +45,26 @@ section .events {
 section .events ul {
   margin: 0;
   padding: 40px;
+  height: 900px;
   list-style: none;
 }
 
 section .events ul li {
   background-color: #fff;
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: 30% 1fr;
-  grid-template-rows: 1fr;
-  grid-gap: 0;
-  grid-template-areas:
-    "time time"
-    "detail detail";
   margin-bottom: 20px;
 }
 
 @media (min-width: 768px) {
   section .events ul li {
-    grid-template-areas:
+    /* grid-template-areas:
       "time detail"
-      "time detail";
+      "time detail"; */
   }
 }
 
 section .events ul li .time {
-  grid-area: time;
+  /* grid-area: time; */
   position: relative;
   padding: 8% 40%;
   background-color: #262626;
@@ -99,7 +93,7 @@ section .events ul li .time h2 span {
 }
 
 section .events ul li .details {
-  grid-area: detail;
+  /* grid-area: detail; */
   padding: 20px 20px 32px;
   background-color: #fff;
   box-sizing: border-box;

@@ -14,6 +14,8 @@ import CreateCompany from './Companies/CreateCompany';
 import CreateEvent from './Events/CreateEvent';
 import Company from './Companies/Company';
 import Event from './Events/Event';
+import CurrentEvent from './Events/CurrentEvent';
+
 import NotFound from './Other/NotFound';
 import ServerError from './Other/ServerError';
 
@@ -42,6 +44,7 @@ function App() {
 				<Route path="*" element={<NotFound />} />
 				<Route path="500" element={<ServerError />} />
 				<Route path='events' element={<Event />} />
+				<Route path='event/:id' element={<CurrentEvent />} />
 
 				<Route element={<RequreAuth allowedRoles={['user', 'admin']} />} >
 					<Route path='user/:id' element={<User />} />

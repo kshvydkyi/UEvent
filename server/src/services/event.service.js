@@ -26,6 +26,7 @@ export default class EventService {
     }
 
     async update(body, id) {
+        console.log('check update',body)
         if(Object.entries(body).length !== 0){
             await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => db.execute(`UPDATE events SET ${key} = '${value}' WHERE id = ${id}`))
         }

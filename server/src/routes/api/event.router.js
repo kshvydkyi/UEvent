@@ -1,13 +1,14 @@
 import { Router } from "express";
 import tryCatch from "../../utils/tryCacth.utils.js";
 import eventController from "../../controllers/eventController.js";
-import { isAccess, isAdmin } from "../../middleware/isAccess.middleware.js";
+import { isAccess, isAccessCompany, isAdmin } from "../../middleware/isAccess.middleware.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isNotExistById } from "../../scripts/roleChecking.script.js";
 import EventService from "../../services/event.service.js";
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
-import { eventCreateValidationChainMethod } from "../../validations/event.validation.js";
+import { eventCreateValidationChainMethod, updateEventValidationChainMethod } from "../../validations/event.validation.js";
 import uploadEventImage from '../../utils/uploadEventImage.js';
+import CompanyService from "../../services/company.service.js";
 
 const eventRouter = Router();
 
@@ -39,19 +40,20 @@ eventRouter.post(
 
 eventRouter.patch(
     '/:id/:token',
-    isAutorised, 
-    isAccess,
+    isAutorised,
+    updateEventValidationChainMethod,
     validateRequestSchema,
+    isAccessCompany(CompanyService), 
     tryCatch(eventController.update.bind(eventController))
 );
 
-// eventRouter.patch(
-//     '/event-image/:id/:token',
-//     isAutorised,
-//     isAccess,
-//     uploadEventImage.single('image'),
-//     tryCatch(eventController.update_event_pic.bind(eventController))
-// );
+eventRouter.patch(
+    '/event-image/:id/:token',
+    isAutorised,
+    isAccess,
+    uploadEventImage.single('image'),
+    tryCatch(eventController.update_event_pic.bind(eventController))
+);
 
 //Delete by id (Only for admin)
 eventRouter.delete(
