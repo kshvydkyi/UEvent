@@ -15,6 +15,7 @@ import CreateEvent from './Events/CreateEvent';
 import Company from './Companies/Company';
 import Event from './Events/Event';
 import CurrentEvent from './Events/CurrentEvent';
+import CreateEventItem from './Events/CreateEventItem';
 
 import NotFound from './Other/NotFound';
 import ServerError from './Other/ServerError';
@@ -52,6 +53,7 @@ function App() {
 					<Route path='change-profile' element={<ChangeProfile />} />
 					<Route path='createCompany' element={<CreateCompany />} />
 					<Route path='createEvent' element={<CreateEvent />} />
+					<Route path='createEventItem/:id' element={<CreateEventItem />} />
 					<Route path='companies' element={<Company />} />
 				</Route>
 				<Route element={<RequreAuth allowedRoles={['admin']} />} >

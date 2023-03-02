@@ -1,7 +1,7 @@
 import { Router } from "express";
 import tryCatch from "../../utils/tryCacth.utils.js";
 import eventController from "../../controllers/eventController.js";
-import { isAccess, isAccessCompany, isAdmin } from "../../middleware/isAccess.middleware.js";
+import { isAccess, isAccessCompanyOrAdmin, isAdmin } from "../../middleware/isAccess.middleware.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isNotExistById } from "../../scripts/roleChecking.script.js";
 import EventService from "../../services/event.service.js";
@@ -43,14 +43,14 @@ eventRouter.patch(
     isAutorised,
     updateEventValidationChainMethod,
     validateRequestSchema,
-    isAccessCompany(CompanyService), 
+    isAccessCompanyOrAdmin(CompanyService), 
     tryCatch(eventController.update.bind(eventController))
 );
 
 eventRouter.patch(
     '/event-image/:id/:token',
     isAutorised,
-    isAccess,
+    isAccessCompanyOrAdmin(CompanyService), 
     uploadEventImage.single('image'),
     tryCatch(eventController.update_event_pic.bind(eventController))
 );
@@ -59,7 +59,7 @@ eventRouter.patch(
 eventRouter.delete(
     '/:id/:token',
     isAutorised,
-    isAdmin,
+    isAccessCompanyOrAdmin(CompanyService), 
     isNotExistById(EventService),
     tryCatch(eventController.deleteById.bind(eventController))
 );

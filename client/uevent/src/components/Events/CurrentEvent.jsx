@@ -17,8 +17,11 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
 
+
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
+
+
 
 
 const CurrentEvent = () => {
@@ -63,6 +66,16 @@ const currentUser = JSON.parse(localStorage.getItem('autorized'));
   const normalFormat = moment(events.dateStart, moment.defaultFormat).toDate();
   const formatedDate = moment(normalFormat).format('D MMMM, h:mm');
 
+  function toRedirect(id) {
+    navigate(`/createEventItem/${id}`)
+  };
+
+
+
+
+
+
+
   return (
     <>
       <br />
@@ -73,6 +86,11 @@ const currentUser = JSON.parse(localStorage.getItem('autorized'));
         {
                 <>
                   <div>
+                    <br/>
+                  <div class="upload-btn-wrapper">
+                      <button onClick={() => toRedirect(events.id)} id="btn_create_event" class="btn_create_event">{lang === 'ua' ? `Створити Подію для ${events.title}` : `Create Event for ${events.title}`}</button>
+                      <input type="button" name="myfile" />
+                    </div>
                     <section>
                       <div  className="events">
                         <ul>
