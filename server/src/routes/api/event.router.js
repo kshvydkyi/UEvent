@@ -57,7 +57,7 @@ eventRouter.patch(
 
 //Delete by id (Only for admin)
 eventRouter.delete(
-    '/:id/:token',
+    '/:id/:company_id/:token',
     isAutorised,
     isAccessCompanyOrAdmin(CompanyService), 
     isNotExistById(EventService),

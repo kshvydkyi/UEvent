@@ -88,7 +88,7 @@ const Company = () => {
         <>
             <br />
             <div class="upload-btn-wrapper">
-                <button onClick={() => toRedirect()} id="btn_create_event" class="btn_create_event">{lang === 'ua' ? 'Створити Подію' : 'Create Event'}</button>
+                <Button onClick={() => toRedirect()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? 'Створити Подію' : 'Create Event'}</Button>
                 <input type="button" name="myfile" />
             </div>
             {

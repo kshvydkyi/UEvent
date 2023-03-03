@@ -20,7 +20,7 @@ export default class EventService {
         const [row] = await db.execute(sql);
         const theme_ids = body.themes_id;
         theme_ids.forEach(async (element) => {
-            const [row1] = await dbConnection.execute(`INSERT INTO themes_events (theme_id, event_id) VALUES (${element}, ${row.insertId})`);
+            const [row1] = await db.execute(`INSERT INTO themes_events (theme_id, event_id) VALUES (${element}, ${row.insertId})`);
         });
         return row;
     }

@@ -11,7 +11,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
 import moment from 'moment';
-import MapPicker from 'react-google-map-picker'
 
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
@@ -21,8 +20,6 @@ const PRICE_REGEX = /^[0-9]{1,5}$/;
 const COUNT_REGEX = /^[0-9]{1,4}$/;
 
 
-const DefaultLocation = { lat: 50.4, lng: 30.5};
-const DefaultZoom = 10;
 
 const CreateEventItem = () => {
 
@@ -233,21 +230,21 @@ const CreateEventItem = () => {
     }
 
 
-    const [defaultLocation, setDefaultLocation] = useState(DefaultLocation);
 
-    const [locationMap, setLocationMap] = useState(defaultLocation);
-    const [zoom, setZoom] = useState(DefaultZoom);
-  
-    function handleChangeLocation (lat, lng){
-        // console.log(lat,lng)
-        let address = Location.reverseGeocodeAsync({lat: lat, lng: lng})
-        console.log(address)
-      setLocationMap({latitude:lat, longitude:lng});
-    }
-    
-    function handleChangeZoom (newZoom){
-      setZoom(newZoom);
-    }
+    const autoCompleteRef = useRef();
+    const inputRef = useRef();
+    const options = {
+     componentRestrictions: { country: "ng" },
+     fields: ["address_components", "geometry", "icon", "name"],
+     types: ["establishment"]
+    };
+    useEffect(() => {
+     autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      options
+     );
+    }, []);
+
   
     return (
         <>
@@ -353,7 +350,7 @@ const CreateEventItem = () => {
                         />
 
                         <Form.Label className="form_label" htmlFor="price">
-                            {lang === 'ua' ? 'Ціна ( Оберіть 0 якщо хочете зробити подію безкоштовною ) ' : 'Price ( Choose 0 if you want to make event free )'}
+                            {lang === 'ua' ? 'Ціна ( в грівнах ) ( Оберіть 0 якщо хочете зробити подію безкоштовною ) ' : 'Price ( grivnah ) ( Choose 0 if you want to make event free )'}
                         <FontAwesomeIcon icon={faCheck} className={validPrice ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validPrice || !priceOfEvent ? "hide" : "invalid"} />
                        </Form.Label>
@@ -384,23 +381,15 @@ const CreateEventItem = () => {
                             max={1000}
                         />
 
-
-                        {/* map */}
-                        <MapPicker defaultLocation={defaultLocation}
-                        zoom={zoom}
-                        mapTypeId="roadmap"
-                        style={{height:'300px', width: '400px'}}
-                        onChangeLocation={handleChangeLocation} 
-                        onChangeZoom={handleChangeZoom}
-                        apiKey='AIzaSyD07E1VvpsN_0FvsmKAj4nK9GnLq-9jtj8'/>
-
+                        <label>enter address :</label>
+                        <input ref={inputRef} />
 
                         <br />
                         <Button variant="secondary" type="submit" disabled={!validCompanyName || !validcompanyDescr || !validPrice || !validCount || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : lang === 'ua' ? 'Створити' : 'Create'}</Button>
                     </form>
                 </div>
             </div>
-            <script src="https://maps.googleapis.com/maps/api/js?&v=3.exp&libraries=geometry,drawing,places"></script>
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuwtC_l4ZMEaQPTSirUq5kbJJu9R_JT3o&libraries=places&callback=initMap"async></script>
         </>
     )
 }

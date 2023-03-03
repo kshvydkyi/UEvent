@@ -130,39 +130,19 @@ const Event = () => {
   }, [])
 
 
-  async function toDeleteEvent(id) {
+  async function toDeleteEvent(id, company_id) {
     const answer = window.confirm("Ви впевнені, що хочете видалити даний event?")
     if (answer) {
-      const response = await axios.delete(`/api/events/${id}/${currentUser.accessToken}`)
+      const response = await axios.delete(`/api/events/${id}/${company_id}/${currentUser.accessToken}`)
       document.location.reload();
     }
   }
-
-  // async function updateEvent(id) {
-  //   const themesId = selectedThemes.map((theme) => theme.value);
-  //   const response = await axios.patch(`/api/events/${eventId}/${currentUser.accessToken}`, JSON.stringify({
-  //     description: eventDescr, 
-  //     title: eventName,
-  //     company_id: +chosenCompany.value,
-  //     format_id: +chosenFormat.value,
-  //     dateStart: startAt,
-  //     event_pic: eventPosterPath.length < 1 ? 'default_event.png' : eventPosterPath,
-  //     themes_id: themesId
-  //   }), 
-  //   {
-  //     headers: { 'Content-Type': 'application/json' },
-  //     withCredentials: true
-  //   })
-  //   console.log(response)
-  //   document.location.reload();
-  // }
 
 
   const updateEvent = async (e) => {
     try {
       setLoading(true);
       const themesId = selectedThemes.map((theme) => theme.value);
-      console.log(eventDescr, eventName, eventPosterPath, eventId)
       const response = await axios.patch(`/api/events/${eventId}/${currentUser.accessToken}`, JSON.stringify({
         title: eventName,
         description: eventDescr,
@@ -170,7 +150,7 @@ const Event = () => {
         format_id: +chosenFormat.value,
         dateStart: startAt,
         event_pic: eventPosterPath.length < 1 ? 'default_event.png' : eventPosterPath,
-        // themes_id: themesId
+        themes_id: themesId
       }), {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true
@@ -285,10 +265,10 @@ const Event = () => {
                                         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                                         <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                                       </svg></Button>
-                                      <Button onClick={() => toDeleteEvent(event.id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                                      <Button onClick={() => toDeleteEvent(event.id, event.company_id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                                         <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
                                       </svg></Button>
-                                    
+
                                     </>
                                     :
                                     <></>

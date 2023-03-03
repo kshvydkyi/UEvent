@@ -88,7 +88,7 @@ const currentUser = JSON.parse(localStorage.getItem('autorized'));
                   <div>
                     <br/>
                   <div class="upload-btn-wrapper">
-                      <button onClick={() => toRedirect(events.id)} id="btn_create_event" class="btn_create_event">{lang === 'ua' ? `Створити Подію для ${events.title}` : `Create Event for ${events.title}`}</button>
+                      <Button onClick={() => toRedirect(events.id)} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? `Створити Подію для ${events.title}` : `Create Event for ${events.title}`}</Button>
                       <input type="button" name="myfile" />
                     </div>
                     <section>
