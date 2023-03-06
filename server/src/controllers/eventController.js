@@ -1,21 +1,25 @@
 import EventService from "../services/event.service.js";
 import CompanyService from '../services/company.service.js'
 import FormatService from '../services/format.service.js'
+import LocationService from "../services/location.service.js";
+import ThemeService from "../services/theme.service.js";
 
 export class EventController {
-    constructor (service, companyService, formatService) {
+    constructor(service, companyService, formatService) {
         this.service = new EventService();
         this.companyService = new CompanyService();
         this.formatService = new FormatService();
+        this.locationService = new LocationService();
+        this.themeService = new ThemeService();
     }
 
     async selectAll(req, res) {
         const result = await this.service.selectAll();
         const data = result.map(async (item) => {
-            // console.log(item);
             const company = await this.companyService.selectById(item.company_id);
             const format = await this.formatService.selectById(item.format_id);
-            
+            const location = await this.locationService.selectById(item.location_id);
+            const themes = await this.themeService.selectByEventId(item.id);
             return {
                 id: item.id,
                 title: item.title,
@@ -24,12 +28,21 @@ export class EventController {
                 company_id: item.company_id,
                 format_id: item.format_id,
                 dateStart: item.dateStart,
+                dateEnd: item.dateEnd,
+                ticketsCount: item.count,
+                status: item.status,
+                showUserList: item.userlist_public,
+                price: item.price,
+                themes: themes,
+                location: location,
                 companyName: company.title,
                 companyOwner: company.user_id,
                 formatName: format.title,
             }
         })
         const returnData = await Promise.all(data);
+
+        
         return returnData;
     }
 
@@ -37,6 +50,8 @@ export class EventController {
         const result = await this.service.selectById(req.params.id);
         const company = await this.companyService.selectById(result.company_id);
         const format = await this.formatService.selectById(result.format_id);
+        const location = await this.locationService.selectById(result.location_id);
+        const themes = await this.themeService.selectByEventId(result.id);
         const data = {
             id: result.id,
             title: result.title,
@@ -45,6 +60,13 @@ export class EventController {
             company_id: result.company_id,
             format_id: result.format_id,
             dateStart: result.dateStart,
+            dateEnd: result.dateEnd,
+            ticketsCount: result.count,
+            status: result.status,
+            showUserList: result.userlist_public,
+            price: result.price,
+            themes: themes,
+            location: location,
             companyName: company.title,
             companyOwner: company.user_id,
             formatName: format.title,
@@ -56,16 +78,16 @@ export class EventController {
         await this.service.create(req.body);
     }
 
-    async update(req, res){
+    async update(req, res) {
         await this.service.update(req.body, req.params.id);
     }
 
     async addPoster(req, res) {
-        const data = {pathFile: req.file.filename};
+        const data = { pathFile: req.file.filename };
         return data;
     }
 
-    async update_event_pic(req, res) { 
+    async update_event_pic(req, res) {
         const pathFile = req.file.filename;
         await this.service.update_event_pic(pathFile, req.params.id);
     }
@@ -75,5 +97,5 @@ export class EventController {
     }
 }
 
-const eventController = new EventController(new EventService(), new CompanyService(), new FormatService());
+const eventController = new EventController(new EventService(), new CompanyService(), new FormatService(), new LocationService(), new ThemeService());
 export default eventController;

@@ -19,6 +19,12 @@ export default class CompanyService {
         return row;
     }
 
+    async selectUsersByCompanyId(id) {
+        var sql = `SELECT * FROM users_companies WHERE company_id = ${id}`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
+
     async create(body) {
         var sql = `INSERT INTO companies (title, description, user_id) VALUES ('${body.title}', '${body.description}', '${body.userId}')`;
         const [row] = await db.execute(sql);
@@ -26,6 +32,7 @@ export default class CompanyService {
     }
 
     async addUser(body) {
+        console.log('pidorasina')
         var sql = `INSERT INTO users_companies (user_id, company_id) VALUES (${body.user_id}, ${body.company_id})`;
         const [row] = await db.execute(sql);
         return row;

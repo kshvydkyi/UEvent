@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch} from "../../utils/tryCacth.utils.js";
 import formatController from "../../controllers/formatController.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isNotExistById, isTitleExist } from "../../scripts/roleChecking.script.js";

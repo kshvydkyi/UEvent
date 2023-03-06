@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch, tryCatchPagination} from "../../utils/tryCacth.utils.js";
 import eventController from "../../controllers/eventController.js";
 import { isAccess, isAccessCompanyOrAdmin, isAdmin } from "../../middleware/isAccess.middleware.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
@@ -14,7 +14,7 @@ const eventRouter = Router();
 
 eventRouter.get(
     '/',
-    tryCatch(eventController.selectAll.bind(eventController))
+    tryCatchPagination(eventController.selectAll.bind(eventController))
 );
 
 eventRouter.get(

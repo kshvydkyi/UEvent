@@ -33,16 +33,10 @@ function Header() {
 
   };
 
-
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
   const [userAvatar, setUserAvatar] = useState();
-
-
-
-
-
 
   useEffect(() => {
     if (currentUser.currentUser !== 'guest') {
@@ -77,19 +71,19 @@ function Header() {
   return (
     <div className='wrapper-navbar'>
       <Navbar fixed="top" collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Container >
+        <Container className='d-flex justify-content-between'>
           {/* <img src={logo} height={40} alt='logo' /> */}
+
           <Navbar.Brand className="" href="/" data-value="Kvitochok">Kvitochok</Navbar.Brand>
           {/* <Navbar.Brand href="/" target={'_blank'}>Concertik</Navbar.Brand> */}
+
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           {/* <Navbar.Collapse id="responsive-navbar-nav"> */}
+
           {auth.user ?
             <>
               <div style={{ width: '40%', float: 'left' }}>
-                <Nav.Link href="/events">{localStorage.getItem("lang") === 'ua' ? 'Подїї' : 'Events'}</Nav.Link>
-              </div>
-              <div style={{ width: '40%', float: 'left' }}>
-                <Nav.Link href="/tickets">{localStorage.getItem("lang") === 'ua' ? 'Квитки' : 'Tickets'}</Nav.Link>
+                <Nav.Link href="/tickets">{localStorage.getItem("lang") === 'ua' ? 'Мої квитки' : 'Tickets'}</Nav.Link>
               </div>
               <div style={{ width: '40%', float: 'left' }}>
                 <Nav.Link href="/notifications">{localStorage.getItem("lang") === 'ua' ? 'Повідомлення' : 'Notifications'}</Nav.Link>
@@ -97,28 +91,31 @@ function Header() {
               <div style={{ width: '40%', float: 'left', marginLeft: '20px' }}>
                 <Nav.Link href="/companies">{localStorage.getItem("lang") === 'ua' ? 'Мої компанії' : 'My companies'}</Nav.Link>
               </div>
+              <div style={{ width: '40%', float: 'left', marginLeft: '20px' }}>
+                <Nav.Link href="/locations">{localStorage.getItem("lang") === 'ua' ? 'Усі локації' : 'All locations'}</Nav.Link>
+              </div>
 
-              <select style={{ marginLeft: '400px' }}
-                className="selectBox"
+              <select 
+                className="form-select bg-dark text-white w-25"
                 onChange={langChange}
                 name="lang"
                 value={localStorage.getItem("lang")}
               >
-                <option className="optionsMenu" value="ua">
+                <option className="" value="ua">
                   Українська
                 </option>
-                <option className="optionsMenu" value="en">
+                <option className="" value="en">
                   English
                 </option>
               </select>
+
               <div className='d-flex align-items-center' style={{ marginLeft: '20px' }}>
                 <div className='d-flex align-items-center'>
                   <Nav.Link className='link-header' href={`/user/${currentUser.userId}`}>{currentUser.user}</Nav.Link>
                   <img src={userAvatar && userAvatar !== 'undefined' && userAvatar !== undefined ? `${route.serverURL}/avatars/${userAvatar}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle' height={40} width={40} alt='avatar' />
                 </div>
-
-
               </div>
+
             </>
             :
             <>
@@ -129,15 +126,15 @@ function Header() {
                 </Nav.Link>
               </Navbar.Collapse>
               <select
-                className="selectBox"
+                className="form-select"
                 onChange={langChange}
                 name="lang"
                 value={localStorage.getItem("lang")}
               >
-                <option className="optionsMenu" value="ua">
+                <option className="" value="ua">
                   Українська
                 </option>
-                <option className="optionsMenu" value="en">
+                <option className="" value="en">
                   English
                 </option>
               </select>

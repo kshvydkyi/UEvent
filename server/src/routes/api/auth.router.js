@@ -3,7 +3,7 @@ import authController from "../../controllers/authController.js";
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
 import { ifEmailExist, ifUserExist, ifUserNotExist } from "../../scripts/userChecking.script.js";
 import UserService from "../../services/user.service.js";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch} from "../../utils/tryCacth.utils.js";
 import { emailValidationChainMethod, loginValidateChainMethod, registerValidateChainMethod, updatePasswordValidateChainMethod } from "../../validations/user.validation.js";
 
 

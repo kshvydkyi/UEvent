@@ -16,7 +16,8 @@ export default class EventService {
 
     async create(body) {
         const date1 = toSQLDate(new Date(body.dateStart));
-        var sql = `INSERT INTO events (title, description, event_pic, company_id, format_id, dateStart) VALUES ('${body.title}', '${body.description}', '${body.event_pic}', ${body.company_id}, ${body.format_id}, '${date1}' )`; 
+        const date2 = toSQLDate(new Date(body.dateEnd));
+        var sql = `INSERT INTO events (title, description, event_pic, company_id, format_id, dateStart, dateEnd, count, userlist_public, price, location_id) VALUES ('${body.title}', '${body.description}', '${body.event_pic}', ${body.company_id}, ${body.format_id}, '${date1}', '${date2}', ${body.count}, ${body.userlist_public}, '${body.price}', ${body.location_id} )`; 
         const [row] = await db.execute(sql);
         const theme_ids = body.themes_id;
         theme_ids.forEach(async (element) => {

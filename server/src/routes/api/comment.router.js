@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch} from "../../utils/tryCacth.utils.js";
 import commentController from "../../controllers/commentController.js";
 import { isNotExistById } from "../../scripts/roleChecking.script.js";
 import CommentService from "../../services/comment.service.js";

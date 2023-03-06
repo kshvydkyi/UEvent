@@ -16,13 +16,7 @@ export default class ThemeService {
     async selectByEventId(id) {
         let sql = `SELECT * FROM themes INNER JOIN themes_events ON themes_events.event_id = ${id} AND themes.id = themes_events.theme_id`;
         const [row] = await db.execute(sql);
-        return row[0];
-    }
-    
-    async selectByEventItemId(id) {
-        let sql = `SELECT * FROM themes INNER JOIN themes_events_item ON themes_events_item.event_item_id = ${id} AND themes.id = themes_events_item.theme_id`;
-        const [row] = await db.execute(sql);
-        return row[0];
+        return row;
     }
 
     async create(body) {

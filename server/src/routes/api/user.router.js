@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch} from "../../utils/tryCacth.utils.js";
 import uploadAvatarImage from '../../utils/uploadAvatarImage.js';
 import userController from "../../controllers/userController.js";
 import { isAccessUserService, isAdmin, isAccessOrAdminUserService} from "../../middleware/isAccess.middleware.js";

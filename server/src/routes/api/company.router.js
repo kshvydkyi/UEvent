@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch, tryCatchPagination} from "../../utils/tryCacth.utils.js";
 import companyController from "../../controllers/companyController.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isAccess, isAccessOrAdmin, isAdmin } from "../../middleware/isAccess.middleware.js";
@@ -29,6 +29,12 @@ companyRouter.get(
     '/user-companies/:id',
     isNotExistById(UserService),
     tryCatch(companyController.selectByUserId.bind(companyController))
+);
+
+companyRouter.get(
+    '/user-companies/company/:id',
+    isNotExistById(UserService),
+    tryCatch(companyController.selectUsersByCompanyId.bind(companyController))
 );
 
 companyRouter.post(

@@ -1,8 +1,8 @@
-import Event_itemService from "../services/event_item.service.js";
+import LocationService from "../services/location.service.js";
 
-export class Event_itemController {
-    constructor(service) {
-        this.service = new Event_itemService();
+export class LocationController {
+    constructor (service) {
+        this.service = new LocationService();
     }
 
     async selectAll(req, res) {
@@ -19,15 +19,14 @@ export class Event_itemController {
         await this.service.create(req.body);
     }
 
-    async update(req, res) {
+    async update(req, res){
         await this.service.update(req.body, req.params.id);
     }
 
     async deleteById(req, res) {
         await this.service.deleteById(req.params.id);
     }
-    
 }
 
-const event_itemController = new Event_itemController(new Event_itemService());
-export default event_itemController;
+const locationController = new LocationController(new LocationService());
+export default locationController;

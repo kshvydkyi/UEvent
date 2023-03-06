@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch} from "../../utils/tryCacth.utils.js";
 import promocodeController from "../../controllers/promocodeController.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isAdmin } from "../../middleware/isAccess.middleware.js";

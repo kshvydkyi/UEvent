@@ -58,12 +58,7 @@ body{
   font-family: sans-serif;
   text-align: center;
 }
-.selectBox {
-  background: grey;
-  color: white;
-  padding: 10px;
-  font-weight: bold;
-}
+
 .optionsMenu {
   background: rgb(56, 56, 56);
   padding: 10px;

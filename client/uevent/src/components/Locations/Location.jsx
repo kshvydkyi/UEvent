@@ -15,9 +15,9 @@ const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 
-const Company = () => {
+const Location = () => {
     const lang = localStorage.getItem('lang');
-    const [companies, setCompanies] = useState([]);
+    const [locations, setLocations] = useState([]);
     const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
     const [companyName, setCompanyName] = useState('');
@@ -52,17 +52,18 @@ const Company = () => {
 
 
 
-    const getCompanies = async () => {
-        const response = await axios.get(`/api/companies/user-companies/${currentUser.userId}`);
-        setCompanies(response.data.values.values);
+    const getLocations = async () => {
+        const response = await axios.get(`/api/location`);
+        setLocations(response.data.values.values);
     }
 
     useEffect(() => {
-        getCompanies();
+        getLocations();
     }, [])
 
     async function toDeleteCompany() {
-        const response = await axios.delete(`/api/companies/${companyIdToDelete}/${currentUser.accessToken}`)
+        console.log("aaa")
+        const response = await axios.delete(`/api/location/${locationIdToDelete}/${currentUser.accessToken}`)
         document.location.reload();
     }
 
@@ -76,15 +77,15 @@ const Company = () => {
     }
 
     function toRedirect() {
-        navigate('/createEvent')
+        navigate('/createLocation')
     };
 
 
-    const [companyIdToDelete, setCompanyIdToDelete] = useState();
+    const [locationIdToDelete, setLocationIdToDelete] = useState();
     const [openModalToDelete, setOpenModalToDelete] = useState(false);
 
     async function openTheModalToDelete(companyId) {
-        setCompanyIdToDelete(companyId);
+        setLocationIdToDelete(companyId);
         setOpenModalToDelete(true);
     }
 
@@ -98,34 +99,32 @@ const Company = () => {
         <>
             <br />
             <br/>
+            {
+            currentUser.role === 'admin' ?
             <div class="upload-btn-wrapper">
-                <Button onClick={() => toRedirect()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? 'Створити Подію' : 'Create Event'}</Button>
+                <Button onClick={() => toRedirect()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? 'Створити Локацію' : 'Create Location'}</Button>
                 <input type="button" name="myfile" />
             </div>
-            <div class="upload-btn-wrapper">
-                <Button href="/createCompany" id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? 'Створити Компанію' : 'Create Company'}</Button>
-                <input type="button" name="myfile" />
-            </div>
+            : <> </>
+            }
             
             {
-                (companies.length !== 0) && (Array.isArray(companies))
+                (locations.length !== 0) && (Array.isArray(locations))
                     ?
-                    companies.map(({ title, description, id }) =>
+                    locations.map(({ title, description, country, city, street, house, id }) =>
                         <>
                             <div className="card d-flex justify-content-center text-black " style={{ width: "20rem", margin: '0 auto', backgroundColor: '#dddbcb' }}>
                                 <div className="card-body">
-                                    <h5 className="card-title" style={{ cursor: 'pointer' }} onClick={() => window.location = `/company/${id}`}>{lang === 'ua' ? 'Назва: ' : 'Title: '}{title}</h5>
+                                    <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{title}</h5>
                                     <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{description}</p>
-                                    <Button onClick={() => openTheModal(id)} type="button" className="btn btn-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                                    </svg></Button>
+                                    <p className="card-text">{lang === 'ua' ? 'Країна: ' : 'Country: '}{country}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Місто: ' : 'City: '}{country}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Вулиця: ' : 'Street: '}{street}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Дім: ' : 'House: '}{house}</p>
                                     <Button onClick={() => openTheModalToDelete(id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                                         <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
                                     </svg></Button>
-                                    
                                 </div>
-
                                 <Modal show={openModal} onHide={() => closeTheModal()}>
                                     <Modal.Header closeButton>
                                         <Modal.Title className="text-black">{lang === 'ua' ? 'Зміна даних' : 'Change company'}</Modal.Title>
@@ -166,10 +165,10 @@ const Company = () => {
 
                                 <Modal style={{ backgroundColor: 'black' }} show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
                                     <Modal.Header style={{ backgroundColor: 'grey' }} closeButton>
-                                        <Modal.Title className="text-black">{lang === 'ua' ? 'Видалення компанії' : 'Deleting company'}</Modal.Title>
+                                        <Modal.Title className="text-black">{lang === 'ua' ? 'Видалення локації' : 'Deleting Location'}</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body style={{ backgroundColor: 'grey' }}>
-                                        <h1>{lang === 'ua' ? 'Ви впевнені що хочете видалити компанію?' : 'Are you sure to delete company?'}</h1>
+                                        <h1>{lang === 'ua' ? 'Ви впевнені що хочете видалити локацію?' : 'Are you sure to delete location?'}</h1>
                                     </Modal.Body>
                                     <Modal.Footer style={{ backgroundColor: 'grey' }}>
 
@@ -185,7 +184,7 @@ const Company = () => {
                         </>
                     )
                     :
-                    <h1>{lang === 'ua' ? 'У вас поки що немає компаній, ви їх можете створити в своєму профілі' : 'You still have no companies, you can create it in your profile'}</h1>
+                    <h1>{lang === 'ua' ? 'Локацій немає' : 'No locations'}</h1>
             }
 
 
@@ -194,4 +193,4 @@ const Company = () => {
     )
 }
 
-export default Company;
+export default Location;

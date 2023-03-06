@@ -20,6 +20,11 @@ export class CompanyController {
         return result;
     }
 
+    async selectUsersByCompanyId(req, res) {
+        const result = await this.service.selectUsersByCompanyId(req.params.id);
+        return result;
+    }
+    
     async create(req, res) {
         await this.service.create(req.body);
     }

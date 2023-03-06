@@ -1,5 +1,5 @@
 import { Router } from "express";
-import tryCatch from "../../utils/tryCacth.utils.js";
+import {tryCatch} from "../../utils/tryCacth.utils.js";
 import themeController from "../../controllers/themeController.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isAdmin } from "../../middleware/isAccess.middleware.js";
@@ -23,6 +23,12 @@ themeRouter.get(
     '/:id',
     isNotExistById(RoleService),
     tryCatch(themeController.selectById.bind(themeController))
+);
+
+//Select By Id(For All)
+themeRouter.get(
+    '/event/:id',
+    tryCatch(themeController.selectByEventId.bind(themeController))
 );
 
 themeRouter.post(
