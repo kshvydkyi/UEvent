@@ -17,8 +17,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
 import StripeCheckout from 'react-stripe-checkout'
-import {toast} from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+// import {toast} from 'react-toastify'
+// import 'react-toastify/dist/ReactToastify.css'
 
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
@@ -28,7 +28,7 @@ const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 
 const CurrentEvent = () => {
-  toast.configure()
+  // toast.configure()
 
   const location = useLocation().pathname.split('/');
   const currentId = location[2];
@@ -67,7 +67,7 @@ const CurrentEvent = () => {
 
   useEffect(() => {
     getEvents();
-    console.log('evnts',events)
+    console.log('evnts', events)
   }, [])
 
 
@@ -81,15 +81,17 @@ const CurrentEvent = () => {
     navigate(`/createEventItem/${id}`)
   };
 
-
-async function handleToken(token) {
-  const response = axios.post(`/api/events/checkout`, 
-    JSON.stringify({ name: events.title, price: events.price,token: token, user_id: events.companyOwner, ticketsCount: events.ticketsCount}), {
-    headers: { 'Content-Type': 'application/json' },
-    withCredentials: true
-  }) 
-  toast("Succss payment is completed",{type: 'success'})
-}
+  const [succesPurchase, setSuccesPurchase] = useState();
+  async function handleToken(token) {
+    const response = await axios.post(`/api/events/checkout`,
+      JSON.stringify({ name: events.title, price: events.price, token: token, user_id: events.companyOwner, ticketsCount: events.ticketsCount }), {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    })
+    console.log(response);
+    setSuccesPurchase(response.data.status === 200 ? true : false)
+    console.log(succesPurchase);
+  }
 
 
 
@@ -97,45 +99,67 @@ async function handleToken(token) {
   return (
     <>
       {events ?
+
         <div className='w-100 d-flex justify-content-center text-align-center'>
-          <section>
-            <div className="events w-500" style={{ width: '500px' }}>
-              <ul>
-                <li>
-                  <div className="time">
-                    <img src={`${route.serverURL}/event-pic/${events.event_pic}`} className="rounded" width='250px' height="350px" alt='Шарікс'
-                      style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${events.id}`}></img>
-                  </div>
-                  <div className="details">
-                    <div style={{ float: 'right' }}>
+          {/* {
+          succesPurchase ? 
+          <div className="toast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div className="toast-header">
+            <img src="..." className="rounded me-2" alt="..."/>
+            <strong className="me-auto">Kvitochok</strong>
+            <small>11 mins ago</small>
+            <button type="button" className="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div className="toast-body">
+            Hello, world! This is a toast message.
+          </div>
+        </div> : <></>
+        
+          } */}
+
+          <div className="mt-4 container-xxl" >
+            <div className="card mb-3 bg-dark">
+              <div className="row g-0">
+                <div className="col-md-4">
+                  <img src={`${route.serverURL}/event-pic/${events.event_pic}`} className="rounded d-block" width='300px' height="500px" alt='Шарікс'
+                    onClick={() => window.location = `/event/${events.id}`}>
+
+                  </img>
+                </div>
+                <div className="col-md-8">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center">
+                      <h3 className="d-block">{events.title}</h3>
+                      <p className="h6 ms-3">{events.formatName}</p>
                     </div>
-                    <h3 style={{ color: 'black' }}>{events.title}</h3>
-                    <p style={{ color: 'black' }}>{events.description}</p>
-                    <p style={{ color: 'black' }}>{formatedDate}  -  {formatedDateEnd}</p>
-                    <p style={{ color: 'black' }}>{lang === 'ua' ? 'Всього місць: ' : 'Seats: '}{events.ticketsCount}</p>
+                    <div className="d-flex align-items-center">
+                      <p >{formatedDate} - {formatedDateEnd}</p>
+                      <p className=" ms-3">
+                        {`${events?.location?.title} - ${events?.location?.country},
+                        ${events?.location?.city}, ${lang === 'ua' ? 'вул. ' : 'st. '}${events?.location?.street} ${events?.location?.house}`}
+                      </p>
+                    </div>
+                    <p >{events.description}</p>
+                    <p >{lang === 'ua' ? 'Залишилось квитків: ' : 'Tickets left: '}{events.ticketsCount}</p>
                     {
                       events.price !== 0 ?
-                        <p style={{ color: 'black' }}>{lang === 'ua' ? 'Ціна: ' : 'Price: '}{events.price}{lang === 'ua' ? 'грн. ' : 'grn.'}</p>
+                        <p >{lang === 'ua' ? 'Ціна: ' : 'Price: '}{events.price}{lang === 'ua' ? 'грн. ' : 'grn.'}</p>
                         :
-                        <p style={{ color: 'black' }}>{lang === 'ua' ? 'Вхід безкоштовний' : 'Entrance is free'}</p>
-
+                        <p >{lang === 'ua' ? 'Вхід безкоштовний' : 'Entrance is free'}</p>
                     }
-                    <p className="text-black">{lang === 'ua' ? 'Місце проведеня: ' : 'Location: '}{`${events?.location?.title} - ${events?.location?.country},
-                              ${events?.location?.city}, ${lang === 'ua' ? 'вул. ' : 'st. '}${events?.location?.street} ${events?.location?.house}`}</p>
 
+                    <div className="d-flex ">
                     {
                       events?.themes?.map((theme) => {
-
                         return (
-                          <p className="text-black">{theme.title}</p>
-                          // <ul><li className="text-black">{theme.title}</li></ul>
-
-
+                          <div>
+                            <p className="badge bg-secondary fs-6 me-3">{theme.title}</p>
+                          </div>
                         )
-
                       })
                     }
-                    <p style={{ color: 'black' }}>{events.formatName}</p>
+                    </div>
+
                     <a className="mb-3" href={`/company/${events.company_id}`}>{events.companyName}</a>
                     <div>
                       <StripeCheckout
@@ -148,18 +172,16 @@ async function handleToken(token) {
                         currency="UAH"
                         token={handleToken}
                       >
-                        <button className="button-28">
+                        <Button className="">
                           {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
-                        </button>
+                        </Button>
                       </StripeCheckout>
                     </div>
-                    
                   </div>
-                  <div style={{ clear: "both" }}></div>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
         :
         <p>Loading...</p>

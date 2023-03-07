@@ -96,7 +96,7 @@ const Company = () => {
           ?
           companies.map((company) =>
             <>
-              <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mb-3">
+              <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mb-3 mt-4">
                 <div className="card-body">
                   <h5 className="card-title" style={{ cursor: 'pointer' }} onClick={() => window.location = `/company/${company.id}`}>{lang === 'ua' ? 'Назва: ' : 'Title: '}{company.title}</h5>
                   <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{company.description}</p>

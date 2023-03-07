@@ -96,7 +96,7 @@ const CurrentCompany = () => {
     <>
       {
         companies.user_id === currentUser.userId ?
-          <div class="upload-btn-wrapper">
+          <div class="upload-btn-wrapper mt-4">
             <Button onClick={() => openTheModal()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? `Додати співробітника` : `Add employee`}</Button>
             <input type="button" name="myfile" />
           </div>
