@@ -97,28 +97,17 @@ const Location = () => {
 
     return (
         <>
-            <br />
-            <br/>
-            {
-            currentUser.role === 'admin' ?
-            <div class="upload-btn-wrapper">
-                <Button onClick={() => toRedirect()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? 'Створити Локацію' : 'Create Location'}</Button>
-                <input type="button" name="myfile" />
-            </div>
-            : <> </>
-            }
-            
             {
                 (locations.length !== 0) && (Array.isArray(locations))
                     ?
                     locations.map(({ title, description, country, city, street, house, id }) =>
                         <>
-                            <div className="card d-flex justify-content-center text-black " style={{ width: "20rem", margin: '0 auto', backgroundColor: '#dddbcb' }}>
+                            <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mt-4 mb-1">
                                 <div className="card-body">
                                     <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{title}</h5>
                                     <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{description}</p>
                                     <p className="card-text">{lang === 'ua' ? 'Країна: ' : 'Country: '}{country}</p>
-                                    <p className="card-text">{lang === 'ua' ? 'Місто: ' : 'City: '}{country}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Місто: ' : 'City: '}{city}</p>
                                     <p className="card-text">{lang === 'ua' ? 'Вулиця: ' : 'Street: '}{street}</p>
                                     <p className="card-text">{lang === 'ua' ? 'Дім: ' : 'House: '}{house}</p>
                                     <Button onClick={() => openTheModalToDelete(id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
@@ -172,14 +161,12 @@ const Location = () => {
                                     </Modal.Body>
                                     <Modal.Footer style={{ backgroundColor: 'grey' }}>
 
-                                    <Button variant="primary" style={{ float: 'right', backgroundColor: 'red' }} onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
-                                    <Button variant="primary" style={{ float: 'left' }} onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
+                                        <Button variant="primary" style={{ float: 'right', backgroundColor: 'red' }} onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
+                                        <Button variant="primary" style={{ float: 'left' }} onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
                                     </Modal.Footer>
                                 </Modal>
 
                             </div>
-                            <br />
-
 
                         </>
                     )

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation  } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../../api/axios";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,6 +16,9 @@ import route from "../../api/route";
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
+import StripeCheckout from 'react-stripe-checkout'
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
@@ -25,12 +28,14 @@ const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 
 const CurrentEvent = () => {
-const location = useLocation().pathname.split('/');
-const currentId = location[2];
-const lang = localStorage.getItem('lang');
-const [events, setEvents] = useState([]);
-const [eventLocation, setEventLocation] = useState([]);
-const currentUser = JSON.parse(localStorage.getItem('autorized'));
+  toast.configure()
+
+  const location = useLocation().pathname.split('/');
+  const currentId = location[2];
+  const lang = localStorage.getItem('lang');
+  const [events, setEvents] = useState([]);
+  const [eventLocation, setEventLocation] = useState([]);
+  const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
   const [eventName, setEventName] = useState('');
   const [validCompanyName, setValidCompanyName] = useState(false);
@@ -44,7 +49,7 @@ const currentUser = JSON.parse(localStorage.getItem('autorized'));
   const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
 
- 
+
 
   useEffect(() => {
     setValidCompanyName(COMPANY_REGEX.test(eventName));
@@ -54,7 +59,7 @@ const currentUser = JSON.parse(localStorage.getItem('autorized'));
     setValidCompanyDescr(DESCR_REGEX.test(eventDescr));
   }, [eventDescr]);
 
-  
+
   const getEvents = async () => {
     const response = await axios.get(`/api/events/${currentId}`);
     setEvents(response.data.values.values);
@@ -62,7 +67,7 @@ const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
   useEffect(() => {
     getEvents();
-    
+    console.log('evnts',events)
   }, [])
 
 
@@ -77,68 +82,88 @@ const currentUser = JSON.parse(localStorage.getItem('autorized'));
   };
 
 
-
+async function handleToken(token) {
+  const response = axios.post(`/api/events/checkout`, 
+    JSON.stringify({ name: events.title, price: events.price,token: token, user_id: events.companyOwner, ticketsCount: events.ticketsCount}), {
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: true
+  }) 
+  toast("Succss payment is completed",{type: 'success'})
+}
 
 
 
 
   return (
     <>
-      { events ? 
-      <div className='d-flex justify-content-center' style = {{overflow:'auto', width: '700px'}}>
-        <div>
-        <section>
-                      <div  className="events" >
-                        <ul>
-                          <li>
-                            <div className="time">  
-                              <img  src={`${route.serverURL}/event-pic/${events.event_pic}`} className="rounded" width='250px' height="350px"  alt='Шарікс'
-                              style={{cursor: 'pointer'}} onClick={() => window.location=`/event/${events.id}`}></img>
-                            </div>
-                            <div className="details">
-                              <div style={{ float: 'right' }}>
-                              </div>
-                              <h3 style={{ color: 'black' }}>{events.title}</h3>
-                              <p style={{ color: 'black' }}>{events.description}</p>
-                              <p style={{ color: 'black' }}>{formatedDate}  -  {formatedDateEnd}</p>
-                              {
-                                events.price !== 0 ? 
-                                <p style={{ color: 'black' }}>{lang === 'ua' ? 'Ціна: ' : 'Price: '}{events.price}{lang === 'ua' ? 'грн. ' : 'grn.'}</p>
-                                :
-                                <p style={{ color: 'black' }}>{lang === 'ua' ? 'Вхід безкоштовний' : 'Entrance is free'}</p>
-              
-                              }
-                              <p className="text-black">{lang === 'ua' ? 'Місце проведеня: ' : 'Location: '}{`${events?.location?.title} - ${events?.location?.country},
-                              ${events?.location?.city}, ${lang === 'ua' ? 'вул. ' : 'st. '}${events?.location?.street} ${events?.location?.house}`}</p>
-                         
-                              {
-                                events?.themes?.map((theme) => {
-                                  
-                                  return(
-                                   <p className="text-black">{theme.title}</p>
-                                    // <ul><li className="text-black">{theme.title}</li></ul>
-                                   
-                                    
-                                  )
+      {events ?
+        <div className='w-100 d-flex justify-content-center text-align-center'>
+          <section>
+            <div className="events w-500" style={{ width: '500px' }}>
+              <ul>
+                <li>
+                  <div className="time">
+                    <img src={`${route.serverURL}/event-pic/${events.event_pic}`} className="rounded" width='250px' height="350px" alt='Шарікс'
+                      style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${events.id}`}></img>
+                  </div>
+                  <div className="details">
+                    <div style={{ float: 'right' }}>
+                    </div>
+                    <h3 style={{ color: 'black' }}>{events.title}</h3>
+                    <p style={{ color: 'black' }}>{events.description}</p>
+                    <p style={{ color: 'black' }}>{formatedDate}  -  {formatedDateEnd}</p>
+                    <p style={{ color: 'black' }}>{lang === 'ua' ? 'Всього місць: ' : 'Seats: '}{events.ticketsCount}</p>
+                    {
+                      events.price !== 0 ?
+                        <p style={{ color: 'black' }}>{lang === 'ua' ? 'Ціна: ' : 'Price: '}{events.price}{lang === 'ua' ? 'грн. ' : 'grn.'}</p>
+                        :
+                        <p style={{ color: 'black' }}>{lang === 'ua' ? 'Вхід безкоштовний' : 'Entrance is free'}</p>
 
-                                })
-                              }
-                              <p style={{ color: 'black' }}>{events.formatName}</p>
-                              <a href={`/company/${events.company_id}`}>{events.companyName}</a>
-                              <br />
-                              <br />
-                              <button className="button-28">{lang === 'ua' ? 'Записатися' : 'Sign up for the event'}</button>
-                            </div>
-                            <div style={{ clear: "both" }}></div>
-                          </li>
-                        </ul>
-                      </div>
-                    </section>
-              </div>
-      </div>   
-      :
-      <p>Loading...</p>
-    }
+                    }
+                    <p className="text-black">{lang === 'ua' ? 'Місце проведеня: ' : 'Location: '}{`${events?.location?.title} - ${events?.location?.country},
+                              ${events?.location?.city}, ${lang === 'ua' ? 'вул. ' : 'st. '}${events?.location?.street} ${events?.location?.house}`}</p>
+
+                    {
+                      events?.themes?.map((theme) => {
+
+                        return (
+                          <p className="text-black">{theme.title}</p>
+                          // <ul><li className="text-black">{theme.title}</li></ul>
+
+
+                        )
+
+                      })
+                    }
+                    <p style={{ color: 'black' }}>{events.formatName}</p>
+                    <a className="mb-3" href={`/company/${events.company_id}`}>{events.companyName}</a>
+                    <div>
+                      <StripeCheckout
+                        className="text-black"
+                        panelLabel="Pay"
+                        image={`${route.serverURL}/event-pic/${events.event_pic}`}
+                        stripeKey='pk_test_51Mixi5EPLqByaBcpL2haakXv0c55d86UjBgpP7F9KxWVYE1mnedNH9PoCDftvaAfUAaBRcALgfODpCdWJERP8eH200XPb8qa6m'
+                        amount={+events.price * 100}
+                        name={events.title}
+                        currency="UAH"
+                        token={handleToken}
+                      >
+                        <button className="button-28">
+                          {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
+                        </button>
+                      </StripeCheckout>
+                    </div>
+                    
+                  </div>
+                  <div style={{ clear: "both" }}></div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </div>
+        :
+        <p>Loading...</p>
+      }
     </>
   )
 }

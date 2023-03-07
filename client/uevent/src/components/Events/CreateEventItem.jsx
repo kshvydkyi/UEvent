@@ -333,7 +333,7 @@ const CreateEventItem = () => {
                             isMulti
                         // isClearable
                         />
-                        <br/>
+                     
                         <p>{lang === 'ua' ? 'Початок події' : 'Start of Event'} - {mainEventStartDate}</p>
                         <label style={{ margin: "10px" }}> {lang === 'ua' ? 'Кінець події' : 'End of Event'}</label>
                         <DatePicker
@@ -384,7 +384,7 @@ const CreateEventItem = () => {
                         <label>enter address :</label>
                         <input ref={inputRef} />
 
-                        <br />
+                        
                         <Button variant="secondary" type="submit" disabled={!validCompanyName || !validcompanyDescr || !validPrice || !validCount || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : lang === 'ua' ? 'Створити' : 'Create'}</Button>
                     </form>
                 </div>

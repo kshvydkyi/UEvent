@@ -385,7 +385,7 @@ const CreateEvent = () => {
                         <Form.Label className="mt-2" htmlFor="isShow">{lang === 'ua' ? 'Показувати користувачів, що записались на подію?' : 'Show users that signed in at the event?'}</Form.Label>
                         <Form.Check id="isShow" type='switch' onChange={(e) => setShowSignedInUsers(e.target.checked)} />
 
-                        <br />
+                        
                         <Button variant="secondary" type="submit" disabled={!validCompanyName || !validcompanyDescr || !validPrice || !validCount || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : lang === 'ua' ? 'Створити' : 'Create'}</Button>
                     </form>
                 </div>

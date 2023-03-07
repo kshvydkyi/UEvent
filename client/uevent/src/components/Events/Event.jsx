@@ -252,8 +252,8 @@ const Event = () => {
 
   return (
     <>
-    <div className="d-flex  mt-3 ">
-      <div className='d-flex justify-content-center flex-wrap'>
+    <div className="container-xxl d-flex  mt-3 ">
+      <div className='d-flex flex-wrap'>
         {
 
 
@@ -270,13 +270,13 @@ const Event = () => {
                 <>
 
 
-                  <div className="p-2">
+                  <div className="p-3 me-3">
                     <ListGroup>
                       <div className="card bg-dark">
                         <div className=" text-center">
                           <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
                             style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
-                          {/* <h2>{event.event_pic}<br/><span></span></h2> */}
+                      
                         </div>
                         <div className="card-body">
                           <p className="">{formatedDateStart} - {formatedDateEnd}</p>
@@ -440,7 +440,7 @@ const Event = () => {
                     </Modal>
 
                   </div>
-                  <br />
+                  
 
                 </>
               )

@@ -11,6 +11,7 @@ import route from '../../api/route';
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { NavDropdown } from 'react-bootstrap';
 
 const checkToken = async (token, setAuth) => {
   try {
@@ -32,7 +33,7 @@ function Header() {
     document.location.reload();
 
   };
-
+  const lang = localStorage.getItem("lang");
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
@@ -70,8 +71,8 @@ function Header() {
 
   return (
     <div className='wrapper-navbar'>
-      <Navbar fixed="top" collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Container className='d-flex justify-content-between'>
+      <Navbar fixed="top" collapseOnSelect expand="lg" bg="dark" variant="dark" className='d-flex'>
+        <Container className='d-flex justify-content-around'>
           {/* <img src={logo} height={40} alt='logo' /> */}
 
           <Navbar.Brand className="" href="/" data-value="Kvitochok">Kvitochok</Navbar.Brand>
@@ -82,30 +83,42 @@ function Header() {
 
           {auth.user ?
             <>
-              <div style={{ width: '40%', float: 'left' }}>
-                <Nav.Link href="/tickets">{localStorage.getItem("lang") === 'ua' ? 'Мої квитки' : 'Tickets'}</Nav.Link>
-              </div>
-              <div style={{ width: '40%', float: 'left' }}>
-                <Nav.Link href="/notifications">{localStorage.getItem("lang") === 'ua' ? 'Повідомлення' : 'Notifications'}</Nav.Link>
-              </div>
-              <div style={{ width: '40%', float: 'left', marginLeft: '20px' }}>
-                <Nav.Link href="/companies">{localStorage.getItem("lang") === 'ua' ? 'Мої компанії' : 'My companies'}</Nav.Link>
-              </div>
-              <div style={{ width: '40%', float: 'left', marginLeft: '20px' }}>
-                <Nav.Link href="/locations">{localStorage.getItem("lang") === 'ua' ? 'Усі локації' : 'All locations'}</Nav.Link>
-              </div>
 
-              <select 
-                className="form-select bg-dark text-white w-25"
+              <Nav.Link href="/tickets">{lang === 'ua' ? 'Мої квитки' : 'Tickets'}</Nav.Link>
+
+
+              <Nav.Link href="/notifications">{lang === 'ua' ? 'Повідомлення' : 'Notifications'}</Nav.Link>
+
+
+              <NavDropdown title={lang === 'ua' ? 'Компанії' : 'Companies'} id="collasible-nav-dropdown">
+                <NavDropdown.Item href="/companies">{lang === 'ua' ? 'Мої компанії' : 'My companies'}</NavDropdown.Item>
+                <NavDropdown.Item href="/createCompany">{lang === 'ua' ? 'Створити Компанію' : 'Create Company'}</NavDropdown.Item>
+                <NavDropdown.Item href="/createEvent">{lang === 'ua' ? 'Створити Подію' : 'Create Event'}</NavDropdown.Item>
+
+              </NavDropdown>
+              <NavDropdown title={lang === 'ua' ? 'Локації' : 'Locations'}>
+                <NavDropdown.Item href="/locations">{lang === 'ua' ? 'Усі локації' : 'All locations'}</NavDropdown.Item>
+                {
+                  currentUser.role === 'admin' ?
+                    <NavDropdown.Item href='/createLocation'>{lang === 'ua' ? 'Створити Локацію' : 'Create Location'}</NavDropdown.Item>
+                    : <> </>
+                }
+              </NavDropdown>
+
+
+
+              <select
+                className="form-select bg-dark text-white"
                 onChange={langChange}
                 name="lang"
-                value={localStorage.getItem("lang")}
+                style={{ minWidth: '7%', maxWidth: '8%' }}
+                value={lang}
               >
                 <option className="" value="ua">
-                  Українська
+                  UA
                 </option>
                 <option className="" value="en">
-                  English
+                  EN
                 </option>
               </select>
 
@@ -120,16 +133,16 @@ function Header() {
             :
             <>
               <Navbar.Collapse id="responsive-navbar-nav">
-                <Nav.Link style={{ marginLeft: '30px' }} href="/login">{localStorage.getItem("lang") === 'ua' ? 'Вхід' : 'Login'}</Nav.Link>
+                <Nav.Link style={{ marginLeft: '30px' }} href="/login">{lang === 'ua' ? 'Вхід' : 'Login'}</Nav.Link>
                 <Nav.Link eventKey={2} href="/registration" style={{ marginLeft: '20px' }}>
-                  {localStorage.getItem("lang") === 'ua' ? 'Реєстрація' : 'Register'}
+                  {lang === 'ua' ? 'Реєстрація' : 'Register'}
                 </Nav.Link>
               </Navbar.Collapse>
               <select
-                className="form-select"
+                className="form-select bg-dark text-white w-25"
                 onChange={langChange}
                 name="lang"
-                value={localStorage.getItem("lang")}
+                value={lang}
               >
                 <option className="" value="ua">
                   Українська
