@@ -50,4 +50,10 @@ export default class EventService {
         const [row] = await db.execute(sql);
         return row.length !== 0;
     }
+
+    async buyTicket(eventId, ticketsCount) {
+        var sql = `UPDATE events SET count=count-1 WHERE id = ${eventId}`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
 }

@@ -3,6 +3,12 @@ import CompanyService from '../services/company.service.js'
 import FormatService from '../services/format.service.js'
 import LocationService from "../services/location.service.js";
 import ThemeService from "../services/theme.service.js";
+import stripe from 'stripe'
+import * as uuid from 'uuid';
+import sendMailUtils from "../utils/sendMail.utils.js";
+import { createPdf } from "../utils/createPdf.utils.js";
+
+
 
 export class EventController {
     constructor(service, companyService, formatService) {
@@ -42,7 +48,7 @@ export class EventController {
         })
         const returnData = await Promise.all(data);
 
-        
+
         return returnData;
     }
 
@@ -91,6 +97,28 @@ export class EventController {
         const pathFile = req.file.filename;
         await this.service.update_event_pic(pathFile, req.params.id);
     }
+    async payment(req, res) {
+        stripe('sk_test_51Mixi5EPLqByaBcpNGY0T2xiailUqTSHqwzHYeYD7gNu58HT1mGljO548Z701MRR9uWZRtFQLFoDtR1AquR0hZjB00iAOmm44E')
+        const { name, price, token, user_id, eventId, startDate, endDate, location, event_pic,user_login } = req.body;
+        const purchase = {
+            title: name,
+            price: price,
+            user_id: user_id,
+            eventId: eventId,
+            email: token.email,
+            location: location, 
+            eventPic: event_pic,
+            startDate: startDate,
+            endDate: endDate,
+            token: token,
+            user_login: user_login
+        }
+        console.log('purchase: ', purchase)
+        await createPdf(purchase);
+        sendMailUtils.send(purchase.email, purchase.token.id, 'buyTicket');
+        await this.service.buyTicket(purchase.eventId, purchase.ticketsCount);
+    }
+
 
     async deleteById(req, res) {
         await this.service.deleteById(req.params.id);

@@ -32,7 +32,7 @@ export default class CompanyService {
     }
 
     async addUser(body) {
-        console.log('pidorasina')
+        console.log(body)
         var sql = `INSERT INTO users_companies (user_id, company_id) VALUES (${body.user_id}, ${body.company_id})`;
         const [row] = await db.execute(sql);
         return row;

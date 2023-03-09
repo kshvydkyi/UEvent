@@ -448,7 +448,7 @@ const Event = () => {
 
             )
             :
-            <h1>{lang === 'ua' ? 'Подій поки що немає' : 'No events exist'}</h1>
+            <h1 className="mt-4 text-center">{lang === 'ua' ? 'Подій поки що немає' : 'No events exist'}</h1>
         }
       </div>
       </div>

@@ -16,7 +16,7 @@ export const tryCatchPagination =
         try {
             const { page } = req.query;
             const parsedPage = page ? Number(page) : 1;
-            const perPage = 10;
+            const perPage = 8;
             const allPages = await controller(req, res);
 
             const promiseData = await Promise.all(allPages);

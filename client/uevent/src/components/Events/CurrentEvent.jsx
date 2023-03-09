@@ -17,6 +17,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
 import StripeCheckout from 'react-stripe-checkout'
+import Toast from 'react-bootstrap/Toast';
 // import {toast} from 'react-toastify'
 // import 'react-toastify/dist/ReactToastify.css'
 
@@ -67,7 +68,7 @@ const CurrentEvent = () => {
 
   useEffect(() => {
     getEvents();
-    console.log('evnts', events)
+    console.log('evnt1s', events)
   }, [])
 
 
@@ -81,16 +82,29 @@ const CurrentEvent = () => {
     navigate(`/createEventItem/${id}`)
   };
 
-  const [succesPurchase, setSuccesPurchase] = useState();
-  async function handleToken(token) {
+  const [succesPurchase, setSuccesPurchase] = useState(false);
+
+  async function handleToken(token, email) {
     const response = await axios.post(`/api/events/checkout`,
-      JSON.stringify({ name: events.title, price: events.price, token: token, user_id: events.companyOwner, ticketsCount: events.ticketsCount }), {
+      JSON.stringify({ 
+        name: events.title, 
+        eventId: events.id , 
+        price: events.price, 
+        token: token, 
+        user_id: events.companyOwner,
+        startDate: formatedDate,
+        endDate: formatedDateEnd,
+        location: events.location,
+        event_pic: events.event_pic,
+        user_login: currentUser.user
+      }), {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true
     })
     console.log(response);
     setSuccesPurchase(response.data.status === 200 ? true : false)
     console.log(succesPurchase);
+    document.location.reload();
   }
 
 
@@ -160,10 +174,19 @@ const CurrentEvent = () => {
                     }
                     </div>
 
-                    <a className="mb-3" href={`/company/${events.company_id}`}>{events.companyName}</a>
+                    <a className="mb-5" href={`/company/${events.company_id}`}>{events.companyName}</a>
                     <div>
+                      <p>{events.ticketsCount === 0 ? lang === 'ua' ? 'Усі квитки продані' : 'All tickets are sold' : ''}</p>
+                    </div>
+                    <div>
+                      {events.price === 0 ? 
+                        <Button onClick={() => handleToken()} className="" disabled = {events.ticketsCount === 0 ? true : false}>
+                        {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
+                        </Button>
+                        :
                       <StripeCheckout
-                        className="text-black"
+                        disabled = {events.ticketsCount === 0 ? true : false}
+                        className="text-black mb-10"
                         panelLabel="Pay"
                         image={`${route.serverURL}/event-pic/${events.event_pic}`}
                         stripeKey='pk_test_51Mixi5EPLqByaBcpL2haakXv0c55d86UjBgpP7F9KxWVYE1mnedNH9PoCDftvaAfUAaBRcALgfODpCdWJERP8eH200XPb8qa6m'
@@ -172,10 +195,24 @@ const CurrentEvent = () => {
                         currency="UAH"
                         token={handleToken}
                       >
-                        <Button className="">
+                        <Button className="" disabled = {events.ticketsCount === 0 ? true : false}>
                           {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
                         </Button>
                       </StripeCheckout>
+                      }
+                      <Toast className='position-absolute top-0 end-0' onClose={() => setSuccesPurchase(false)} show={succesPurchase} delay={4000} autohide>
+                    <Toast.Header>
+                      <img
+                        src="holder.js/20x20?text=%20"
+                        className="rounded me-2"
+                        alt="123"
+                      />
+                      <strong className="me-auto">{lang === 'ua' ? 'Успішно!' : 'Sucess!'}</strong>
+                    </Toast.Header>
+                    <Toast.Body className='dark'>{lang === 'ua' ? 'Ви успішно записалися на подію!' : 'You\'ve been successfully signed up at the event!'}</Toast.Body>
+                  </Toast>
+                  
+                      
                     </div>
                   </div>
                 </div>

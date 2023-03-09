@@ -259,7 +259,7 @@ const Register = () => {
                             { lang === 'ua' ? ' Повинен збігатись з полем вище.' 
                             : 'Must be same as a password' }
                         </p>
-                        <Button  type="submit" variant="secondary" className="login-btn rounded" disabled={!validName || !validPwd || !validMatch || !validEmail || !validFullName || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : 
+                        <Button  type="submit" variant="secondary" className="w-100" disabled={!validName || !validPwd || !validMatch || !validEmail || !validFullName || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : 
                                                      lang === 'ua' ? 'Зареєструватись' 
                                                     : 'Sign Up' }</Button>
                     </form>

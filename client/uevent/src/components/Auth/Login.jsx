@@ -59,18 +59,19 @@ const Login = () => {
                     withCredentials: true
                 }
             );
+            // console.log(response);
             // console.log(response?.data.status, response?.data?.values);
             const accessToken = response?.data?.values?.values?.token;
             const role = response?.data?.values?.values?.userData?.title;
             const userId = response?.data?.values?.values?.userData?.id;
             setAuth({ user, accessToken, role, userId});
-            console.log(userId)
+            // console.log(userId)
             localStorage.setItem('autorized', JSON.stringify({user, accessToken, role, userId}))
             setUser('');
             setPwd('');
             setLoading(false);
             navigate(from, {replace: true});
-            document.location.reload();
+            
         }
         catch (err) {
             setLoading(false);
@@ -123,7 +124,7 @@ const Login = () => {
                 value={pwd}
                 required
             />
-            <Button  variant="secondary" type="submit" className="login-btn rounded mt-4" disabled={isLoading}>{isLoading ? <SpinnerLoading /> : 
+            <Button  variant="secondary" type="submit" className="w-100 mt-4" disabled={isLoading}>{isLoading ? <SpinnerLoading /> : 
             lang === 'ua' ? 'Вхід' : 'Login' }
             </Button >
         </form>
