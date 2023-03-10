@@ -16,8 +16,7 @@ This is a service that helps people broaden their horizons and improve their net
 <img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/users -- get all users <img valign='middle' src='https://readme-swatches.vercel.app/2496f2?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/5CB270?style=circle'/> **GET** - /api/users/:id -- get specified user data <img valign='middle' src='https://readme-swatches.vercel.app/2496f2?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ffc000?style=circle'/> **POST** - /api/users/:token -- create a new user <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>\
-<img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/users/avatar/:token -- update user data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/>  <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>
-#### - Role module\
+<img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/users/avatar/:token -- update user data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/>  <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ececec?style=circle'/> **PATCH** - /api/users/:id/:token -- update user data <img valign='middle' src='https://readme-swatches.vercel.app/de57d0?style=round'/> <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>\
 <img valign='middle' src='https://readme-swatches.vercel.app/ec3323?style=circle'/> **DEL** - /api/users/:id/:token -- delete user <img valign='middle' src='https://readme-swatches.vercel.app/ad2232?style=round'/>
 #### - Role module

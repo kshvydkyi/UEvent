@@ -18,6 +18,8 @@ import Event from './Events/Event';
 import CurrentEvent from './Events/CurrentEvent';
 import CreateEventItem from './Events/CreateEventItem';
 
+import Ticket from './Ticket/Ticket';
+
 import Location from './Locations/Location';
 import CreateLocation from './Locations/CreateLocation';
 
@@ -64,6 +66,7 @@ function App() {
 					<Route path='createLocation' element={<CreateLocation />} />
 					<Route path='createEventItem/:id' element={<CreateEventItem />} />
 					<Route path='companies' element={<Company />} />
+					<Route path='tickets' element={<Ticket />} />
 				</Route>
 				<Route element={<RequreAuth allowedRoles={['admin']} />} >
 				</Route>

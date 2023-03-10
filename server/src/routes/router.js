@@ -8,6 +8,7 @@ import companyRouter from './api/company.router.js';
 import eventRouter from './api/event.router.js';
 import promocodeRouter from './api/promocode.router.js';
 import locationRouter from './api/location.router.js';
+import ticketRouter from './api/ticket.router.js';
 class AppRouter {
 	constructor(app) { this.app = app }
 
@@ -25,6 +26,7 @@ class AppRouter {
 		this.app.use('/api/companies', companyRouter);
 		this.app.use('/api/promocodes', promocodeRouter);
 		this.app.use('/api/location', locationRouter);
+		this.app.use('/api/tickets', ticketRouter);
 	}
 }
 

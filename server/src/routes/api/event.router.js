@@ -9,8 +9,7 @@ import { validateRequestSchema } from "../../middleware/validateRequestSchema.mi
 import { eventCreateValidationChainMethod, updateEventValidationChainMethod } from "../../validations/event.validation.js";
 import uploadEventImage from '../../utils/uploadEventImage.js';
 import CompanyService from "../../services/company.service.js";
-import stripe from 'stripe'
-import * as uuid from 'uuid';
+
 
 const eventRouter = Router();
 

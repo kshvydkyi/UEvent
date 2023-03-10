@@ -13,7 +13,7 @@ import Select from 'react-select'
 import moment from 'moment';
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,40}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&*\\\.();:`~"/\s/\.]{10,200}$/;
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,200}$/;
 
 const PRICE_REGEX = /^[0-9]{1,5}$/;
 const COUNT_REGEX = /^[0-9]{1,4}$/;

@@ -100,7 +100,7 @@ const CurrentCompany = () => {
             <Button onClick={() => openTheModal()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? `Додати співробітника` : `Add employee`}</Button>
             <input type="button" name="myfile" />
           </div>
-          : <> </>
+          : <div className = 'mx-auto'> <br/>  </div>
       }
 
       <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white">

@@ -7,6 +7,7 @@ import stripe from 'stripe'
 import * as uuid from 'uuid';
 import sendMailUtils from "../utils/sendMail.utils.js";
 import { createPdf } from "../utils/createPdf.utils.js";
+import TicketService from "../services/ticket.service.js";
 
 
 
@@ -17,6 +18,7 @@ export class EventController {
         this.formatService = new FormatService();
         this.locationService = new LocationService();
         this.themeService = new ThemeService();
+        this.tickenService = new TicketService();
     }
 
     async selectAll(req, res) {
@@ -104,7 +106,7 @@ export class EventController {
             title: name,
             price: price,
             user_id: user_id,
-            eventId: eventId,
+            event_id: eventId,
             email: token.email,
             location: location, 
             eventPic: event_pic,
@@ -113,10 +115,10 @@ export class EventController {
             token: token,
             user_login: user_login
         }
-        console.log('purchase: ', purchase)
+        // console.log('purchase: ', purchase)
         await createPdf(purchase);
         sendMailUtils.send(purchase.email, purchase.token.id, 'buyTicket');
-        await this.service.buyTicket(purchase.eventId, purchase.ticketsCount);
+        await this.service.buyTicket(purchase);
     }
 
 

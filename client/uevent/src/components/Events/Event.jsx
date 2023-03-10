@@ -263,9 +263,9 @@ const Event = () => {
 
               // console.log(event)
               const normalFormatStart = moment(event.dateStart, moment.defaultFormat).toDate();
-              const formatedDateStart = moment(normalFormatStart).format('D MMMM, h:mm');
+              const formatedDateStart = moment(normalFormatStart).format('D MMMM, HH:mm');
               const normalFormatEnd = moment(event.dateEnd, moment.defaultFormat).toDate();
-              const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, h:mm');
+              const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, HH:mm');
               return (
                 <>
 

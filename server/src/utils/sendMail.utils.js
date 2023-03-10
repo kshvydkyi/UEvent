@@ -64,7 +64,7 @@ class SendMail {
         <h1 class="header">Kvitochok</h1>
         <div class="text-div" style="justify-content: center">
         <p class="text">
-            Thank you for buying a ticket on our website,
+            Thank you for buying a ticket on our website, your ticket is attached to this message
                 <a style="color:#fba92c;"class ="confirm-link" href="http://localhost:3000/tickets">
                 click here
                 </a>

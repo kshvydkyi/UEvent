@@ -73,10 +73,10 @@ const CurrentEvent = () => {
 
 
   const normalFormat = moment(events.dateStart, moment.defaultFormat).toDate();
-  const formatedDate = moment(normalFormat).format('D MMMM, h:mm');
+  const formatedDate = moment(normalFormat).format('D MMMM, HH:mm');
 
   const normalFormatEnd = moment(events.dateEnd, moment.defaultFormat).toDate();
-  const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, h:mm');
+  const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, HH:mm');
 
   function toRedirect(id) {
     navigate(`/createEventItem/${id}`)
@@ -91,7 +91,7 @@ const CurrentEvent = () => {
         eventId: events.id , 
         price: events.price, 
         token: token, 
-        user_id: events.companyOwner,
+        user_id: currentUser.userId,
         startDate: formatedDate,
         endDate: formatedDateEnd,
         location: events.location,
@@ -174,7 +174,7 @@ const CurrentEvent = () => {
                     }
                     </div>
 
-                    <a className="mb-5" href={`/company/${events.company_id}`}>{events.companyName}</a>
+                    <button className="mb-5 btn btn-info" onClick={() => navigate(`/company/${events.company_id}`)}>{events.companyName}</button>
                     <div>
                       <p>{events.ticketsCount === 0 ? lang === 'ua' ? 'Усі квитки продані' : 'All tickets are sold' : ''}</p>
                     </div>
