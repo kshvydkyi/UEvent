@@ -60,4 +60,10 @@ export default class EventService {
 
         return row;
     }
+
+    async search(data) {
+        let sql = `SELECT * FROM events WHERE (title LIKE '%${data}%' OR description LIKE '%${data}%')`
+        const [row] = await db.execute(sql);
+        return row;
+    }
 }

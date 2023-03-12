@@ -125,6 +125,39 @@ export class EventController {
     async deleteById(req, res) {
         await this.service.deleteById(req.params.id);
     }
+
+    async search(req,res) {
+        const result = await this.service.search(req.params.search);
+        const data = result.map(async (item) => {
+            const company = await this.companyService.selectById(item.company_id);
+            const format = await this.formatService.selectById(item.format_id);
+            const location = await this.locationService.selectById(item.location_id);
+            const themes = await this.themeService.selectByEventId(item.id);
+            return {
+                id: item.id,
+                title: item.title,
+                description: item.description,
+                event_pic: item.event_pic,
+                company_id: item.company_id,
+                format_id: item.format_id,
+                dateStart: item.dateStart,
+                dateEnd: item.dateEnd,
+                ticketsCount: item.count,
+                status: item.status,
+                showUserList: item.userlist_public,
+                price: item.price,
+                themes: themes,
+                location: location,
+                companyName: company.title,
+                companyOwner: company.user_id,
+                formatName: format.title,
+            }
+        })
+        const returnData = await Promise.all(data);
+
+
+        return returnData;
+    }
 }
 
 const eventController = new EventController(new EventService(), new CompanyService(), new FormatService(), new LocationService(), new ThemeService());

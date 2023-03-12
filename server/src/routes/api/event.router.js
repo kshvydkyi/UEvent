@@ -24,6 +24,13 @@ eventRouter.get(
 );
 
 eventRouter.get(
+    '/search/:search',
+    tryCatch(eventController.search.bind(eventController))
+)
+
+
+
+eventRouter.get(
     '/:id',
     isNotExistById(EventService),
     tryCatch(eventController.selectById.bind(eventController))

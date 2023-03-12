@@ -11,6 +11,9 @@ import Nav from 'react-bootstrap/Nav';
 import ReactPaginate from 'react-paginate'
 import '../../App.css'
 import route from "../../api/route";
+import Pagination from 'react-bootstrap/Pagination';
+
+
 
 const Ticket = () => {
   const lang = localStorage.getItem('lang');
@@ -21,9 +24,10 @@ const Ticket = () => {
 
 
   const getTickets = async () => {
-    const response = await axios.get(`/api/tickets/byUserId/${currentUser.userId}`);
+    const response = await axios.get(`/api/tickets/byUserId/${currentUser.userId}/?page=1`);
     console.log('response',response)
-    setTickets(response.data.values.values);
+    setTickets(response.data.values.data);
+    setPageCount(response.data.values.meta.totalPages);
   }
 
   useEffect(() => {
@@ -31,18 +35,14 @@ const Ticket = () => {
   }, [])
 
 
-  const downloadPDF = (token) => {
-    fetch(`../../../../server/assets/tickets/${token}.pdf`).then(response => {
-        response.blob().then(blob => {
-            const fileURL = window.URL.createObjectURL('blob');
-            let alink = document.createElement('a');
-            alink.href = fileURL;
-            alink.download = `aboba.pdf`;
-            alink.click();
-        })
-    })
-}
+const [pageCount, setPageCount] = useState(0);
 
+
+const handlePageClick = async (data) => {
+  const response = await axios.get(`/api/tickets/?page=${data.selected + 1}`);
+  console.log(response);
+  setTickets(response.data.values.data);
+}
 
 
 
@@ -55,12 +55,10 @@ const Ticket = () => {
             <>
               <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mb-3 mt-4">
                 <div className="card-body">
-                  <h5 className="card-title" >{lang === 'ua' ? 'UserId: ' : 'UserId: '}{ticket.user_id}</h5>
-                  <p className="card-text">{lang === 'ua' ? 'EventId: ' : 'EventId: '}{ticket.event_id}</p>
-                  <p className="card-text">{lang === 'ua' ? 'Token: ' : 'Token: '}{ticket.secret_code}</p>
-                  <button onClick={downloadPDF(ticket.secret_code)}>
-                    Download PDF
-                </button>
+                  <h5 className="card-title" >{lang === 'ua' ? 'Ваш квиток було відправлено на вашу пошту' : 'Your ticket was sent to your email'}</h5>
+                  <img src={`${route.serverURL}/qr-codes/${ticket.secret_code}.png`} className="rounded" width='200px' height="200px" alt='Шарікс'></img>
+     
+
                 </div>
               </div>
             </>
@@ -68,6 +66,26 @@ const Ticket = () => {
           :
           <h1 className="mt-4">{lang === 'ua' ? 'У вас поки що немає квитків' : 'You still have no tickets'}</h1>
       }
+
+<ReactPaginate
+        previousLabel={'previous'}
+        nextLabel={'next'}
+        breakLabel={'...'}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={3}
+        onPageChange={handlePageClick}
+        containerClassName={'pagination justify-content-center'}
+        pageClassName={'page-item'}
+        pageLinkClassName={'page-link'}
+        previousClassName={'page-item'}
+        previousLinkClassName={'page-link'}
+        nextClassItem={'page-item'}
+        nextLinkClassName={'page-link'}
+        breakClassName={'page-item'}
+        breakLinkClassName={'page-link'}
+        activeClassName={'active'}
+      />
 
 
 

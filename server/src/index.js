@@ -27,7 +27,8 @@ router.init();
 
 app.use('/avatars', express.static(`${path.resolve()}/assets/avatars`));
 app.use('/event-pic', express.static(`${path.resolve()}/assets/event_pic`));
-
+app.use('/qr-codes', express.static(`${path.resolve()}/assets/qr-codes`));
+app.use('/tickets', express.static(`${path.resolve()}/assets/tickets`));
 const port = app.get('port');
 
 const server = app.listen(port, () => console.log(`Server started on port ${port}`));

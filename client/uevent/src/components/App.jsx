@@ -25,6 +25,7 @@ import CreateLocation from './Locations/CreateLocation';
 
 import NotFound from './Other/NotFound';
 import ServerError from './Other/ServerError';
+import { CheckTicket } from './Ticket/CheckTicket';
 
 
 function App() {
@@ -54,7 +55,7 @@ function App() {
 				<Route path='/' element={<Event />} />
 				<Route path='event/:id' element={<CurrentEvent />} />
 				<Route path='company/:id' element={<CurrentCompany />} />
-
+				<Route path='check-ticket/:secretCode' element={<CheckTicket />} />
 				<Route path='locations' element={<Location />} />
 
 				<Route element={<RequreAuth allowedRoles={['user', 'admin']} />} >

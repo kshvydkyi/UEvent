@@ -1,12 +1,14 @@
 import { Router } from "express";
 import ticketController from "../../controllers/ticketController.js";
-import { tryCatch } from "../../utils/tryCacth.utils.js";
+import { checkTicket } from "../../scripts/ticketChecking.js";
+import TicketService from "../../services/ticket.service.js";
+import {tryCatch, tryCatchPagination} from "../../utils/tryCacth.utils.js";
 
 const ticketRouter = Router()
 
 ticketRouter.get(
     '/',
-    tryCatch(ticketController.selectAll.bind(ticketController))
+    tryCatchPagination(ticketController.selectAll.bind(ticketController))
 )
 
 ticketRouter.get(
@@ -16,7 +18,13 @@ ticketRouter.get(
 
 ticketRouter.get(
     '/byUserId/:user_id',
-    tryCatch(ticketController.selectByUserId.bind(ticketController))
+    tryCatchPagination(ticketController.selectByUserId.bind(ticketController))
+)
+
+ticketRouter.post(
+    '/check-ticket/:secretCode',
+    checkTicket(TicketService),
+    tryCatch(ticketController.checkTicket.bind(ticketController))
 )
 
 export default ticketRouter;

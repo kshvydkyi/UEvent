@@ -19,11 +19,11 @@ export default class TicketService {
         return row;
     }
 
-    // async selectByEventId(id) {
-    //     let sql = `SELECT * FROM tickets INNER JOIN themes_events ON themes_events.event_id = ${id} AND themes.id = themes_events.theme_id`;
-    //     const [row] = await db.execute(sql);
-    //     return row;
-    // }
+    async selectByEventId(id) {
+        let sql = `SELECT * FROM tickets INNER JOIN themes_events ON themes_events.event_id = ${id} AND themes.id = themes_events.theme_id`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
 
     async create(body) {
         var sql = `INSERT INTO tickets (user_id, event_id, secret_code) VALUES ('${body.user_id}', '${body.event_id}', '${body.secret_code}')`;
@@ -42,6 +42,12 @@ export default class TicketService {
         const [row] = await db.execute(sql);
         return row;
 	}
+    
+    async selectBySecretCode(secretCode){
+        let sql = `SELECT * FROM tickets WHERE secret_code = '${secretCode}'`
+        const [row] = await db.execute(sql);
+        return row[0];
+    }
 
     async isExist(field, value) {
         var sql = `SELECT * FROM tickets WHERE ${field} = '${value}'`;

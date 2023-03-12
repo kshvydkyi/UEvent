@@ -15,12 +15,14 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
 import Pagination from 'react-bootstrap/Pagination';
 import ReactPaginate from 'react-paginate'
+
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 const Event = () => {
   const lang = localStorage.getItem('lang');
   const [events, setEvents] = useState([]);
+  const [searchEvents, setSearchEvents] = useState('');
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
   const [eventName, setEventName] = useState('');
@@ -134,14 +136,13 @@ const Event = () => {
 
   const getEvents = async () => {
     const response = await axios.get(`/api/events/?page=1`);
-    console.log(response);
     setEvents(response.data.values.data);
     setPageCount(response.data.values.meta.totalPages);
-    console.log(pageCount)
   }
 
   useEffect(() => {
     getEvents();
+    // console.log('events',events)
   }, [])
 
 
@@ -250,15 +251,37 @@ const Event = () => {
     setEvents(response.data.values.data);
   }
 
+
+  const search = async () => {
+    const response = await axios.get(`/api/events/search/${searchEvents}`);
+    // if(response.data.values.values.length === 0) {
+    //   const res = await axios.get(`/api/events/`);
+    //   setEvents(res.data.values.data)
+    // }
+    setEvents(response.data.values.values);
+  }
+
   return (
     <>
-    <div className="container-xxl d-flex  mt-3 ">
+      
+    <div className="container-xxl d-flex flex-column mt-3 ">
+    <Form className="d-flex w-25 mx-auto mt-3">
+            <Form.Control
+              type="input"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+              value={searchEvents}
+              onChange={(e) => setSearchEvents(e.target.value)}
+            />
+            <Button variant="secondary" onClick = {() => search()}>Search</Button>
+      </Form>
       <div className='d-flex flex-wrap'>
+      
         {
 
-
           (events.length !== 0) && (Array.isArray(events))
-            ?
+            ? 
             events.map((event) => {
 
               // console.log(event)
@@ -289,7 +312,7 @@ const Event = () => {
                           <p>{lang === 'ua' ? 'Де: ' : 'Location: '}{event.location.title}</p>
 
                           <p>{event.formatName}</p>
-                          <Nav.Link href={`/company/${event.company_id}`}>{event.companyName}</Nav.Link>
+                          <Nav.Link className="mb-2"href={`/company/${event.company_id}`}>{event.companyName}</Nav.Link>
                           <div className='d-flex justify-content-between'>
                             <Button onClick={() => window.location = `/event/${event.id}`} className="btn btn-secondary">{lang === 'ua' ? 'Читати більше...' : 'Read more...'}</Button>
                             <div>
