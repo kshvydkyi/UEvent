@@ -97,7 +97,7 @@ const Company = () => {
           ?
           companies.map((company) =>
             <>
-              <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mb-3 mt-4">
+              <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mb-3 mt-5">
                 <div className="card-body">
                   <h5 className="card-title" style={{ cursor: 'pointer' }} onClick={() => window.location = `/company/${company.id}`}>{lang === 'ua' ? 'Назва: ' : 'Title: '}{company.title}</h5>
                   <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{company.description}</p>
@@ -111,12 +111,13 @@ const Company = () => {
 
                 </div>
 
-                <Modal show={openModal} onHide={() => closeTheModal()}>
-                  <Modal.Header closeButton>
-                    <Modal.Title className="text-black">{lang === 'ua' ? 'Зміна даних' : 'Change company'}</Modal.Title>
+                <Modal className="bg-dark" centered show={openModal} onHide={() => closeTheModal()}>
+                <div className="border border-secondary rounded">
+                  <Modal.Header className="bg-dark " closeButton closeVariant="white">
+                    <Modal.Title className="">{lang === 'ua' ? 'Зміна даних' : 'Change company'}</Modal.Title>
                   </Modal.Header>
-                  <Modal.Body>
-                    <Form.Label className="form_label text-black" htmlFor="compName">{lang === 'ua' ? 'Назва Компанії' : 'Company Name'}
+                  <Modal.Body className=" bg-dark d-flex flex-column  justify-content-center">
+                    <Form.Label className="" htmlFor="compName">{lang === 'ua' ? 'Назва Компанії' : 'Company Name'}
                       <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
                       <FontAwesomeIcon icon={faTimes} className={validCompanyName || !companyName ? "hide" : "invalid"} />
                     </Form.Label>
@@ -129,7 +130,7 @@ const Company = () => {
                       value={companyName}
                     />
 
-                    <Form.Label className="form_label text-black" htmlFor="compDescr">{lang === 'ua' ? 'Опис Компанії' : 'Company Description'}
+                    <Form.Label className="" htmlFor="compDescr">{lang === 'ua' ? 'Опис Компанії' : 'Company Description'}
                       <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
                       <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !companyDescr ? "hide" : "invalid"} />
                     </Form.Label>
@@ -142,27 +143,28 @@ const Company = () => {
                     >
                     </textarea>
                   </Modal.Body>
-                  <Modal.Footer>
-                    <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="primary" style={{ textAlign: 'center' }} onClick={() => updateCompany(company.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
+                  <Modal.Footer className="bg-dark">
+                    <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="secondary" style={{ textAlign: 'center' }} onClick={() => updateCompany(company.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
                   </Modal.Footer>
+                  </div>
                 </Modal>
 
 
 
-                <Modal style={{ backgroundColor: 'black' }} show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
-                  <Modal.Header style={{ backgroundColor: 'grey' }} closeButton>
-                    <Modal.Title className="text-black">{lang === 'ua' ? 'Видалення компанії' : 'Deleting company'}</Modal.Title>
+                <Modal className="bg-dark"centered show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
+                <div className="border border-secondary rounded">
+                  <Modal.Header className="bg-dark" closeButton closeVariant="white">
+                    <Modal.Title className="">{lang === 'ua' ? 'Видалення компанії' : 'Deleting company'}</Modal.Title>
                   </Modal.Header>
-                  <Modal.Body style={{ backgroundColor: 'grey' }}>
-                    <h1>{lang === 'ua' ? 'Ви впевнені що хочете видалити компанію?' : 'Are you sure to delete company?'}</h1>
+                  <Modal.Body className="bg-dark">
+                    <h1 className="h5">{lang === 'ua' ? 'Ви впевнені що хочете видалити компанію?' : 'Are you sure to delete company?'}</h1>
                   </Modal.Body>
-                  <Modal.Footer style={{ backgroundColor: 'grey' }}>
-
-                    <Button variant="primary" style={{ float: 'right', backgroundColor: 'red' }} onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
-                    <Button variant="primary" style={{ float: 'left' }} onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
+                  <Modal.Footer className="bg-dark">
+                    <Button variant="secondary" onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
+                    <Button variant="danger" onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
                   </Modal.Footer>
+                  </div> 
                 </Modal>
-
               </div>
 
 
@@ -170,7 +172,7 @@ const Company = () => {
             </>
           )
           :
-          <h1>{lang === 'ua' ? 'У вас поки що немає компаній, ви їх можете створити в своєму профілі' : 'You still have no companies, you can create it in your profile'}</h1>
+          <h1 className="mt-5">{lang === 'ua' ? 'У вас поки що немає компаній, ви їх можете створити в своєму профілі' : 'You still have no companies, you can create it in your profile'}</h1>
       }
 
 

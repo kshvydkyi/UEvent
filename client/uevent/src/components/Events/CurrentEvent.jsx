@@ -86,11 +86,11 @@ const CurrentEvent = () => {
 
   async function handleToken(token, email) {
     const response = await axios.post(`/api/events/checkout`,
-      JSON.stringify({ 
-        name: events.title, 
-        eventId: events.id , 
-        price: events.price, 
-        token: token, 
+      JSON.stringify({
+        name: events.title,
+        eventId: events.id,
+        price: events.price,
+        token: token,
         user_id: currentUser.userId,
         startDate: formatedDate,
         endDate: formatedDateEnd,
@@ -131,7 +131,7 @@ const CurrentEvent = () => {
         
           } */}
 
-          <div className="mt-4 container-xxl" >
+          <div className="mt-5 container-xxl" >
             <div className="card mb-3 bg-dark">
               <div className="row g-0">
                 <div className="col-md-4">
@@ -147,72 +147,88 @@ const CurrentEvent = () => {
                       <p className="h6 ms-3">{events.formatName}</p>
                     </div>
                     <div className="d-flex align-items-center">
-                      <p >{formatedDate} - {formatedDateEnd}</p>
-                      <p className=" ms-3">
-                        {`${events?.location?.title} - ${events?.location?.country},
+                      <span className="bi bi-calendar-date">
+                        <span className="ms-1">{formatedDate} - {formatedDateEnd}</span>
+                      </span>
+                      <span className="bi bi-geo ms-3">
+                        <span className=" ms-1">
+                          {`${events?.location?.title} - ${events?.location?.country},
                         ${events?.location?.city}, ${lang === 'ua' ? 'вул. ' : 'st. '}${events?.location?.street} ${events?.location?.house}`}
-                      </p>
+                        </span>
+                      </span>
                     </div>
-                    <p >{events.description}</p>
-                    <p >{lang === 'ua' ? 'Залишилось квитків: ' : 'Tickets left: '}{events.ticketsCount}</p>
+                    <div className="mt-3">
+                      <span className="bi bi-card-text">
+                        <span className="ms-1">{events.description}</span>
+                      </span>
+                    </div>
+                    <div className="mt-3">
                     {
                       events.price !== 0 ?
-                        <p >{lang === 'ua' ? 'Ціна: ' : 'Price: '}{events.price}{lang === 'ua' ? 'грн. ' : 'grn.'}</p>
+                        
+                          <span className="bi bi-cash-stack mt-3">
+                            <span className="ms-1">{events.price} {lang === 'ua' ? 'грн. ' : 'UAH.'}</span>
+                          </span>
+                        
                         :
-                        <p >{lang === 'ua' ? 'Вхід безкоштовний' : 'Entrance is free'}</p>
+                        <span className="mt-3">{lang === 'ua' ? 'Вхід безкоштовний' : 'Entrance is free'}</span>
                     }
-
-                    <div className="d-flex ">
-                    {
-                      events?.themes?.map((theme) => {
-                        return (
-                          <div>
-                            <p className="badge bg-secondary fs-6 me-3">{theme.title}</p>
-                          </div>
-                        )
-                      })
-                    }
+                    <span className="bi bi-ticket-perforated ms-5">
+                      <span className="ms-1">{events.ticketsCount}</span>
+                    </span>
                     </div>
 
-                    <button className="mb-5 btn btn-info" onClick={() => navigate(`/company/${events.company_id}`)}>{events.companyName}</button>
+                    <div className="d-flex mt-3">
+                      {
+                        events?.themes?.map((theme) => {
+                          return (
+                            <div>
+                              <p className="badge bg-secondary fs-6 me-3">{theme.title}</p>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+
+                    <Button variant="outline-light" className="mb-3" onClick={() => navigate(`/company/${events.company_id}`)}>{events.companyName}</Button>
                     <div>
                       <p>{events.ticketsCount === 0 ? lang === 'ua' ? 'Усі квитки продані' : 'All tickets are sold' : ''}</p>
                     </div>
                     <div>
-                      {events.price === 0 ? 
-                        <Button onClick={() => handleToken()} className="" disabled = {events.ticketsCount === 0 ? true : false}>
-                        {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
-                        </Button>
-                        :
-                      <StripeCheckout
-                        disabled = {events.ticketsCount === 0 ? true : false}
-                        className="text-black mb-10"
-                        panelLabel="Pay"
-                        image={`${route.serverURL}/event-pic/${events.event_pic}`}
-                        stripeKey='pk_test_51Mixi5EPLqByaBcpL2haakXv0c55d86UjBgpP7F9KxWVYE1mnedNH9PoCDftvaAfUAaBRcALgfODpCdWJERP8eH200XPb8qa6m'
-                        amount={+events.price * 100}
-                        name={events.title}
-                        currency="UAH"
-                        token={handleToken}
-                      >
-                        <Button className="" disabled = {events.ticketsCount === 0 ? true : false}>
+                      {events.price === 0 ?
+                        <Button onClick={() => handleToken()} className="" disabled={events.ticketsCount === 0 ? true : false}>
                           {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
                         </Button>
-                      </StripeCheckout>
+                        :
+                        <StripeCheckout
+                          disabled={events.ticketsCount === 0 ? true : false}
+                          className="text-black mb-5"
+                          panelLabel="Pay"
+                          image={`${route.serverURL}/event-pic/${events.event_pic}`}
+                          stripeKey='pk_test_51Mixi5EPLqByaBcpL2haakXv0c55d86UjBgpP7F9KxWVYE1mnedNH9PoCDftvaAfUAaBRcALgfODpCdWJERP8eH200XPb8qa6m'
+                          amount={+events.price * 100}
+                          name={events.title}
+                          currency="UAH"
+                          token={handleToken}
+                        >
+                          <Button className="" disabled={events.ticketsCount === 0 ? true : false}>
+                            {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
+                          </Button>
+                        </StripeCheckout>
                       }
                       <Toast className='position-absolute top-0 end-0' onClose={() => setSuccesPurchase(false)} show={succesPurchase} delay={4000} autohide>
-                    <Toast.Header>
-                      <img
-                        src="holder.js/20x20?text=%20"
-                        className="rounded me-2"
-                        alt="123"
-                      />
-                      <strong className="me-auto">{lang === 'ua' ? 'Успішно!' : 'Sucess!'}</strong>
-                    </Toast.Header>
-                    <Toast.Body className='dark'>{lang === 'ua' ? 'Ви успішно записалися на подію!' : 'You\'ve been successfully signed up at the event!'}</Toast.Body>
-                  </Toast>
-                  
-                      
+                        <Toast.Header>
+                          <img
+                            src="holder.js/20x20?text=%20"
+                            className="rounded me-2"
+                            alt="123"
+                          />
+                          <strong className="me-auto">{lang === 'ua' ? 'Успішно!' : 'Sucess!'}</strong>
+                        </Toast.Header>
+                        <Toast.Body className='dark'>{lang === 'ua' ? 'Ви успішно записалися на подію!' : 'You\'ve been successfully signed up at the event!'}</Toast.Body>
+                      </Toast>
+
+
                     </div>
                   </div>
                 </div>

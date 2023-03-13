@@ -55,9 +55,12 @@ export default class EventService {
         var sql = `UPDATE events SET count=count-1 WHERE id = ${body.event_id}`;
         const [row] = await db.execute(sql);
 
-        sql = `INSERT INTO tickets (user_id, event_id, secret_code) VALUES ('${body.user_id}', '${body.event_id}', '${body.token.id}')`;
-        const [row1] = await db.execute(sql);
+        let sql1 = `INSERT INTO tickets (user_id, event_id, secret_code) VALUES ('${body.user_id}', '${body.event_id}', '${body.token.id}')`;
+        const [row1] = await db.execute(sql1);
 
+        let sql2 = `INSERT INTO notifications (user_id, title, description) VALUES ('${body.user_id}', '${body.title}', '${body.title}')`;
+        const [row2] = await db.execute(sql2);
+        
         return row;
     }
 

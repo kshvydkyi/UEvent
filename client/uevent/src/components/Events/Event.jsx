@@ -5,7 +5,7 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
 import { Modal, Button, Form, ListGroup, ListGroupItem, } from "react-bootstrap";
-import { Nav } from "react-bootstrap";
+import { Nav, Collapse, Alert } from "react-bootstrap";
 import '../../App.css'
 import './Event.css'
 import moment from 'moment';
@@ -16,7 +16,10 @@ import Select from 'react-select'
 import Pagination from 'react-bootstrap/Pagination';
 import ReactPaginate from 'react-paginate'
 
-const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
+import { ToastContainer } from 'react-toastify';
+
+
+const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,50}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 const Event = () => {
@@ -193,7 +196,7 @@ const Event = () => {
     control: (provided, state) => ({
       ...provided,
       backgroundColor: 'none',
-      boxShadow: state.isFocused ? `0 0 0 2px rgb(90, 20, 152), 0 0 #0000` : '',
+      boxShadow: state.isFocused ? `` : '',
       transition: 'box-shadow 0.1s ease-in-out',
     }),
 
@@ -210,7 +213,7 @@ const Event = () => {
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isFocused
-        ? 'rgb(90, 20, 152)'
+        ? 'grey'
         : 'transparent',
       transition: '0.3s',
       color: 'white',
@@ -263,217 +266,221 @@ const Event = () => {
 
   return (
     <>
-      
-    <div className="container-xxl d-flex flex-column mt-3 ">
-    <Form className="d-flex w-25 mx-auto mt-3">
-            <Form.Control
-              type="input"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-              value={searchEvents}
-              onChange={(e) => setSearchEvents(e.target.value)}
-            />
-            <Button variant="secondary" onClick = {() => search()}>Search</Button>
-      </Form>
-      <div className='d-flex flex-wrap'>
-      
-        {
 
-          (events.length !== 0) && (Array.isArray(events))
-            ? 
-            events.map((event) => {
+      <div className="container-xxl d-flex flex-column mt-5 ">
+        <Form className="d-flex w-25 mx-auto mt-3">
+          <Form.Control
+            type="input"
+            placeholder="Search"
+            className="me-2"
+            aria-label="Search"
+            value={searchEvents}
+            onChange={(e) => setSearchEvents(e.target.value)}
+          />
+          <Button variant="secondary" onClick={() => search()}>Search</Button>
+        </Form>
+        <div className='d-flex flex-wrap'>
 
-              // console.log(event)
-              const normalFormatStart = moment(event.dateStart, moment.defaultFormat).toDate();
-              const formatedDateStart = moment(normalFormatStart).format('D MMMM, HH:mm');
-              const normalFormatEnd = moment(event.dateEnd, moment.defaultFormat).toDate();
-              const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, HH:mm');
-              return (
-                <>
+          {
+
+            (events.length !== 0) && (Array.isArray(events))
+              ?
+              events.map((event) => {
+
+                // console.log(event)
+                const normalFormatStart = moment(event.dateStart, moment.defaultFormat).toDate();
+                const formatedDateStart = moment(normalFormatStart).format('D MMMM, HH:mm');
+                const normalFormatEnd = moment(event.dateEnd, moment.defaultFormat).toDate();
+                const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, HH:mm');
+                return (
+                  <>
 
 
-                  <div className="p-3 me-3">
-                    <ListGroup>
-                      <div className="card bg-dark">
-                        <div className=" text-center">
-                          <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
-                            style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
-                      
-                        </div>
-                        <div className="card-body">
-                          <p className="">{formatedDateStart} - {formatedDateEnd}</p>
-                          <h5 className=" card-title">{event.title.length < 24 ? event.title : <>
-                            {event.title.slice(0, 24)}
-                            <a className="text-decoration-none text-white" href={`/events/${event.id}`} target={`_blank`}>...</a>
-                          </>}</h5>
-                          
+                    <div className="p-3 me-3">
+                      <ListGroup>
+                        <div className="card bg-dark">
+                          <div className=" text-center">
+                            <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
+                              style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
 
-                          <p>{lang === 'ua' ? 'Де: ' : 'Location: '}{event.location.title}</p>
+                          </div>
+                          <div className="card-body">
+                            <span className="bi bi-calendar-date">
+                              <span className='px-2'>{formatedDateStart} - {formatedDateEnd}</span>
+                            </span> <br />
+                            <span className="bi bi-book">
+                              <span className="card-title px-2">{event.title.length < 24 ? event.title : <>
+                                {event.title.slice(0, 24)}
+                                <a className="text-decoration-none text-white" href={`/events/${event.id}`} target={`_blank`}>...</a>
+                              </>}</span>
+                            </span> <br />
 
-                          <p>{event.formatName}</p>
-                          <Nav.Link className="mb-2"href={`/company/${event.company_id}`}>{event.companyName}</Nav.Link>
-                          <div className='d-flex justify-content-between'>
-                            <Button onClick={() => window.location = `/event/${event.id}`} className="btn btn-secondary">{lang === 'ua' ? 'Читати більше...' : 'Read more...'}</Button>
-                            <div>
-                              {
-                                currentUser.role === 'admin' && currentUser.userId === event.companyOwner ?
-                                  <>
-                                    <Button onClick={() => openTheModal(event.id)} type="button" className="btn btn-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
-                                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                      <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                                    </svg></Button>
-                                    <Button onClick={() => openTheModalToDelete(event.id, event.company_id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                                      <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
-                                    </svg></Button>
+                            <span className="bi bi-geo">
+                              <span className="px-2">{event.location.title}</span>
+                            </span> <br />
 
-                                  </>
-                                  :
-                                  <></>
-                              }
+                            <span className="bi bi-card-list">
+                              <span className="px-2">{event.formatName}</span>
+                            </span> <br />
 
-                            </div>
+                            <span className="bi bi-building">
+                              <span className="mb-3 px-2" style={{ cursor: 'pointer' }} onClick={() => window.location = `/company/${event.company_id}`} >{event.companyName}</span>
+                            </span>
+                            <div className='d-flex justify-content-between'>
+                              <Button onClick={() => window.location = `/event/${event.id}`} className="btn btn-secondary">{lang === 'ua' ? 'Читати більше...' : 'Read more...'}</Button>
+                              <div>
+                                {
+                                  currentUser.role === 'admin' && currentUser.userId === event.companyOwner ?
+                                    <>
+                                      <Button onClick={() => openTheModal(event.id)} type="button" className="btn btn-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
+                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                        <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                      </svg></Button>
+                                      <Button onClick={() => openTheModalToDelete(event.id, event.company_id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
+                                      </svg></Button>
+
+                                    </>
+                                    :
+                                    <></>
+                                }
+
+                              </div>
                             </div>
                           </div>
                         </div>
-                    
-                    </ListGroup>
+
+                      </ListGroup>
+
+                      <Modal className="bg-dark" show={openModal} onHide={() => closeTheModal()}>
+                        <div className="border border-secondary rounded">
+                          <Modal.Header className="bg-dark" closeButton closeVariant='white'>
+                            <Modal.Title className="text-white">{lang === 'ua' ? 'Зміна даних' : 'Change Event'}</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body className="bg-dark text-white rounded-bottom">
+                            <Form className="d-flex flex-column  justify-content-center">
+                              <Form.Label className="form_label text-white" htmlFor="compName">{lang === 'ua' ? 'Назва Події' : 'Event Name'}
+                                <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
+                                <FontAwesomeIcon icon={faTimes} className={validCompanyName || !eventName ? "hide" : "invalid"} />
+                              </Form.Label>
+                              <Form.Control
+                                type="text"
+                                className="bg-dark text-white mb-3"
+                                id="compName"
+                                autoComplete="off"
+                                onChange={(e) => setEventName(e.target.value)}
+                                value={eventName}
+                              />
+
+                              <Form.Label className=" text-White" htmlFor="compDescr">{lang === 'ua' ? 'Опис Події' : 'Event Description'}
+                                <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
+                                <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !eventDescr ? "hide" : "invalid"} />
+                              </Form.Label>
+                              <textarea
+                                className="bg-dark text-white mb-3"
+                                id="compDescr"
+                                rows="3"
+                                autoComplete="off"
+                                onChange={(e) => setEventDescr(e.target.value)}
+                                value={eventDescr}
+                              >
+                              </textarea>
+
+                              <Form.Label className="" htmlFor="posteer">{lang === 'ua' ? 'Постер' : 'Poster'}</Form.Label>
+                              <Form.Control
+                                type="file"
+                                className="bg-dark text-white mb-3"
+                                id="posteer"
+                                autoComplete="off"
+                                accept="image/jpeg,image/png,image/jpg"
+                                onChange={addImage}
+                              // value={eventPoster}
+                              />
+
+                              <Form.Label className="mt-2" htmlFor="companies">{lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}</Form.Label>
+                              <Select
+                                placeholder={lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}
+                                value={chosenCompany}
+                                styles={customStyles}
+                                id='companies'
+                                options={allCompanies}
+                                onChange={(option) => {
+                                  setChosenCompany(option);
+                                }}
+                              />
+
+                              <Form.Label className="mt-2" htmlFor="formats">{lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}</Form.Label>
+                              <Select
+                                style={{ color: 'black' }}
+                                placeholder={lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}
+                                value={chosenFormat}
+                                styles={customStyles}
+                                id='formats'
+                                options={allFormat}
+                                onChange={(option) => {
+                                  setChosenFormat(option);
+                                }}
+                              />
+                              <Form.Label className="mt-2" htmlFor="themes">{lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}</Form.Label>
+                              <Select
+                                styles={customStyles}
+                                placeholder={lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}
+                                id="themes"
+                                options={allThemes}
+                                onChange={(option) => {
+                                  setSelectedThemes(option);
+                                }}
+                                isMulti
+                              // isClearable
+                              />
+                              <Form.Label className="mt-2"> {lang === 'ua' ? 'Початок події' : 'Start of Event'}</Form.Label>
+                              <DatePicker
+                                className="rounded w-100 p-1 me-1 mb-2 bg-dark text-white border"
+                                selected={startAt}
+                                timeFormat="HH:mm"
+                                minDate={moment().toDate()}
+                                onChange={date => setStartDate(date)}
+                                timeIntervals={15}
+                                dateFormat="d MMMM yyyy, HH:mm "
+                                timeCaption="time"
+                                showTimeInput
+                                required
+                              />
+                              <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="secondary" onClick={() => updateEvent(event.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
+
+                            </Form>
+
+                          </Modal.Body>
+
+                        </div>
+                      </Modal>
 
 
+                      <Modal className="bg-dark" centered show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
+                        <div className="border border-secondary rounded">
+                          <Modal.Header className="bg-dark" closeButton closeVariant='white'>
+                            <Modal.Title className="text-white">{lang === 'ua' ? 'Видалення події' : 'Deleting event'}</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body className="bg-dark">
+                            <h1 className="h5">{lang === 'ua' ? 'Ви впевнені що хочете видалити подію?' : 'Are you sure to delete event?'}</h1>
+                          </Modal.Body>
+                          <Modal.Footer className="bg-dark">
+                            <Button variant="secondary" onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
+                            <Button variant="danger" onClick={() => toDeleteEvent()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
 
+                          </Modal.Footer>
+                        </div>
+                      </Modal>
+                    </div>
+                  </>
+                )
+              }
 
-                    <Modal style={{ backgroundColor: 'black' }} show={openModal} onHide={() => closeTheModal()}>
-                      <Modal.Header style={{ backgroundColor: 'grey' }} closeButton>
-                        <Modal.Title className="text-black">{lang === 'ua' ? 'Зміна даних' : 'Change Event'}</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body style={{ backgroundColor: 'grey' }}>
-                        <Form.Label className="form_label text-black" htmlFor="compName">{lang === 'ua' ? 'Назва Події' : 'Event Name'}
-                          <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
-                          <FontAwesomeIcon icon={faTimes} className={validCompanyName || !eventName ? "hide" : "invalid"} />
-                        </Form.Label>
-                        <Form.Control
-                          type="text"
-                          className="bg-dark text-white mb-3"
-                          id="compName"
-                          autoComplete="off"
-                          onChange={(e) => setEventName(e.target.value)}
-                          value={eventName}
-                        />
-
-                        <Form.Label className="form_label text-black" htmlFor="compDescr">{lang === 'ua' ? 'Опис Компанії' : 'Company Description'}
-                          <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
-                          <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !eventDescr ? "hide" : "invalid"} />
-                        </Form.Label>
-                        <textarea
-                          className="bg-dark text-white mb-3"
-                          id="compDescr"
-                          rows="3"
-                          autoComplete="off"
-                          onChange={(e) => setEventDescr(e.target.value)}
-                          value={eventDescr}
-                        >
-                        </textarea>
-
-                        <Form.Label className="form_label" htmlFor="posteer">{lang === 'ua' ? 'Постер' : 'Poster'}
-                        </Form.Label>
-                        <Form.Control
-                          type="file"
-                          className="bg-dark text-white mb-3"
-                          id="posteer"
-                          autoComplete="off"
-                          accept="image/jpeg,image/png,image/jpg"
-                          onChange={addImage}
-                        // value={eventPoster}
-                        />
-
-                        <label className="form_label" htmlFor="companies">{lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}</label>
-                        <Select
-                          placeholder={lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}
-                          value={chosenCompany}
-                          styles={customStyles}
-                          id='companies'
-                          options={allCompanies}
-                          onChange={(option) => {
-                            setChosenCompany(option);
-                          }}
-                        />
-
-
-
-
-                        <label className="form_label" htmlFor="formats">{lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}</label>
-                        <Select
-                          style={{ color: 'black' }}
-                          placeholder={lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}
-                          value={chosenFormat}
-                          styles={customStyles}
-                          id='formats'
-                          options={allFormat}
-                          onChange={(option) => {
-                            setChosenFormat(option);
-                          }}
-                        />
-                        <label className="form_label" htmlFor="themes">{lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}</label>
-
-                        <Select
-                          styles={customStyles}
-                          placeholder={lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}
-                          id="themes"
-                          options={allThemes}
-                          onChange={(option) => {
-                            setSelectedThemes(option);
-                          }}
-                          isMulti
-                        // isClearable
-                        />
-
-                        <label style={{ margin: "10px" }}> {lang === 'ua' ? 'Початок події' : 'Start of Event'}</label>
-                        <DatePicker
-                          style={{ margin: "10px" }}
-                          selected={startAt}
-                          timeFormat="HH:mm"
-                          minDate={moment().toDate()}
-                          onChange={date => setStartDate(date)}
-                          timeIntervals={15}
-                          dateFormat="d MMMM yyyy, HH:mm "
-                          timeCaption="time"
-                          showTimeInput
-                          required
-                        />
-
-                      </Modal.Body>
-                      <Modal.Footer style={{ backgroundColor: 'grey' }}>
-                        <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="primary" style={{ textAlign: 'center' }} onClick={() => updateEvent(event.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
-                      </Modal.Footer>
-                    </Modal>
-
-
-                    <Modal style={{ backgroundColor: 'black' }} show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
-                      <Modal.Header style={{ backgroundColor: 'grey' }} closeButton>
-                        <Modal.Title className="text-black">{lang === 'ua' ? 'Видалення події' : 'Deleting event'}</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body style={{ backgroundColor: 'grey' }}>
-                        <h1>{lang === 'ua' ? 'Ви впевнені що хочете видалити подію?' : 'Are you sure to delete event?'}</h1>
-                      </Modal.Body>
-                      <Modal.Footer style={{ backgroundColor: 'grey' }}>
-
-                        <Button variant="primary" style={{ float: 'right', backgroundColor: 'red' }} onClick={() => toDeleteEvent()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
-                        <Button variant="primary" style={{ float: 'left' }} onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
-                      </Modal.Footer>
-                    </Modal>
-
-                  </div>
-                  
-
-                </>
               )
-            }
-
-            )
-            :
-            <h1 className="mt-4 text-center">{lang === 'ua' ? 'Подій поки що немає' : 'No events exist'}</h1>
-        }
-      </div>
+              :
+              <h1 className="mt-5 text-center">{lang === 'ua' ? 'Подій поки що немає' : 'No events exist'}</h1>
+          }
+        </div>
       </div>
       <ReactPaginate
         previousLabel={'previous'}

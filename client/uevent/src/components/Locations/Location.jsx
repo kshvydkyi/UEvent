@@ -102,7 +102,7 @@ const Location = () => {
                     ?
                     locations.map(({ title, description, country, city, street, house, id }) =>
                         <>
-                            <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mt-4 mb-1">
+                            <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mt-5 mb-1">
                                 <div className="card-body">
                                     <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{title}</h5>
                                     <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{description}</p>
@@ -110,15 +110,17 @@ const Location = () => {
                                     <p className="card-text">{lang === 'ua' ? 'Місто: ' : 'City: '}{city}</p>
                                     <p className="card-text">{lang === 'ua' ? 'Вулиця: ' : 'Street: '}{street}</p>
                                     <p className="card-text">{lang === 'ua' ? 'Дім: ' : 'House: '}{house}</p>
-                                    <Button onClick={() => openTheModalToDelete(id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
-                                    </svg></Button>
+                                    <Button onClick={() => openTheModalToDelete(id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}>
+                                        <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
+                                        </svg>
+                                    </Button>
                                 </div>
-                                <Modal show={openModal} onHide={() => closeTheModal()}>
-                                    <Modal.Header closeButton>
+                                <Modal className="bg-dark" show={openModal} onHide={() => closeTheModal()}>
+                                    <Modal.Header closeButton closeVariant="white">
                                         <Modal.Title className="text-black">{lang === 'ua' ? 'Зміна даних' : 'Change company'}</Modal.Title>
                                     </Modal.Header>
-                                    <Modal.Body>
+                                    <Modal.Body >
                                         <Form.Label className="form_label text-black" htmlFor="compName">{lang === 'ua' ? 'Назва Компанії' : 'Company Name'}
                                             <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
                                             <FontAwesomeIcon icon={faTimes} className={validCompanyName || !companyName ? "hide" : "invalid"} />
@@ -152,18 +154,20 @@ const Location = () => {
 
 
 
-                                <Modal style={{ backgroundColor: 'black' }} show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
-                                    <Modal.Header style={{ backgroundColor: 'grey' }} closeButton>
-                                        <Modal.Title className="text-black">{lang === 'ua' ? 'Видалення локації' : 'Deleting Location'}</Modal.Title>
+                                <Modal className="bg-dark" centered show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
+                                <div className="border border-secondary rounded">
+                                    <Modal.Header className="bg-dark" closeButton closeVariant="white">
+                                        <Modal.Title className="">{lang === 'ua' ? 'Видалення локації' : 'Deleting Location'}</Modal.Title>
                                     </Modal.Header>
-                                    <Modal.Body style={{ backgroundColor: 'grey' }}>
-                                        <h1>{lang === 'ua' ? 'Ви впевнені що хочете видалити локацію?' : 'Are you sure to delete location?'}</h1>
+                                    <Modal.Body className="bg-dark">
+                                        <h1 className="h5">{lang === 'ua' ? 'Ви впевнені що хочете видалити локацію?' : 'Are you sure to delete location?'}</h1>
                                     </Modal.Body>
-                                    <Modal.Footer style={{ backgroundColor: 'grey' }}>
+                                    <Modal.Footer className="bg-dark">
 
-                                        <Button variant="primary" style={{ float: 'right', backgroundColor: 'red' }} onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
-                                        <Button variant="primary" style={{ float: 'left' }} onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
+                                        <Button variant="danger"  onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
+                                        <Button variant="secondary"  onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
                                     </Modal.Footer>
+                                    </div>
                                 </Modal>
 
                             </div>

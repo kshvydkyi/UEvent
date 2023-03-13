@@ -94,30 +94,32 @@ const CurrentCompany = () => {
 
   return (
     <>
-      {
+      
+
+      <div className="card d-flex justify-content-center w-25 mt-5 m-auto bg-dark text-white">
+        <div className="card-body">
+          <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{companies.title}</h5>
+          <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{companies.description}</p>
+        </div>
+        {
         companies.user_id === currentUser.userId ?
-          <div class="upload-btn-wrapper mt-4">
+          <div className="upload-btn-wrapper">
             <Button onClick={() => openTheModal()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? `Додати співробітника` : `Add employee`}</Button>
             <input type="button" name="myfile" />
           </div>
           : <div className = 'mx-auto'> <br/>  </div>
       }
-
-      <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white">
-        <div className="card-body">
-          <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{companies.title}</h5>
-          <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{companies.description}</p>
-        </div>
       </div>
 
 
-      <Modal style={{ backgroundColor: 'black' }} show={openModal} onHide={() => closeTheModal()}>
-        <Modal.Header style={{ backgroundColor: 'grey' }} closeButton>
-          <Modal.Title className="text-black">{lang === 'ua' ? 'Додавання співробітника' : 'Adding Employee'}</Modal.Title>
+      <Modal className="bg-dark" centered show={openModal} onHide={() => closeTheModal()}>
+      <div className="border border-secondary rounded">
+        <Modal.Header className="bg-dark" closeButton closeVariant="white">
+          <Modal.Title className="">{lang === 'ua' ? 'Додавання співробітника' : 'Adding Employee'}</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ backgroundColor: 'grey' }}>
+        <Modal.Body className="bg-dark">
 
-          <Form.Label className="form_label text-black" htmlFor="compName">{lang === 'ua' ? 'Логін користувача' : 'User Login'}
+          <Form.Label className="form_label " htmlFor="compName">{lang === 'ua' ? 'Логін користувача' : 'User Login'}
           </Form.Label>
           <Form.Control
             type="text"
@@ -129,9 +131,10 @@ const CurrentCompany = () => {
           />
 
         </Modal.Body>
-        <Modal.Footer style={{ backgroundColor: 'grey' }}>
-          <Button variant="primary" style={{ textAlign: 'center' }} onClick={() => addEmployee()}>{lang === 'ua' ? 'Додати співробітника' : 'Add Employee'}</Button>
+        <Modal.Footer className="bg-dark">
+          <Button variant="secondary"  onClick={() => addEmployee()}>{lang === 'ua' ? 'Додати співробітника' : 'Add Employee'}</Button>
         </Modal.Footer>
+        </div>
       </Modal>
 
     </>
