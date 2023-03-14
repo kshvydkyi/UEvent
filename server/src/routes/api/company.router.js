@@ -56,7 +56,7 @@ companyRouter.post(
 companyRouter.patch(
     '/:id/:token',
     isAutorised, 
-    isAccess,
+    isAccess(CompanyService),
     updateCompanyValidationChainMethod,
     validateRequestSchema,
     isSameTitle(CompanyService),

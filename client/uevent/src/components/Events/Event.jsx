@@ -20,15 +20,22 @@ import { ToastContainer } from 'react-toastify';
 
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,50}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
-
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,300}$/;
+const PRICE_REGEX = /^[0-9]{1,5}$/;
+const COUNT_REGEX = /^[0-9]{1,4}$/;
 const Event = () => {
   const lang = localStorage.getItem('lang');
-  const [events, setEvents] = useState([]);
-  const [searchEvents, setSearchEvents] = useState('');
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
+  const [events, setEvents] = useState([]);
+  const [searchEvents, setSearchEvents] = useState('');
+
+
   const [eventName, setEventName] = useState('');
+
+  const [locations, setAllLocations] = useState([])
+  const [chosenLocation, setChosenLocation] = useState('')
+
   const [validCompanyName, setValidCompanyName] = useState(false);
 
   const [eventDescr, setEventDescr] = useState('');
@@ -37,18 +44,51 @@ const Event = () => {
   const [eventPosterPath, setEventPosterPath] = useState('');
 
   const [allCompanies, setAllCompanies] = useState([]);
+
   const [chosenCompany, setChosenCompany] = useState('');
 
   const [allFormat, setAllFormats] = useState([]);
+
   const [allThemes, setAllThemes] = useState([]);
+
   const [chosenFormat, setChosenFormat] = useState('');
+
   const [selectedThemes, setSelectedThemes] = useState([])
+
+  const [showSignedInUsers, setShowSignedInUsers] = useState(false);
+
   const [startAt, setStartDate] = useState('');
+  const [endAt, setEndDate] = useState('');
 
   const [eventId, setEventId] = useState();
 
+  const [priceOfEvent, setPriceOfEvent] = useState('');
+  const [validPrice, setValidPrice] = useState(false);
+
+  const [countOfPeople, setCountOfPeople] = useState('');
+  const [validCount, setValidCount] = useState(false);
+
   const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const [dateFilter, setDateFilter] = useState('ASC');
+  useEffect(() => {
+    setValidPrice(PRICE_REGEX.test(priceOfEvent));
+  }, [priceOfEvent]);
+  useEffect(() => {
+    setValidCount(COUNT_REGEX.test(countOfPeople));
+  }, [countOfPeople]);
+
+  const getLocations = async () => {
+    const response = await axios.get(`/api/location/`);
+    setAllLocations(response.data.values.values.map((value) => {
+      const data = { value: value.id, label: value.title }
+      return data
+    }))
+  }
+  useEffect(() => {
+    getLocations()
+  }, [])
 
   const addImage = async (e) => {
     const formData = new FormData();
@@ -65,6 +105,19 @@ const Event = () => {
       console.log(e);
     }
   }
+
+  const getEvents = async (dateFilter) => {
+    setDateFilter(dateFilter);
+    const response = await axios.get(`/api/events/?page=1&filter=${dateFilter}`)
+    setEvents(response.data.values.data);
+    setPageCount(response.data.values.meta.totalPages);
+  }
+
+  useEffect(() => {
+    getEvents();
+  }, [])
+
+
 
   const getCompanies = async () => {
     const response = await axios.get(`/api/companies/user-companies/${currentUser.userId}`);
@@ -111,10 +164,38 @@ const Event = () => {
 
   const [openModal, setOpenModal] = useState(false);
 
-
+  // 💩💩💩💩💩 УВАГА В ДАНОМІ УЧАСТКЕ КОДІ НАСРАНО
   async function openTheModal(id) {
     setEventId(id)
     setOpenModal(true);
+    try {
+      const response = await axios.get(`/api/events/${id}`)
+      setEventName(response.data.values.values.title)
+      setEventDescr(response.data.values.values.description)
+      setChosenCompany({ value: response.data.values.values.company_id, label: response.data.values.values.companyName })
+      setChosenFormat({ value: response.data.values.values.format_id, label: response.data.values.values.formatName })
+      const themes = response.data.values.values.themes.map((value) => {
+        const data = {
+          value: value.theme_id
+          , label: value.title
+        }
+        return data;
+      })
+      setSelectedThemes(themes);
+      const normalFormatStart = moment(response.data.values.values.dateStart, moment.defaultFormat).toDate();
+      const normalFormatEnd = moment(response.data.values.values.dateEnd, moment.defaultFormat).toDate();
+      setStartDate(normalFormatStart);
+      setEndDate(normalFormatEnd);
+      setPriceOfEvent(response.data.values.values.price);
+      setCountOfPeople(response.data.values.values.ticketsCount);
+      setChosenLocation({ value: response.data.values.values.location.id, label: response.data.values.values.location.title });
+      setShowSignedInUsers(response.data.values.values.showUserList === 1 ? true : false);
+    }
+
+    catch (e) {
+      console.log(e)
+    }
+
   }
 
   async function closeTheModal() {
@@ -137,16 +218,7 @@ const Event = () => {
 
 
 
-  const getEvents = async () => {
-    const response = await axios.get(`/api/events/?page=1`);
-    setEvents(response.data.values.data);
-    setPageCount(response.data.values.meta.totalPages);
-  }
 
-  useEffect(() => {
-    getEvents();
-    // console.log('events',events)
-  }, [])
 
 
   async function toDeleteEvent() {
@@ -159,6 +231,7 @@ const Event = () => {
   const updateEvent = async (e) => {
     try {
       setLoading(true);
+      // console.log(selectedThemes);
       const themesId = selectedThemes.map((theme) => theme.value);
       const response = await axios.patch(`/api/events/${eventId}/${currentUser.accessToken}`, JSON.stringify({
         title: eventName,
@@ -167,7 +240,11 @@ const Event = () => {
         format_id: +chosenFormat.value,
         dateStart: startAt,
         event_pic: eventPosterPath.length < 1 ? 'default_event.png' : eventPosterPath,
-        themes_id: themesId
+        themes_id: themesId,
+        price: +priceOfEvent,
+        count: +countOfPeople,
+        userlist_public: showSignedInUsers,
+        location_id: +chosenLocation.value
       }), {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true
@@ -175,8 +252,8 @@ const Event = () => {
       console.log('ku')
       console.log(response);
       setLoading(false);
-      navigate(`/events`);
-      document.location.reload();
+      // navigate(`/events`);
+      // document.location.reload();
     }
     catch (err) {
       setLoading(false);
@@ -260,7 +337,7 @@ const Event = () => {
     // if(response.data.values.values.length === 0) {
     //   const res = await axios.get(`/api/events/`);
     //   setEvents(res.data.values.data)
-    // }
+    // }  // 💩💩💩💩💩 УВАГА В ДАНОМІ УЧАСТКЕ КОДІ НАСРАНО
     setEvents(response.data.values.values);
   }
 
@@ -268,7 +345,7 @@ const Event = () => {
     <>
 
       <div className="container-xxl d-flex flex-column mt-5 ">
-        <Form className="d-flex w-25 mx-auto mt-3">
+        <Form className="d-flex w-50 mx-auto mt-3 mb-3">
           <Form.Control
             type="input"
             placeholder="Search"
@@ -278,7 +355,19 @@ const Event = () => {
             onChange={(e) => setSearchEvents(e.target.value)}
           />
           <Button variant="secondary" onClick={() => search()}>Search</Button>
+
+          <div className='w-25 p-3 float-right position-relative'>
+            <select value={dateFilter} onChange={(e) => getEvents(e.target.value)} style={customStyles} className="form-select form-select-sm position-absolute top-50 start-50" aria-label=".form-select-sm example">
+              <option selected value="ASC">Від нових до старих</option>
+              <option value="DESC">Від старих до нових</option>
+            </select>
+          </div>
         </Form>
+
+
+
+
+
         <div className='d-flex flex-wrap'>
 
           {
@@ -377,7 +466,7 @@ const Event = () => {
                                 <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !eventDescr ? "hide" : "invalid"} />
                               </Form.Label>
                               <textarea
-                                className="bg-dark text-white mb-3"
+                                className="bg-dark text-white mb-3 p-2"
                                 id="compDescr"
                                 rows="3"
                                 autoComplete="off"
@@ -396,7 +485,18 @@ const Event = () => {
                                 onChange={addImage}
                               // value={eventPoster}
                               />
+                              <Form.Label className="mt-2" htmlFor="location">{lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}</Form.Label>
+                              <Select
 
+                                placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
+                                value={chosenLocation}
+                                styles={customStyles}
+                                id='location'
+                                options={locations}
+                                onChange={(option) => {
+                                  setChosenLocation(option);
+                                }}
+                              />
                               <Form.Label className="mt-2" htmlFor="companies">{lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}</Form.Label>
                               <Select
                                 placeholder={lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}
@@ -408,10 +508,9 @@ const Event = () => {
                                   setChosenCompany(option);
                                 }}
                               />
-
                               <Form.Label className="mt-2" htmlFor="formats">{lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}</Form.Label>
                               <Select
-                                style={{ color: 'black' }}
+
                                 placeholder={lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}
                                 value={chosenFormat}
                                 styles={customStyles}
@@ -431,6 +530,7 @@ const Event = () => {
                                   setSelectedThemes(option);
                                 }}
                                 isMulti
+                                value={selectedThemes}
                               // isClearable
                               />
                               <Form.Label className="mt-2"> {lang === 'ua' ? 'Початок події' : 'Start of Event'}</Form.Label>
@@ -446,6 +546,51 @@ const Event = () => {
                                 showTimeInput
                                 required
                               />
+                              <Form.Label className="mt-2"> {lang === 'ua' ? 'Кінець події' : 'End of Event'}</Form.Label>
+                              <DatePicker
+                                className="rounded w-100 p-1 bg-dark text-white border"
+                                selected={endAt}
+                                timeFormat="HH:mm"
+                                minDate={new Date(startAt)}
+                                onChange={date => setEndDate(date)}
+                                timeIntervals={15}
+                                dateFormat="d MMMM yyyy, HH:mm "
+                                timeCaption="time"
+                                showTimeInput
+                                required
+                              />
+                              <Form.Label className="mt-2" htmlFor="price">
+                                {lang === 'ua' ? 'Ціна у грн.' : 'Price ₴'}
+                                <FontAwesomeIcon icon={faCheck} className={validPrice ? "valid" : "hide"} />
+                                <FontAwesomeIcon icon={faTimes} className={validPrice || !priceOfEvent ? "hide" : "invalid"} />
+                              </Form.Label>
+                              <Form.Control
+                                type="number"
+                                className="bg-dark text-white"
+                                id="price"
+                                autoComplete="off"
+                                onChange={(e) => setPriceOfEvent(e.target.value)}
+                                value={priceOfEvent}
+                                min={0}
+                                max={10000}
+                              />
+                              <Form.Label className="mt-2" htmlFor="countPeople">
+                                {lang === 'ua' ? 'Кількість квитків' : 'Amount of tickets'}
+                                <FontAwesomeIcon icon={faCheck} className={validCount ? "valid" : "hide"} />
+                                <FontAwesomeIcon icon={faTimes} className={validCount || !countOfPeople ? "hide" : "invalid"} />
+                              </Form.Label>
+                              <Form.Control
+                                type="number"
+                                className="bg-dark text-white"
+                                id="countPeople"
+                                autoComplete="off"
+                                onChange={(e) => setCountOfPeople(e.target.value)}
+                                value={countOfPeople}
+                                min={1}
+                                max={3000}
+                              />
+                              <Form.Label className="mt-2" htmlFor="isShow">{lang === 'ua' ? 'Показувати користувачів, що записались на подію?' : 'Show users that signed in at the event?'}</Form.Label>
+                              <Form.Check id="isShow" className="mb-2" type='switch' checked={showSignedInUsers} onChange={(e) => setShowSignedInUsers(e.target.checked)} />
                               <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="secondary" onClick={() => updateEvent(event.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
 
                             </Form>

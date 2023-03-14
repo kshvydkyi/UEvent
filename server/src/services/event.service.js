@@ -2,8 +2,9 @@ import db from '../config/db.connection.js';
 import toSQLDate from 'js-date-to-sql-datetime';
 
 export default class EventService {
-    async selectAll() {
-        let sql = "SELECT * FROM `events`";
+    async selectAll(filterByDate) {
+        if(filterByDate === 'undefined' || filterByDate === undefined) filterByDate='ASC';
+        let sql = `SELECT * FROM events ORDER BY dateStart ${filterByDate}`;
         const [row] = await db.execute(sql);
         return row;
     }
@@ -58,9 +59,9 @@ export default class EventService {
         let sql1 = `INSERT INTO tickets (user_id, event_id, secret_code) VALUES ('${body.user_id}', '${body.event_id}', '${body.token.id}')`;
         const [row1] = await db.execute(sql1);
 
-        let sql2 = `INSERT INTO notifications (user_id, title, description) VALUES ('${body.user_id}', '${body.title}', '${body.title}')`;
+        let sql2 = `INSERT INTO notifications (user_id, title, descriptiob) VALUES ('${body.user_id}', '${body.title}', '${body.title}')`;
         const [row2] = await db.execute(sql2);
-        
+
         return row;
     }
 

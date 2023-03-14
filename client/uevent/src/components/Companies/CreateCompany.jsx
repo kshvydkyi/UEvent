@@ -90,7 +90,7 @@ const CreateCompany = () => {
                             <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !companyDescr ? "hide" : "invalid"} />
                         </Form.Label>
                         <textarea
-                            className="bg-dark text-white mb-3"
+                            className="bg-dark text-white mb-3 p-2"
                             class="bg-dark text-white mb-3" id="compDescr" rows="3"
                             autoComplete="off"
                             onChange={(e) => setCompanyDescr(e.target.value)}

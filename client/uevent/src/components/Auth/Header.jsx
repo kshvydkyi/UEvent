@@ -43,7 +43,6 @@ function Header() {
 
   const getTickets = async () => {
     const response = await axios.get(`/api/notifications/user-notifications/${currentUser.userId}`);
-    console.log('notifications',response.data.values.values)
     setTickets(response.data.values.values);
   }
 
@@ -95,12 +94,12 @@ function Header() {
   }
 
   async function makeAsReadNotif(idTicket) {
-    for(let i = 0; i < tickets.length; i++) {
-      if(tickets[i].id === idTicket) {
-        tickets.splice(i, 1); 
-        setOpenNotif(false);
-      }
-    }
+    const response = await axios.delete(`/api/notifications/${idTicket}/${currentUser.accessToken}`)
+
+    const res = await axios.get(`/api/notifications/user-notifications/${currentUser.userId}`);
+    setTickets(res.data.values.values);
+
+    // document.location.reload();
   }
 
   return (
@@ -109,7 +108,7 @@ function Header() {
         <Container className='d-flex justify-content-around'>
           {/* <img src={logo} height={40} alt='logo' /> */}
 
-          <Navbar.Brand className="" href="/" data-value="Kvitochok">Kvitochok</Navbar.Brand>
+          <Navbar.Brand className="" href="/" data-value="Kvitochok">Kvit😊chok</Navbar.Brand>
           {/* <Navbar.Brand href="/" target={'_blank'}>Concertik</Navbar.Brand> */}
 
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -210,7 +209,7 @@ function Header() {
       <Collapse className='ms-3 w-25 fixed-bottom' in={openNotif}>
         <div>
           <Alert variant="info">
-            <Alert.Heading >Повідомлення</Alert.Heading>
+            <Alert.Heading >{lang === 'ua' ? 'Повідомлення' : 'Notifications'}</Alert.Heading>
             <>
               {
                (tickets.length !== 0) && (Array.isArray(tickets))
@@ -218,14 +217,14 @@ function Header() {
                 tickets.map((ticket) => {
                   return (
                     <div className = 'border border-dark rounded mt-2 overflow-auto'>
-                      <p className = 'mx-2'>Ви купили квиток - {ticket.title}
+                      <p className = 'mx-2'>{lang === 'ua' ? 'Ви купили квиток' : 'You have just bought a ticket'} - {ticket.title}
                       <span onClick={() => makeAsReadNotif(ticket.id)} role="button" title = 'Make as read' className="bi bi-x bg-danger text-white mx-2"></span>
                       </p>
                     </div>
                   )
                 })
                 :
-                <p>No notifications</p>
+                <p>{lang === 'ua' ? 'Повідомлень немає' : 'No notifications'}</p>
                 
               }
             </>

@@ -131,16 +131,16 @@ const CurrentEvent = () => {
         
           } */}
 
-          <div className="mt-5 container-xxl" >
+          <div className="mt-5 container" >
             <div className="card mb-3 bg-dark">
-              <div className="row g-0">
-                <div className="col-md-4">
+              <div className="d-flex">
+                <div className="">
                   <img src={`${route.serverURL}/event-pic/${events.event_pic}`} className="rounded d-block" width='300px' height="500px" alt='Шарікс'
                     onClick={() => window.location = `/event/${events.id}`}>
 
                   </img>
                 </div>
-                <div className="col-md-8">
+                <div className="">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
                       <h3 className="d-block">{events.title}</h3>
@@ -183,7 +183,7 @@ const CurrentEvent = () => {
                         events?.themes?.map((theme) => {
                           return (
                             <div>
-                              <p className="badge bg-secondary fs-6 me-3">{theme.title}</p>
+                              <p className="badge rounded-pill bg-secondary fs-6 me-3">{theme.title}</p>
                             </div>
                           )
                         })
@@ -211,8 +211,8 @@ const CurrentEvent = () => {
                           currency="UAH"
                           token={handleToken}
                         >
-                          <Button className="" disabled={events.ticketsCount === 0 ? true : false}>
-                            {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
+                          <Button variant="secondary" className="" disabled={events.ticketsCount === 0 ? true : false}>
+                            {lang === 'ua' ? 'Купити квиток' : 'Buy ticket'}
                           </Button>
                         </StripeCheckout>
                       }

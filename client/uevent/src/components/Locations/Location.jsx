@@ -20,30 +20,35 @@ const Location = () => {
     const [locations, setLocations] = useState([]);
     const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
-    const [companyName, setCompanyName] = useState('');
-    const [validCompanyName, setValidCompanyName] = useState(false);
+    const [locationId, setLocationId] = useState();
 
-    const [companyDescr, setCompanyDescr] = useState('');
-    const [validcompanyDescr, setValidCompanyDescr] = useState(false);
 
-    const [companyId, setCompanyId] = useState();
-
-    const [isLoading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        setValidCompanyName(COMPANY_REGEX.test(companyName));
-    }, [companyName]);
+    const [locationName, setlocationName] = useState('');
 
-    useEffect(() => {
-        setValidCompanyDescr(DESCR_REGEX.test(companyDescr));
-    }, [companyDescr]);
+    const [locationDescr, setlocationDescr] = useState('');
+
+    const [country, setCountry] = useState('');
+    const [city, setCity] = useState('');
+    const [street, setStreet] = useState('');
+    const [house, setHouse] = useState('');
+
 
     const [openModal, setOpenModal] = useState(false);
 
     async function openTheModal(id) {
-        setCompanyId(id)
+        setLocationId(id)
         setOpenModal(true);
+        console.log(id)
+        const response = await axios.get(`/api/location/${id}`)
+        console.log(response.data.values.values)
+        setlocationDescr(response.data.values.values.description);
+        setlocationName(response.data.values.values.title)
+        setCountry(response.data.values.values.country)
+        setCity(response.data.values.values.city)
+        setHouse(response.data.values.values.house)
+        setStreet(response.data.values.values.street)
     }
 
     async function closeTheModal() {
@@ -67,9 +72,15 @@ const Location = () => {
         document.location.reload();
     }
 
-    async function updateCompany(id) {
-        console.log(companyDescr, companyName, id)
-        const response = await axios.patch(`/api/companies/${companyId}/${currentUser.accessToken}`, JSON.stringify({ description: companyDescr, title: companyName }), {
+    async function updateLocation(id) {
+        const response = await axios.patch(`/api/location/${locationId}/${currentUser.accessToken}`, JSON.stringify({
+            description: locationDescr,
+            title: locationName,
+            country: country,
+            street: street,
+            city: city,
+            house: house
+        }), {
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
         })
@@ -100,73 +111,125 @@ const Location = () => {
             {
                 (locations.length !== 0) && (Array.isArray(locations))
                     ?
-                    locations.map(({ title, description, country, city, street, house, id }) =>
+                    locations.map((location) =>
                         <>
                             <div className="card d-flex justify-content-center w-25 m-auto bg-dark text-white mt-5 mb-1">
                                 <div className="card-body">
-                                    <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{title}</h5>
-                                    <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{description}</p>
-                                    <p className="card-text">{lang === 'ua' ? 'Країна: ' : 'Country: '}{country}</p>
-                                    <p className="card-text">{lang === 'ua' ? 'Місто: ' : 'City: '}{city}</p>
-                                    <p className="card-text">{lang === 'ua' ? 'Вулиця: ' : 'Street: '}{street}</p>
-                                    <p className="card-text">{lang === 'ua' ? 'Дім: ' : 'House: '}{house}</p>
-                                    <Button onClick={() => openTheModalToDelete(id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}>
+                                    <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{location.title}</h5>
+                                    <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{location.description}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Країна: ' : 'Country: '}{location.country}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Місто: ' : 'City: '}{location.city}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Вулиця: ' : 'Street: '}{location.street}</p>
+                                    <p className="card-text">{lang === 'ua' ? 'Дім: ' : 'House: '}{location.house}</p>
+                                    <Button onClick={() => openTheModal(location.id)} type="button" className="btn btn-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                    </svg></Button>
+                                    <Button onClick={() => openTheModalToDelete(location.id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}>
                                         <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                                             <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
                                         </svg>
                                     </Button>
                                 </div>
-                                <Modal className="bg-dark" show={openModal} onHide={() => closeTheModal()}>
-                                    <Modal.Header closeButton closeVariant="white">
-                                        <Modal.Title className="text-black">{lang === 'ua' ? 'Зміна даних' : 'Change company'}</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body >
-                                        <Form.Label className="form_label text-black" htmlFor="compName">{lang === 'ua' ? 'Назва Компанії' : 'Company Name'}
-                                            <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
-                                            <FontAwesomeIcon icon={faTimes} className={validCompanyName || !companyName ? "hide" : "invalid"} />
-                                        </Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            className="bg-dark text-white mb-3"
-                                            id="compName"
-                                            autoComplete="off"
-                                            onChange={(e) => setCompanyName(e.target.value)}
-                                            value={companyName}
-                                        />
+                                <Modal className="bg-dark" centered show={openModal} onHide={() => closeTheModal()}>
+                                    <div className="border border-secondary rounded">
+                                        <Modal.Header className="bg-dark " closeButton closeVariant="white">
+                                            <Modal.Title className="">{lang === 'ua' ? 'Зміна даних' : 'Change Location'}</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body className=" bg-dark d-flex flex-column  justify-content-center">
 
-                                        <Form.Label className="form_label text-black" htmlFor="compDescr">{lang === 'ua' ? 'Опис Компанії' : 'Company Description'}
-                                            <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
-                                            <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !companyDescr ? "hide" : "invalid"} />
-                                        </Form.Label>
-                                        <textarea
-                                            className="bg-dark text-white mb-3"
-                                            class="bg-dark text-white mb-3" id="compDescr" rows="3"
-                                            autoComplete="off"
-                                            onChange={(e) => setCompanyDescr(e.target.value)}
-                                            value={companyDescr}
-                                        >
-                                        </textarea>
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="primary" style={{ textAlign: 'center' }} onClick={() => updateCompany(id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
-                                    </Modal.Footer>
+                                            <Form.Label className="form_label" htmlFor="locName">{lang === 'ua' ? 'Назва Локації' : 'Location Name'}
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                className="bg-dark text-white mb-3"
+                                                id="locName"
+                                                autoComplete="off"
+                                                onChange={(e) => setlocationName(e.target.value)}
+                                                value={locationName}
+                                            />
+
+                                            <Form.Label className="form_label" htmlFor="compDescr">{lang === 'ua' ? 'Опис Локації' : 'Location Description'}
+                                            </Form.Label>
+                                            <textarea
+                                                className="bg-dark text-white mb-3 p-2"
+                                                class="bg-dark text-white mb-3" id="compDescr" rows="3"
+                                                autoComplete="off"
+                                                onChange={(e) => setlocationDescr(e.target.value)}
+                                                value={locationDescr}
+                                            >
+                                            </textarea>
+
+                                            <Form.Label className="form_label" htmlFor="country">{lang === 'ua' ? 'Країна' : 'Country'}
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                className="bg-dark text-white mb-3"
+                                                id="country"
+                                                autoComplete="off"
+                                                onChange={(e) => setCountry(e.target.value)}
+                                                value={country}
+                                            // defaultValue={''}
+                                            />
+
+                                            <Form.Label className="form_label" htmlFor="city">{lang === 'ua' ? 'Місто' : 'City'}
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                className="bg-dark text-white mb-3"
+                                                id="city"
+                                                autoComplete="off"
+                                                onChange={(e) => setCity(e.target.value)}
+                                                value={city}
+                                            // defaultValue={''}
+                                            />
+
+                                            <Form.Label className="form_label" htmlFor="street">{lang === 'ua' ? 'Вулиця' : 'Street'}
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                className="bg-dark text-white mb-3"
+                                                id="street"
+                                                autoComplete="off"
+                                                onChange={(e) => setStreet(e.target.value)}
+                                                value={street}
+                                            // defaultValue={''}
+                                            />
+
+                                            <Form.Label className="form_label" htmlFor="house">{lang === 'ua' ? 'Дім' : 'House'}
+                                            </Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                className="bg-dark text-white mb-3"
+                                                id="house"
+                                                autoComplete="off"
+                                                onChange={(e) => setHouse(e.target.value)}
+                                                value={house}
+                                            // defaultValue={''}
+                                            />
+
+                                        </Modal.Body>
+                                        <Modal.Footer className="bg-dark">
+                                            <Button variant="secondary" style={{ textAlign: 'center' }} onClick={() => updateLocation(location.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
+                                        </Modal.Footer>
+                                    </div>
                                 </Modal>
 
 
 
                                 <Modal className="bg-dark" centered show={openModalToDelete} onHide={() => closeTheModalToDelete()}>
-                                <div className="border border-secondary rounded">
-                                    <Modal.Header className="bg-dark" closeButton closeVariant="white">
-                                        <Modal.Title className="">{lang === 'ua' ? 'Видалення локації' : 'Deleting Location'}</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body className="bg-dark">
-                                        <h1 className="h5">{lang === 'ua' ? 'Ви впевнені що хочете видалити локацію?' : 'Are you sure to delete location?'}</h1>
-                                    </Modal.Body>
-                                    <Modal.Footer className="bg-dark">
+                                    <div className="border border-secondary rounded">
+                                        <Modal.Header className="bg-dark" closeButton closeVariant="white">
+                                            <Modal.Title className="">{lang === 'ua' ? 'Видалення локації' : 'Deleting Location'}</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body className="bg-dark">
+                                            <h1 className="h5">{lang === 'ua' ? 'Ви впевнені що хочете видалити локацію?' : 'Are you sure to delete location?'}</h1>
+                                        </Modal.Body>
+                                        <Modal.Footer className="bg-dark">
 
-                                        <Button variant="danger"  onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
-                                        <Button variant="secondary"  onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
-                                    </Modal.Footer>
+                                            <Button variant="danger" onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
+                                            <Button variant="secondary" onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
+                                        </Modal.Footer>
                                     </div>
                                 </Modal>
 

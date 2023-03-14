@@ -43,6 +43,10 @@ const Company = () => {
   async function openTheModal(id) {
     setCompanyId(id)
     setOpenModal(true);
+    const response = await axios.get(`/api/companies/${id}`)
+    setCompanyName(response.data.values.values.title);
+    setCompanyDescr(response.data.values.values.description);
+    console.log(response);
   }
 
   async function closeTheModal() {
@@ -66,12 +70,13 @@ const Company = () => {
   }
 
   async function updateCompany(id) {
-    console.log(companyDescr, companyName, id)
-    const response = await axios.patch(`/api/companies/${companyId}/${currentUser.accessToken}`, JSON.stringify({ description: companyDescr, title: companyName }), {
+    // console.log(companyDescr, companyName, companyId)
+    const response = await axios.patch(`/api/companies/${companyId}/${currentUser.accessToken}`, JSON.stringify({ description: companyDescr, title: companyName }), 
+    {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true
     })
-    console.log(response)
+    // console.log(response)
     document.location.reload();
   }
 
@@ -135,7 +140,7 @@ const Company = () => {
                       <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !companyDescr ? "hide" : "invalid"} />
                     </Form.Label>
                     <textarea
-                      className="bg-dark text-white mb-3"
+                      className="bg-dark text-white mb-3 p-2"
                       class="bg-dark text-white mb-3" id="compDescr" rows="3"
                       autoComplete="off"
                       onChange={(e) => setCompanyDescr(e.target.value)}
@@ -144,7 +149,7 @@ const Company = () => {
                     </textarea>
                   </Modal.Body>
                   <Modal.Footer className="bg-dark">
-                    <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="secondary" style={{ textAlign: 'center' }} onClick={() => updateCompany(company.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
+                    <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="secondary" onClick={() => updateCompany(company.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
                   </Modal.Footer>
                   </div>
                 </Modal>

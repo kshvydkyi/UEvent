@@ -82,9 +82,9 @@ const ChangeProfile = () => {
         try {
             const response = await axios.get(`/api/users/${user.userId}`);
             console.log(response);
-            setChangedLogin(response.data.values.result.login);
-            setChangedFullName(response.data.values.result.full_name);
-            setChangedEmail(response.data.values.result.email);
+            setChangedLogin(response.data.values.values.login);
+            setChangedFullName(response.data.values.values.full_name);
+            setChangedEmail(response.data.values.values.email);
 
 
         }
