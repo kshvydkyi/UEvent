@@ -9,6 +9,8 @@ import UserService from "../../services/user.service.js";
 import { createCompanyValidationChainMethod, updateCompanyValidationChainMethod } from "../../validations/company.validation.js";
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
 import { isSameTitle } from "../../scripts/titleChecking.js";
+import { uploadCompanyImage } from '../../utils/uploadImage.js';
+
 
 const companyRouter = Router();
 
@@ -47,6 +49,13 @@ companyRouter.post(
 );
 
 companyRouter.post(
+    '/add-image/:token',
+    isAutorised,
+    uploadCompanyImage.single('image'),
+    tryCatch(companyController.add_pic.bind(companyController))
+);
+
+companyRouter.post(
     '/addUser/:token',
     isAutorised,
     isAccess,
@@ -61,6 +70,13 @@ companyRouter.patch(
     validateRequestSchema,
     isSameTitle(CompanyService),
     tryCatch(companyController.update.bind(companyController))
+);
+
+companyRouter.patch(
+    '/company-image/:id/:token',
+    isAutorised,
+    uploadCompanyImage.single('image'),
+    tryCatch(companyController.update_pic.bind(companyController))
 );
 
 //Delete by id (Only for admin)

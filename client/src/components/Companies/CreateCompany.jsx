@@ -12,7 +12,7 @@ const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 const CreateCompany = () => {
-    const lang  = localStorage.getItem('lang');
+    const lang = localStorage.getItem('lang');
     const errRef = useRef();
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('autorized'));
@@ -23,7 +23,7 @@ const CreateCompany = () => {
 
     const [companyDescr, setCompanyDescr] = useState('');
     const [validcompanyDescr, setValidCompanyDescr] = useState(false);
-
+    const [companyLogo, setCompanyLogo] = useState('')
     const [isLoading, setLoading] = useState(false);
 
     const currentUser = JSON.parse(localStorage.getItem('autorized'));
@@ -40,15 +40,32 @@ const CreateCompany = () => {
     const setHidden = () => {
         setTimeout(() => setErrMsg(''), 5000);
     }
-
+    const addImage = async (e) => {
+        const formData = new FormData();
+        console.log(e.target.files[0]);
+        formData.append('image', e.target.files[0]);
+        try {
+            const response = await axios.post(`/api/companies/add-image/${currentUser.accessToken}`, formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    withCredentials: true
+                }
+            )
+            console.log(response);
+            setCompanyLogo(response.data.values.values.pathFile);
+        } catch (e) {
+            console.log(e);
+        }
+    }
     const createCompany = async (e) => {
         e.preventDefault();
         try {
             setLoading(true);
-            const response = await axios.post(`/api/companies/${currentUser.accessToken}`, JSON.stringify({ description: companyDescr, title: companyName, userId: currentUser.userId}), {
+            const response = await axios.post(`/api/companies/${currentUser.accessToken}`, JSON.stringify(
+                { description: companyDescr, title: companyName, userId: currentUser.userId, company_pic: companyLogo }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
-            }) 
+            })
             console.log(response);
             setLoading(false);
             navigate(`/`);
@@ -70,9 +87,9 @@ const CreateCompany = () => {
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
 
                 <div className='login bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>
-                    <h2 className="text-center">{ lang === 'ua' ? 'Створити Компанію' : 'Create Company' }</h2>
+                    <h2 className="text-center">{lang === 'ua' ? 'Створити Компанію' : 'Create Company'}</h2>
                     <form className="d-flex flex-column  justify-content-center" onSubmit={createCompany}>
-                        <Form.Label className="form_label" htmlFor="compName">{ lang === 'ua' ? 'Назва Компанії' : 'Company Name' }
+                        <Form.Label className="form_label" htmlFor="compName">{lang === 'ua' ? 'Назва Компанії' : 'Company Name'}
                             <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validCompanyName || !companyName ? "hide" : "invalid"} />
                         </Form.Label>
@@ -84,21 +101,31 @@ const CreateCompany = () => {
                             onChange={(e) => setCompanyName(e.target.value)}
                             value={companyName}
                         />
-                        
-                        <Form.Label className="form_label" htmlFor="compDescr">{ lang === 'ua' ? 'Опис Компанії' : 'Company Description' }
+
+                        <Form.Label className="form_label" htmlFor="compDescr">{lang === 'ua' ? 'Опис Компанії' : 'Company Description'}
                             <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !companyDescr ? "hide" : "invalid"} />
                         </Form.Label>
                         <textarea
                             className="bg-dark text-white mb-3 p-2"
-                            class="bg-dark text-white mb-3" id="compDescr" rows="3"
+                            id="compDescr"
+                            rows="3"
                             autoComplete="off"
                             onChange={(e) => setCompanyDescr(e.target.value)}
                             value={companyDescr}
                         >
-                         </textarea>
+                        </textarea>
+                        <Form.Control
+                            type="file"
+                            className="bg-dark text-white mb-3"
+                            id="posteer"
+                            autoComplete="off"
+                            accept="image/jpeg,image/png,image/jpg"
+                            onChange={addImage}
+                        // value={eventPoster}
+                        />
 
-                        <Button  variant="secondary" type="submit"disabled={ !validCompanyName || !validcompanyDescr || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> :  lang === 'ua' ? 'Створити' : 'Create' }</Button>
+                        <Button variant="secondary" type="submit" disabled={!validCompanyName || !validcompanyDescr || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : lang === 'ua' ? 'Створити' : 'Create'}</Button>
                     </form>
                 </div>
             </div>

@@ -26,7 +26,7 @@ export default class CompanyService {
     }
 
     async create(body) {
-        var sql = `INSERT INTO companies (title, description, user_id) VALUES ('${body.title}', '${body.description}', '${body.userId}')`;
+        var sql = `INSERT INTO companies (title, description, user_id, company_pic) VALUES ('${body.title}', '${body.description}', '${body.userId}', '${body.company_pic}')`;
         const [row] = await db.execute(sql);
         return row;
     }
@@ -42,6 +42,12 @@ export default class CompanyService {
         if(Object.entries(body).length !== 0){
             await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => db.execute(`UPDATE companies SET ${key} = '${value}' WHERE id = ${id}`))
         }
+	}
+
+    async update_pic(path, company_id) {
+        var sql = `UPDATE companies SET company_pic = '${path}' WHERE id = ${company_id}`;
+        const [row] = await db.execute(sql);
+        return row;
 	}
 
     async deleteById(id) {

@@ -44,6 +44,7 @@ const CurrentEvent = () => {
   const [eventDescr, setEventDescr] = useState('');
   const [validcompanyDescr, setValidCompanyDescr] = useState(false);
 
+  const [usersEvents, setUsersEvents] = useState([]);
 
   const [eventId, setEventId] = useState();
 
@@ -68,7 +69,17 @@ const CurrentEvent = () => {
 
   useEffect(() => {
     getEvents();
-    console.log('evnt1s', events)
+  }, [])
+
+
+  const getUsersOfEvent = async () => {
+    const response = await axios.get(`/api/users/event/${currentId}`);
+    setUsersEvents(response.data.values.values);
+    console.log(response.data.values.values)
+  }
+
+  useEffect(() => {
+    getUsersOfEvent();
   }, [])
 
 
@@ -115,22 +126,6 @@ const CurrentEvent = () => {
       {events ?
 
         <div className='w-100 d-flex justify-content-center text-align-center'>
-          {/* {
-          succesPurchase ? 
-          <div className="toast" role="alert" aria-live="assertive" aria-atomic="true">
-          <div className="toast-header">
-            <img src="..." className="rounded me-2" alt="..."/>
-            <strong className="me-auto">Kvitochok</strong>
-            <small>11 mins ago</small>
-            <button type="button" className="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div className="toast-body">
-            Hello, world! This is a toast message.
-          </div>
-        </div> : <></>
-        
-          } */}
-
           <div className="mt-5 container" >
             <div className="card mb-3 bg-dark">
               <div className="d-flex">
@@ -142,6 +137,12 @@ const CurrentEvent = () => {
                 </div>
                 <div className="">
                   <div className="card-body">
+                  {
+                      new Date() > new Date(events.dateEnd) ? 
+                        <h2 className='text-danger'>{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</h2>
+                      :
+                      <></>
+                    }
                     <div className="d-flex align-items-center">
                       <h3 className="d-block">{events.title}</h3>
                       <p className="h6 ms-3">{events.formatName}</p>
@@ -201,7 +202,7 @@ const CurrentEvent = () => {
                         </Button>
                         :
                         <StripeCheckout
-                          disabled={events.ticketsCount === 0 ? true : false}
+                          disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd) ? true : false}
                           className="text-black mb-5"
                           panelLabel="Pay"
                           image={`${route.serverURL}/event-pic/${events.event_pic}`}
@@ -211,10 +212,31 @@ const CurrentEvent = () => {
                           currency="UAH"
                           token={handleToken}
                         >
-                          <Button variant="secondary" className="" disabled={events.ticketsCount === 0 ? true : false}>
+                          <Button variant="secondary" className="" disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd)  ? true : false}>
                             {lang === 'ua' ? 'Купити квиток' : 'Buy ticket'}
                           </Button>
                         </StripeCheckout>
+                      }
+                      {
+                        events.showUserList === 1 ? 
+                        <>
+                        <h3 className='mt-2'>{lang === 'ua' ? 'Користувачі, що записались на подію' : 'Users that signed up at the event'}</h3>
+                        {
+                          (usersEvents.length !== 0) && (Array.isArray(usersEvents)) ?
+                          usersEvents.map((user) => {
+                            return (
+                            <>
+                            <span className='mx-2'>{user.login}</span>
+                            <img src={user.profile_pic && user.profile_pic !== 'undefined' && user.profile_pic !== undefined ? `${route.serverURL}/avatars/${user.profile_pic}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle mb-3' height={40} width={40} alt='avatar' /><br/>
+                            </>
+                            )
+                          })
+                          :
+                          <p>{lang === 'ua' ? 'Поки що ніхто не записався на подію' : 'Still users did not sign up at the event'}</p>
+                        }
+                        </>
+                        : 
+                        <></>
                       }
                       <Toast className='position-absolute top-0 end-0' onClose={() => setSuccesPurchase(false)} show={succesPurchase} delay={4000} autohide>
                         <Toast.Header>

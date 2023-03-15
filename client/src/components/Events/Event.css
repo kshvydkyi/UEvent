@@ -171,3 +171,12 @@ section .events ul li .details a:hover {
   box-shadow: none;
   transform: translateY(0);
 }
+
+
+#blurred {
+  filter: blur(3px);
+  -webkit-filter: blur(3px);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

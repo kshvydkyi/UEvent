@@ -11,6 +11,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
 import moment from 'moment';
+import route from "../../api/route";
+import StripeCheckout from "react-stripe-checkout";
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,55}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,300}$/;
@@ -95,15 +97,77 @@ const CreateEvent = () => {
             console.log(e);
         }
     }
-    const createEvent = async (e) => {
-        e.preventDefault();
+    // const createEvent = async (e) => {
+    //     e.preventDefault();
+    //     console.log(countOfPeople)
+    //     try {
+    //         setLoading(true);
+    //         // console.log(selectedThemes);
+    //         const themesId = selectedThemes.map((theme) => theme.value);
+    //         // console.log(themesId)
+    //         // console.log(chosenLocation)
+    //         const response = await axios.post(`/api/events/${currentUser.accessToken}`, JSON.stringify({
+    //             title: companyName,
+    //             description: companyDescr,
+    //             company_id: +chosenCompany.value,
+    //             format_id: +chosenFormat.value,
+    //             dateStart: startAt,
+    //             dateEnd: endAt,
+    //             event_pic: eventPosterPath.length < 1 ? 'default_event.png' : eventPosterPath,
+    //             themes_id: themesId,
+    //             price: +priceOfEvent,
+    //             count: +countOfPeople,
+    //             userlist_public: showSignedInUsers,
+    //             location_id: +chosenLocation.value
+    //         }), {
+    //             headers: { 'Content-Type': 'application/json' },
+    //             withCredentials: true
+    //         })
+    //         console.log(response);
+    //         setLoading(false);
+    //         navigate(`/events`);
+    //         document.location.reload();
+    //     }
+    //     catch (err) {
+    //         setLoading(false);
+    //         if (err?.response.data.status === 404) {
+    //             navigate('/404');
+    //         }
+    //         else {
+    //             console.log(err)
+    //             // navigate('/500')
+    //         }
+    //     }
+    // }
+    async function handleToken(token, email) {
+        // const response = await axios.post(`/api/events/checkout`,
+        //   JSON.stringify({
+        //     name: events.title,
+        //     eventId: events.id,
+        //     price: events.price,
+        //     token: token,
+        //     user_id: currentUser.userId,
+        //     startDate: formatedDate,
+        //     endDate: formatedDateEnd,
+        //     location: events.location,
+        //     event_pic: events.event_pic,
+        //     user_login: currentUser.user
+        //   }), {
+        //   headers: { 'Content-Type': 'application/json' },
+        //   withCredentials: true
+        // })
+        // console.log(response);
+        // setSuccesPurchase(response.data.status === 200 ? true : false)
+        // console.log(succesPurchase);
+        // document.location.reload();
+        // e.preventDefault();
         console.log(countOfPeople)
         try {
             setLoading(true);
-            console.log(selectedThemes);
+            // console.log(selectedThemes);
             const themesId = selectedThemes.map((theme) => theme.value);
-            console.log(themesId)
-            console.log(chosenLocation)
+            // console.log(themesId)
+            // console.log(chosenLocation)
             const response = await axios.post(`/api/events/${currentUser.accessToken}`, JSON.stringify({
                 title: companyName,
                 description: companyDescr,
@@ -121,23 +185,24 @@ const CreateEvent = () => {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             })
-            console.log(response);
+            // console.log(response);
+            // console.log('Розміщеня вдалось')
             setLoading(false);
             navigate(`/events`);
-            document.location.reload();
+            // document.location.reload();
         }
         catch (err) {
             setLoading(false);
+            // console.log('Розміщення не вдалось')
             if (err?.response.data.status === 404) {
                 navigate('/404');
             }
             else {
                 console.log(err)
-                // navigate('/500')
+                navigate('/500')
             }
         }
     }
-
 
     const getCompanies = async () => {
         const response = await axios.get(`/api/companies/user-companies/${currentUser.userId}`);
@@ -231,7 +296,7 @@ const CreateEvent = () => {
 
                 <div className='login bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>
                     <h2 className="text-center">{lang === 'ua' ? 'Створити Подію' : 'Create Event'}</h2>
-                    <form className="d-flex flex-column  justify-content-center" onSubmit={createEvent}>
+                    <div className="d-flex flex-column  justify-content-center">
                         <Form.Label className="form_label" htmlFor="compName">{lang === 'ua' ? 'Назва Події' : 'Event Title'}
                             <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validCompanyName || !companyName ? "hide" : "invalid"} />
@@ -251,7 +316,7 @@ const CreateEvent = () => {
                         </Form.Label>
                         <textarea
                             className="bg-dark text-white mb-3 p-2"
-                            class="bg-dark text-white mb-3" id="compDescr" rows="3"
+                            id="compDescr" rows="3"
                             autoComplete="off"
                             onChange={(e) => setCompanyDescr(e.target.value)}
                             value={companyDescr}
@@ -271,7 +336,7 @@ const CreateEvent = () => {
                         />
                         <Form.Label className="mt-2" htmlFor="location">{lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}</Form.Label>
                         <Select
-                           
+
                             placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
                             value={chosenLocation}
                             styles={customStyles}
@@ -386,9 +451,25 @@ const CreateEvent = () => {
                         <Form.Label className="mt-2" htmlFor="isShow">{lang === 'ua' ? 'Показувати користувачів, що записались на подію?' : 'Show users that signed in at the event?'}</Form.Label>
                         <Form.Check id="isShow" className="mb-2" type='switch' onChange={(e) => setShowSignedInUsers(e.target.checked)} />
 
-                        
-                        <Button variant="secondary" type="submit" disabled={!validCompanyName || !validcompanyDescr || !validPrice || !validCount || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : lang === 'ua' ? 'Створити' : 'Create'}</Button>
-                    </form>
+
+                        <StripeCheckout
+                            disabled={!validCompanyName || !validcompanyDescr || !validPrice || !validCount || isLoading ? true : false}
+                            className="text-black mb-5"
+                            panelLabel="Pay"
+                            image={`${route.serverURL}/event-pic/logo.png`}
+                            stripeKey='pk_test_51Mixi5EPLqByaBcpL2haakXv0c55d86UjBgpP7F9KxWVYE1mnedNH9PoCDftvaAfUAaBRcALgfODpCdWJERP8eH200XPb8qa6m'
+                            amount={100 * 100}
+                            name={lang === 'ua' ? 'Розмістити івент' : "Publish event"}
+                            currency="UAH"
+                            token={handleToken}
+                        >
+                            <Button variant="secondary" type="submit" disabled={!validCompanyName || !validcompanyDescr || !validPrice || !validCount || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : lang === 'ua' ? 'Створити' : 'Create'}</Button>
+
+                            {/* <Button variant="secondary" className="" disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd)  ? true : false}>
+                            {lang === 'ua' ? 'Купити квиток' : 'Buy ticket'}
+                          </Button> */}
+                        </StripeCheckout>
+                    </div>
                 </div>
             </div>
         </>

@@ -2,9 +2,16 @@ import db from '../config/db.connection.js';
 import toSQLDate from 'js-date-to-sql-datetime';
 
 export default class EventService {
-    async selectAll(filterByDate) {
+    async selectAll(filterByDate, filterLoc) {
+        let sql;
         if(filterByDate === 'undefined' || filterByDate === undefined) filterByDate='ASC';
-        let sql = `SELECT * FROM events ORDER BY dateStart ${filterByDate}`;
+        if(filterLoc === 'All') {
+            sql = `SELECT * FROM events ORDER BY dateStart ${filterByDate}`;
+        }
+        else {
+            sql = `SELECT * FROM events WHERE location_id=${filterLoc} ORDER BY dateStart ${filterByDate}`;
+        }
+        
         const [row] = await db.execute(sql);
         return row;
     }

@@ -7,6 +7,7 @@ import { validateRequestSchema } from "../../middleware/validateRequestSchema.mi
 import { isAdmin } from "../../middleware/isAccess.middleware.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { createLocationValidationChainMethod } from "../../validations/location.validation.js";
+import { uploadLocationImage } from '../../utils/uploadImage.js';
 
 const locationRouter = Router();
 
@@ -29,12 +30,26 @@ locationRouter.post(
     tryCatch(locationController.create.bind(locationController))
 );
 
+locationRouter.post(
+    '/add-image/:token',
+    isAutorised,
+    uploadLocationImage.single('image'),
+    tryCatch(locationController.add_pic.bind(locationController))
+);
+
 locationRouter.patch(
     '/:id/:token',
     isAutorised, 
     isAdmin,
     validateRequestSchema,
     tryCatch(locationController.update.bind(locationController))
+);
+
+locationRouter.patch(
+    '/location-image/:id/:token',
+    isAutorised,
+    uploadLocationImage.single('image'),
+    tryCatch(locationController.update_pic.bind(locationController))
 );
 
 locationRouter.delete(

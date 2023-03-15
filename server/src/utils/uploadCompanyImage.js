@@ -11,7 +11,7 @@ const fileStorageEngineAvatar = multer.diskStorage({
     },
 });
 
-const uploadEventImage = multer({ storage: fileStorageEngineAvatar });
+const uploadCompanyImage = multer({ storage: fileStorageEngineAvatar });
 
-export default uploadEventImage;
+export default uploadCompanyImage;
 

@@ -19,8 +19,6 @@ export default class NotificationService {
         return row;
     }
 
-
-
     async create(body) {
         var sql = `INSERT INTO notifications (title, description, user_id) VALUES ('${body.title}', '${body.description}', '${body.userId}')`;
         const [row] = await db.execute(sql);

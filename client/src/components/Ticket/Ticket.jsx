@@ -60,19 +60,23 @@ const Ticket = () => {
             return (
               <>
                 <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-5">
-                  <div className="card-body d-flex justify-content-between">
-                  <img src={`${route.serverURL}/event-pic/${ticket.event.event_pic}`} className="rounded" width='200px' height="200px" alt='Шарікс'></img>
+                  <div className="card-body d-flex">
+                    <img src={`${route.serverURL}/event-pic/${ticket.event.event_pic}`} className="rounded" width='200px' height="300px" alt='Шарікс'></img>
                     <div className="ms-3">
-                      <h5 className="card-title" style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${ticket.event.id}`} >{ticket.event.title}</h5>
-
-                      <span className="bi bi-calendar">
-                        <span className='px-2'>{formatedDateStart} - {formatedDateEnd}</span>
-                      </span> <br />
-                      <span className="bi bi-geo mt-5">
-                        <span className='px-2'>{ticket.location.title}</span>
-                      </span> <br />
+                      <a className="card-title text-underline-none text-white" href={`/event/${ticket.event.id}`} >{ticket.event.title}</a>
+                      <div className="mt-2">
+                        <span className="bi bi-calendar">
+                          <span className='px-2'>{formatedDateStart} - {formatedDateEnd}</span>
+                        </span>
+                      </div>
+                      <div className="mt-2">
+                        <span className="bi bi-geo mt-5">
+                          <span className='px-2'>{ticket.location.title}</span>
+                        </span>
+                      </div>
+                      <img src={`${route.serverURL}/qr-codes/${ticket.secret_code}.png`} className="rounded mt-2" width='200px' height="200px" alt='Шарікс'></img>
                     </div>
-                    <img src={`${route.serverURL}/qr-codes/${ticket.secret_code}.png`} className="rounded" width='200px' height="200px" alt='Шарікс'></img>
+                    {/* <img src={`${route.serverURL}/qr-codes/${ticket.secret_code}.png`} className="rounded" width='200px' height="200px" alt='Шарікс'></img> */}
 
 
 

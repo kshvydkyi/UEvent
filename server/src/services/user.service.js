@@ -13,6 +13,12 @@ export default class UserService {
         return row[0];
     }
 
+    async selectByEventId(id) {
+        let sql = `SELECT users.id, users.login, users.profile_pic FROM users INNER JOIN tickets ON tickets.event_id = ${id} AND users.id = tickets.user_id`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
+
     async create(body) {
         let sql = `INSERT INTO users (login, password, full_name, email, profile_pic, role_id, status) VALUES ('${body.login}', '${body.password}', '${body.full_name}', '${body.email}', '${body.profile_pic}', ${body.role_id}, 0)`;
         const [row] = await db.execute(sql);

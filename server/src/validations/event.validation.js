@@ -28,5 +28,5 @@ export const updateEventValidationChainMethod = [
     body('description').exists({checkFalsy: true}).isString().withMessage("Invalid format"),
     body('company_id').exists({checkFalsy: true}).isNumeric().withMessage("Invalid format"),
     body('format_id').isNumeric().withMessage("Invalid format"),
-    body('event_pic').isString().custom((value) => /\.(gif|jpg|jpeg|tiff|png)$/.test(value)).withMessage("Invalid format")
+    body('event_pic').isString().custom((value) => /\.(gif|jpg|JPG|jpeg|tiff|png)$/.test(value)).withMessage("Invalid format")
 ]

@@ -12,7 +12,7 @@ const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
 const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
 
 const CreateLocation = () => {
-    const lang  = localStorage.getItem('lang');
+    const lang = localStorage.getItem('lang');
     const errRef = useRef();
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('autorized'));
@@ -28,6 +28,7 @@ const CreateLocation = () => {
     const [city, setCity] = useState('');
     const [street, setStreet] = useState('');
     const [house, setHouse] = useState('');
+    const [locationPicture, setLocationPicture] = useState('')
 
     const [isLoading, setLoading] = useState(false);
 
@@ -45,27 +46,46 @@ const CreateLocation = () => {
     const setHidden = () => {
         setTimeout(() => setErrMsg(''), 5000);
     }
-
+    const addImage = async (e) => {
+        const formData = new FormData();
+        console.log(e.target.files[0]);
+        formData.append('image', e.target.files[0]);
+        try {
+            const response = await axios.post(`/api/location/add-image/${currentUser.accessToken}`, formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    withCredentials: true
+                }
+            )
+            console.log(response);
+            setLocationPicture(response.data.values.values.pathFile);
+        } catch (e) {
+            console.log(e);
+        }
+    }
     const createLocation = async (e) => {
         e.preventDefault();
         try {
             setLoading(true);
+            console.log(locationPicture)
             const response = await axios.post(`/api/location/${currentUser.accessToken}`, JSON.stringify(
-                { description: locationDescr,
-                title: locationName,
-                country: country,
-                street: street,
-                city: city,
-                house: house
+                {
+                    description: locationDescr,
+                    title: locationName,
+                    country: country,
+                    street: street,
+                    city: city,
+                    house: house,
+                    location_pic: locationPicture.length < 1 ? 'default_location.png' : locationPicture
 
                 }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
-            }) 
+            })
             console.log(response);
             setLoading(false);
-            navigate(`/`);
-            document.location.reload();
+            // navigate(`/`);
+            // document.location.reload();
         }
         catch (err) {
             setLoading(false);
@@ -83,9 +103,9 @@ const CreateLocation = () => {
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
 
                 <div className='login bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>
-                    <h2 className="text-center">{ lang === 'ua' ? 'Створити Локацію' : 'Create Location' }</h2>
+                    <h2 className="text-center">{lang === 'ua' ? 'Створити Локацію' : 'Create Location'}</h2>
                     <form className="d-flex flex-column  justify-content-center" onSubmit={createLocation}>
-                        <Form.Label className="form_label" htmlFor="compName">{ lang === 'ua' ? 'Назва Локації' : 'Location Name' }
+                        <Form.Label className="form_label" htmlFor="compName">{lang === 'ua' ? 'Назва Локації' : 'Location Name'}
                             <FontAwesomeIcon icon={faCheck} className={validlocationName ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validlocationName || !locationName ? "hide" : "invalid"} />
                         </Form.Label>
@@ -97,21 +117,22 @@ const CreateLocation = () => {
                             onChange={(e) => setlocationName(e.target.value)}
                             value={locationName}
                         />
-                        
-                        <Form.Label className="form_label" htmlFor="compDescr">{ lang === 'ua' ? 'Опис Локації' : 'Location Description' }
+
+                        <Form.Label className="form_label" htmlFor="compDescr">{lang === 'ua' ? 'Опис Локації' : 'Location Description'}
                             <FontAwesomeIcon icon={faCheck} className={validlocationDescr ? "valid" : "hide"} />
                             <FontAwesomeIcon icon={faTimes} className={validlocationDescr || !locationDescr ? "hide" : "invalid"} />
                         </Form.Label>
                         <textarea
                             className="bg-dark text-white mb-3 p-2"
-                            class="bg-dark text-white mb-3" id="compDescr" rows="3"
+                            id="compDescr"
+                            rows="3"
                             autoComplete="off"
                             onChange={(e) => setlocationDescr(e.target.value)}
                             value={locationDescr}
                         >
-                         </textarea>
+                        </textarea>
 
-                         <Form.Label className="form_label" htmlFor="country">{ lang === 'ua' ? 'Країна' : 'Country' }
+                        <Form.Label className="form_label" htmlFor="country">{lang === 'ua' ? 'Країна' : 'Country'}
                         </Form.Label>
                         <Form.Control
                             type="text"
@@ -122,7 +143,7 @@ const CreateLocation = () => {
                             value={country}
                         />
 
-                        <Form.Label className="form_label" htmlFor="city">{ lang === 'ua' ? 'Місто' : 'City' }
+                        <Form.Label className="form_label" htmlFor="city">{lang === 'ua' ? 'Місто' : 'City'}
                         </Form.Label>
                         <Form.Control
                             type="text"
@@ -133,7 +154,7 @@ const CreateLocation = () => {
                             value={city}
                         />
 
-                        <Form.Label className="form_label" htmlFor="street">{ lang === 'ua' ? 'Вулиця' : 'Street' }
+                        <Form.Label className="form_label" htmlFor="street">{lang === 'ua' ? 'Вулиця' : 'Street'}
                         </Form.Label>
                         <Form.Control
                             type="text"
@@ -144,7 +165,7 @@ const CreateLocation = () => {
                             value={street}
                         />
 
-                        <Form.Label className="form_label" htmlFor="house">{ lang === 'ua' ? 'Дім' : 'House' }
+                        <Form.Label className="form_label" htmlFor="house">{lang === 'ua' ? 'Дім' : 'House'}
                         </Form.Label>
                         <Form.Control
                             type="text"
@@ -154,8 +175,19 @@ const CreateLocation = () => {
                             onChange={(e) => setHouse(e.target.value)}
                             value={house}
                         />
+                        <Form.Label htmlFor="posteer">{lang === 'ua' ? 'Фото' : 'Photo'}
+                        </Form.Label>
+                        <Form.Control
+                            type="file"
+                            className="bg-dark text-white mb-3"
+                            id="posteer"
+                            autoComplete="off"
+                            accept="image/jpeg,image/png,image/jpg"
+                            onChange={addImage}
+                        // value={eventPoster}
+                        />
 
-                        <Button  variant="secondary" type="submit"disabled={ !validlocationName || !validlocationDescr || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> :  lang === 'ua' ? 'Створити' : 'Create' }</Button>
+                        <Button variant="secondary" type="submit" disabled={!validlocationName || !validlocationDescr || isLoading ? true : false}>{isLoading ? <SpinnerLoading /> : lang === 'ua' ? 'Створити' : 'Create'}</Button>
                     </form>
                 </div>
             </div>

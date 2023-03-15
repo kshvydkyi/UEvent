@@ -22,7 +22,7 @@ export class EventController {
     }
 
     async selectAll(req, res) {
-        const result = await this.service.selectAll(req.query.filter);
+        const result = await this.service.selectAll(req.query.filter, req.query.filterL);
         const data = result.map(async (item) => {
             const company = await this.companyService.selectById(item.company_id);
             const format = await this.formatService.selectById(item.format_id);
@@ -83,6 +83,8 @@ export class EventController {
     }
 
     async create(req, res) {
+        stripe('sk_test_51Mixi5EPLqByaBcpNGY0T2xiailUqTSHqwzHYeYD7gNu58HT1mGljO548Z701MRR9uWZRtFQLFoDtR1AquR0hZjB00iAOmm44E');
+        
         await this.service.create(req.body);
     }
 
@@ -99,6 +101,7 @@ export class EventController {
         const pathFile = req.file.filename;
         await this.service.update_event_pic(pathFile, req.params.id);
     }
+    
     async payment(req, res) {
         stripe('sk_test_51Mixi5EPLqByaBcpNGY0T2xiailUqTSHqwzHYeYD7gNu58HT1mGljO548Z701MRR9uWZRtFQLFoDtR1AquR0hZjB00iAOmm44E')
         const { name, price, token, user_id, eventId, startDate, endDate, location, event_pic,user_login } = req.body;

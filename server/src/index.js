@@ -29,6 +29,8 @@ app.use('/avatars', express.static(`${path.resolve()}/assets/avatars`));
 app.use('/event-pic', express.static(`${path.resolve()}/assets/event_pic`));
 app.use('/qr-codes', express.static(`${path.resolve()}/assets/qr-codes`));
 app.use('/tickets', express.static(`${path.resolve()}/assets/tickets`));
+app.use('/locations', express.static(`${path.resolve()}/assets/location_pic`));
+app.use('/company-pic', express.static(`${path.resolve()}/assets/company_pic`));
 const port = app.get('port');
 
 const server = app.listen(port, () => console.log(`Server started on port ${port}`));

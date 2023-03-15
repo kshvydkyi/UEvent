@@ -208,7 +208,7 @@ function Header() {
 
       <Collapse className='ms-3 w-25 fixed-bottom' in={openNotif}>
         <div>
-          <Alert variant="info">
+          <Alert variant="dark">
             <Alert.Heading >{lang === 'ua' ? 'Повідомлення' : 'Notifications'}</Alert.Heading>
             <>
               {

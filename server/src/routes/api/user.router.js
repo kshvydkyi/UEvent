@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {tryCatch} from "../../utils/tryCacth.utils.js";
-import uploadAvatarImage from '../../utils/uploadAvatarImage.js';
 import userController from "../../controllers/userController.js";
 import { isAccessUserService, isAdmin, isAccessOrAdminUserService} from "../../middleware/isAccess.middleware.js";
 import UserService from "../../services/user.service.js";
@@ -9,6 +8,8 @@ import { registerValidateChainMethod, updateProfileDataValidationChainMethod } f
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
 import { isNotExistById } from "../../scripts/roleChecking.script.js";
 import { isSameUserData } from "../../scripts/userChecking.script.js";
+
+import { uploadAvatarImage } from '../../utils/uploadImage.js';
 
 const userRouter = Router();
 
@@ -26,6 +27,11 @@ userRouter.get(
     tryCatch(userController.selectById.bind(userController))
 );
 
+//Select By Event Id 
+userRouter.get(
+    '/event/:id',
+    tryCatch(userController.selectByEventId.bind(userController))
+);
 //Create (Only for admin)
 userRouter.post(
     '/:token',

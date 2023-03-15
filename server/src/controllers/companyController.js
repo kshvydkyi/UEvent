@@ -37,6 +37,16 @@ export class CompanyController {
         await this.service.update(req.body, req.params.id);
     }
 
+    async add_pic(req, res) {
+        const data = { pathFile: req.file.filename };
+        return data;
+    }
+    
+    async update_pic(req, res) { 
+        const pathFile = req.file.filename;
+        await this.service.update_pic(pathFile, req.params.id);
+    }
+
     async deleteById(req, res) {
         await this.service.deleteById(req.params.id);
     }

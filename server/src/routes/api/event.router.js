@@ -7,7 +7,7 @@ import { isNotExistById } from "../../scripts/roleChecking.script.js";
 import EventService from "../../services/event.service.js";
 import { validateRequestSchema } from "../../middleware/validateRequestSchema.middleware.js";
 import { eventCreateValidationChainMethod, updateEventValidationChainMethod } from "../../validations/event.validation.js";
-import uploadEventImage from '../../utils/uploadEventImage.js';
+import { uploadEventImage } from '../../utils/uploadImage.js';
 import CompanyService from "../../services/company.service.js";
 
 
@@ -27,8 +27,6 @@ eventRouter.get(
     '/search/:search',
     tryCatch(eventController.search.bind(eventController))
 )
-
-
 
 eventRouter.get(
     '/:id',

@@ -34,7 +34,12 @@ const Event = () => {
   const [eventName, setEventName] = useState('');
 
   const [locations, setAllLocations] = useState([])
+
+  const [locationsFilter, setAllLocationsFilter] = useState([])
+
   const [chosenLocation, setChosenLocation] = useState('')
+
+  const [chosenLocationFilter, setChosenLocationFilter] = useState('All')
 
   const [validCompanyName, setValidCompanyName] = useState(false);
 
@@ -85,7 +90,14 @@ const Event = () => {
       const data = { value: value.id, label: value.title }
       return data
     }))
+
+    setAllLocationsFilter(response.data.values.values.map((value) => {
+      const data = { value: value.id, label: value.title }
+      return data
+    }))
+    setAllLocationsFilter(locationsFilter => [...locationsFilter, {value: 'All', label: 'All' }]);
   }
+
   useEffect(() => {
     getLocations()
   }, [])
@@ -106,15 +118,16 @@ const Event = () => {
     }
   }
 
-  const getEvents = async (dateFilter) => {
+  const getEvents = async (dateFilter, locationFilter) => {
+    setChosenLocationFilter(locationFilter);
     setDateFilter(dateFilter);
-    const response = await axios.get(`/api/events/?page=1&filter=${dateFilter}`)
+    const response = await axios.get(`/api/events/?page=1&filter=${dateFilter}&filterL=${locationFilter.value}`)
     setEvents(response.data.values.data);
     setPageCount(response.data.values.meta.totalPages);
   }
 
   useEffect(() => {
-    getEvents();
+    getEvents('ASC',{value: 'All',label:'All'});
   }, [])
 
 
@@ -170,6 +183,7 @@ const Event = () => {
     setOpenModal(true);
     try {
       const response = await axios.get(`/api/events/${id}`)
+      console.log(response);
       setEventName(response.data.values.values.title)
       setEventDescr(response.data.values.values.description)
       setChosenCompany({ value: response.data.values.values.company_id, label: response.data.values.values.companyName })
@@ -190,6 +204,8 @@ const Event = () => {
       setCountOfPeople(response.data.values.values.ticketsCount);
       setChosenLocation({ value: response.data.values.values.location.id, label: response.data.values.values.location.title });
       setShowSignedInUsers(response.data.values.values.showUserList === 1 ? true : false);
+      console.log(response.data.values.values.event_pic)
+      setEventPosterPath(response.data.values.values.event_pic)
     }
 
     catch (e) {
@@ -232,6 +248,7 @@ const Event = () => {
     try {
       setLoading(true);
       // console.log(selectedThemes);
+      console.log(eventPosterPath);
       const themesId = selectedThemes.map((theme) => theme.value);
       const response = await axios.patch(`/api/events/${eventId}/${currentUser.accessToken}`, JSON.stringify({
         title: eventName,
@@ -239,7 +256,7 @@ const Event = () => {
         company_id: +chosenCompany.value,
         format_id: +chosenFormat.value,
         dateStart: startAt,
-        event_pic: eventPosterPath.length < 1 ? 'default_event.png' : eventPosterPath,
+        event_pic: eventPosterPath,
         themes_id: themesId,
         price: +priceOfEvent,
         count: +countOfPeople,
@@ -252,8 +269,8 @@ const Event = () => {
       console.log('ku')
       console.log(response);
       setLoading(false);
-      // navigate(`/events`);
-      // document.location.reload();
+      navigate(`/events`);
+      document.location.reload();
     }
     catch (err) {
       setLoading(false);
@@ -321,12 +338,12 @@ const Event = () => {
 
   const paginatePosts = async (currentPage) => {
     console.log(currentPage)
-    const response = await axios.get(`/api/events/?page=${currentPage}`);
+    const response = await axios.get(`/api/events/?page=${currentPage}&filter=${dateFilter}`);
     return response;
   }
 
   const handlePageClick = async (data) => {
-    const response = await axios.get(`/api/events/?page=${data.selected + 1}`);
+    const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter}&filterL=${chosenLocationFilter.value}`);
     console.log(response);
     setEvents(response.data.values.data);
   }
@@ -334,10 +351,6 @@ const Event = () => {
 
   const search = async () => {
     const response = await axios.get(`/api/events/search/${searchEvents}`);
-    // if(response.data.values.values.length === 0) {
-    //   const res = await axios.get(`/api/events/`);
-    //   setEvents(res.data.values.data)
-    // }  // 💩💩💩💩💩 УВАГА В ДАНОМІ УЧАСТКЕ КОДІ НАСРАНО
     setEvents(response.data.values.values);
   }
 
@@ -357,12 +370,21 @@ const Event = () => {
           <Button variant="secondary" onClick={() => search()}>Search</Button>
 
           <div className='w-25 p-3 float-right position-relative'>
-            <select value={dateFilter} onChange={(e) => getEvents(e.target.value)} style={customStyles} className="form-select form-select-sm position-absolute top-50 start-50" aria-label=".form-select-sm example">
+            <select value={dateFilter} onChange={(e) => getEvents(e.target.value, chosenLocationFilter)} style={customStyles} className="form-select form-select-sm position-absolute top-50 start-50" aria-label=".form-select-sm example">
               <option selected value="ASC">Від нових до старих</option>
               <option value="DESC">Від старих до нових</option>
             </select>
           </div>
+
         </Form>
+          <Select
+          placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
+          value={chosenLocationFilter}
+          styles={customStyles}
+          id='location'
+          options={locationsFilter}
+          onChange={(option) => getEvents(dateFilter, option)} 
+          />
 
 
 
@@ -381,19 +403,36 @@ const Event = () => {
                 const formatedDateStart = moment(normalFormatStart).format('D MMMM, HH:mm');
                 const normalFormatEnd = moment(event.dateEnd, moment.defaultFormat).toDate();
                 const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, HH:mm');
+
+                const normalcurrentDate = moment(new Date(), moment.defaultFormat).toDate();
+                const formatedCurrentDate = moment(normalcurrentDate).format('D MMMM, HH:mm');
                 return (
                   <>
 
 
-                    <div className="p-3 me-3">
-                      <ListGroup>
-                        <div className="card bg-dark">
-                          <div className=" text-center">
-                            <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
+                    <div  className="p-3 me-3">
+                      <ListGroup> 
+                        <div  className="card bg-dark">
+                          <div  className=" text-center">
+                            {
+                              new Date() > new Date(event.dateEnd) ? 
+                              <img  id = "blurred" src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="331px" alt='Шарікс'
+                              style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
+                              :
+                              <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
                               style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
 
+                            }
+                     
                           </div>
-                          <div className="card-body">
+                          <div  className="card-body">
+                          {
+                              new Date() > new Date(event.dateEnd) ? 
+                              
+                              <p>{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</p>
+                              :
+                              <></>
+                            }
                             <span className="bi bi-calendar-date">
                               <span className='px-2'>{formatedDateStart} - {formatedDateEnd}</span>
                             </span> <br />
@@ -411,6 +450,8 @@ const Event = () => {
                             <span className="bi bi-card-list">
                               <span className="px-2">{event.formatName}</span>
                             </span> <br />
+
+                            
 
                             <span className="bi bi-building">
                               <span className="mb-3 px-2" style={{ cursor: 'pointer' }} onClick={() => window.location = `/company/${event.company_id}`} >{event.companyName}</span>
