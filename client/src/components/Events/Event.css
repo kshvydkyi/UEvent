@@ -174,9 +174,16 @@ section .events ul li .details a:hover {
 
 
 #blurred {
-  filter: blur(3px);
-  -webkit-filter: blur(3px);
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  content: 'Подія скінчилась';
+}
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

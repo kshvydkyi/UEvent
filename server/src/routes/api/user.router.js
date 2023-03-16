@@ -44,7 +44,7 @@ userRouter.post(
 
 //Update Avatar (Only for self user and admin)
 userRouter.patch(
-    '/avatar/:token',
+    '/avatar/:id/:token',
     isAutorised,
     isAccessOrAdminUserService(UserService),
     uploadAvatarImage.single('image'),

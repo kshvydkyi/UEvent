@@ -122,7 +122,7 @@ const Company = () => {
           ?
           companies.map((company) =>
             <>
-              <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-5">
+              <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-2">
                 <div className="card-body ">
 
                   <div className="d-flex mb-3">
@@ -218,7 +218,7 @@ const Company = () => {
             </>
           )
           :
-          <h1 className="mt-5">{lang === 'ua' ? 'У вас поки що немає компаній, ви їх можете створити в своєму профілі' : 'You still have no companies, you can create it in your profile'}</h1>
+          <h1 className="mt-2">{lang === 'ua' ? 'У вас поки що немає компаній, ви їх можете створити в своєму профілі' : 'You still have no companies, you can create it in your profile'}</h1>
       }
 
 

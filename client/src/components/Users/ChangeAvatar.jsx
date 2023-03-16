@@ -25,21 +25,21 @@ const ChangeUserAvatar = () => {
         // console.log(formData);
         try {
             setLoading(true);
-            const response = await axios.patch(`/api/users/avatar/${user.accessToken}`, formData,
+            const response = await axios.patch(`/api/users/avatar/${user.userId}/${user.accessToken}`, formData,
                 {
                     headers: { "Content-Type": "multipart/form-data" },
                     withCredentials: true
                 }
 
             )
-            // console.log(response);
+            console.log(response);
             setImage(response.data.values.path);
             setLoading(false);
             navigate(`/user/${user.userId}`);
         }
         catch (err) {
             setLoading(false);
-            // console.log(err);
+            console.log(err);
             setErrMsg( lang === 'ua' ? 'Помилка' : 'Error' )
         }
 

@@ -96,7 +96,7 @@ const CurrentCompany = () => {
     <>
       
 
-      <div className="card d-flex justify-content-center w-25 mt-5 m-auto bg-dark text-white">
+      <div className="card d-flex justify-content-center w-25 mt-2 m-auto bg-dark text-white">
         <div className="card-body">
           <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{companies.title}</h5>
           <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{companies.description}</p>

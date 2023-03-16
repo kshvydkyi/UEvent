@@ -142,7 +142,7 @@ const Location = () => {
                     ?
                     locations.map((location) =>
                         <>
-                            <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mt-5 mb-1">
+                            <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mt-2 mb-1">
                                 <div className="card-body ">
                                     <div className="d-flex justify-content-center m-auto">
                                         <img src={`${route.serverURL}/locations/${location.location_pic}`} alt="location_picture" className="text-center" width='200' height='150' />

@@ -59,7 +59,7 @@ const Ticket = () => {
 
             return (
               <>
-                <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-5">
+                <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-2">
                   <div className="card-body d-flex">
                     <img src={`${route.serverURL}/event-pic/${ticket.event.event_pic}`} className="rounded" width='200px' height="300px" alt='Шарікс'></img>
                     <div className="ms-3">
@@ -87,7 +87,7 @@ const Ticket = () => {
             )
           })
           :
-          <h1 className="mt-4">{lang === 'ua' ? 'У вас поки що немає квитків' : 'You still have no tickets'}</h1>
+          <h1 className="mt-2 text-center">{lang === 'ua' ? 'У вас поки що немає квитків' : 'You still have no tickets'}</h1>
       }
 
       <ReactPaginate

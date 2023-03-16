@@ -74,8 +74,8 @@ const CurrentEvent = () => {
 
   const getUsersOfEvent = async () => {
     const response = await axios.get(`/api/users/event/${currentId}`);
-    setUsersEvents(response.data.values.values);
-    console.log(response.data.values.values)
+    setUsersEvents([...new Map(response.data.values.values.map((m) => [m.id, m])).values()])
+    
   }
 
   useEffect(() => {
@@ -125,10 +125,10 @@ const CurrentEvent = () => {
     <>
       {events ?
 
-        <div className='w-100 d-flex justify-content-center text-align-center'>
-          <div className="mt-5 container" >
+        <div className=' d-flex justify-content-center text-align-center'>
+          <div className="mt-2 p-2" >
             <div className="card mb-3 bg-dark">
-              <div className="d-flex">
+              <div className="d-flex flex-wrap justify-content-center">
                 <div className="">
                   <img src={`${route.serverURL}/event-pic/${events.event_pic}`} className="rounded d-block" width='300px' height="500px" alt='Шарікс'
                     onClick={() => window.location = `/event/${events.id}`}>
@@ -151,13 +151,16 @@ const CurrentEvent = () => {
                       <span className="bi bi-calendar-date">
                         <span className="ms-1">{formatedDate} - {formatedDateEnd}</span>
                       </span>
-                      <span className="bi bi-geo ms-3">
+                      </div>
+                      <div>
+                      <span className="bi bi-geo">
                         <span className=" ms-1">
                           {`${events?.location?.title} - ${events?.location?.country},
                         ${events?.location?.city}, ${lang === 'ua' ? 'вул. ' : 'st. '}${events?.location?.street} ${events?.location?.house}`}
                         </span>
                       </span>
-                    </div>
+                      </div>
+                    
                     <div className="mt-3">
                       <span className="bi bi-card-text">
                         <span className="ms-1">{events.description}</span>
@@ -221,19 +224,23 @@ const CurrentEvent = () => {
                         events.showUserList === 1 ? 
                         <>
                         <h3 className='mt-2'>{lang === 'ua' ? 'Користувачі, що записались на подію' : 'Users that signed up at the event'}</h3>
+                        <div className="d-flex flex-wrap">
                         {
                           (usersEvents.length !== 0) && (Array.isArray(usersEvents)) ?
+                          
                           usersEvents.map((user) => {
                             return (
                             <>
-                            <span className='mx-2'>{user.login}</span>
-                            <img src={user.profile_pic && user.profile_pic !== 'undefined' && user.profile_pic !== undefined ? `${route.serverURL}/avatars/${user.profile_pic}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle mb-3' height={40} width={40} alt='avatar' /><br/>
+                            
+                            <a href={`/user/${user.id}`} className="text-decoration-none"> <img src={user.profile_pic && user.profile_pic !== 'undefined' && user.profile_pic !== undefined ? `${route.serverURL}/avatars/${user.profile_pic}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle mb-3' height={40} width={40} alt='avatar' /></a>
+                            
                             </>
                             )
                           })
                           :
                           <p>{lang === 'ua' ? 'Поки що ніхто не записався на подію' : 'Still users did not sign up at the event'}</p>
                         }
+                        </div>
                         </>
                         : 
                         <></>

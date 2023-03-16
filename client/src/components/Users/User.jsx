@@ -42,12 +42,12 @@ const User = () => {
     const getUserInfo = async () => {
         try {
             const response = await axios.get(`/api/users/${id[2]}`);
-            console.log('user', response.data.values);
+            // console.log('user', response.data.values);
             setSelfProfile(currentUser.userId === +id[2] ? true : false)
             setLogin(response.data.values.values.login);
             setFullName(response.data.values.values.full_name);
             setEmail(response.data.values.values.email);
-            setPhoto(response.data.values.values.photo);
+            setPhoto(response.data.values.values.profile_pic);
             setRoleId(response.data.values.values.role_id);
             const role = await axios.get(`/api/roles/${response.data.values.values.role_id}`);
             setRole(role.data.values.values.role_id)
@@ -68,8 +68,8 @@ const User = () => {
             <div className="form-background p-5 d-flex justify-content-center">
                 <section className='bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>
                     <div className='d-flex justify-content-center align-items-center'>
-                        <h2 className='m-2'>{login}</h2>
-                        <p className='m-2 text-muted'>{role}</p>
+                        <h2 className=''>{login}</h2>
+                        <p className=' text-muted'>{role}</p>
                         <div className="ms-5">{selfProfile ?
                             <>
                             <NavDropdown title={ lang === 'ua' ? 'Налаштування' : 'Setting' } id="collasible-nav-dropdown">

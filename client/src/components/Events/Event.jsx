@@ -357,7 +357,7 @@ const Event = () => {
   return (
     <>
 
-      <div className="container-xxl d-flex flex-column mt-5 ">
+      <div className="container-xxl d-flex flex-column mt-2 ">
         <Form className="d-flex w-50 mx-auto mt-3 mb-3">
           <Form.Control
             type="input"
@@ -413,11 +413,12 @@ const Event = () => {
                     <div  className="p-3 me-3">
                       <ListGroup> 
                         <div  className="card bg-dark">
-                          <div  className=" text-center">
+                          <div  className="position-relative text-center text-black">
                             {
                               new Date() > new Date(event.dateEnd) ? 
-                              <img  id = "blurred" src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="331px" alt='Шарікс'
-                              style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
+                              <>
+                              <img  id = "blurred" src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
+                              style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img> <div className="centered ">{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</div> </>
                               :
                               <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
                               style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
@@ -426,15 +427,15 @@ const Event = () => {
                      
                           </div>
                           <div  className="card-body">
-                          {
+                          {/* {
                               new Date() > new Date(event.dateEnd) ? 
                               
                               <p>{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</p>
                               :
                               <></>
-                            }
+                            } */}
                             <span className="bi bi-calendar-date">
-                              <span className='px-2'>{formatedDateStart} - {formatedDateEnd}</span>
+                              <span className='px-2'>{formatedDateStart}</span>
                             </span> <br />
                             <span className="bi bi-book">
                               <span className="card-title px-2">{event.title.length < 24 ? event.title : <>
@@ -664,7 +665,7 @@ const Event = () => {
 
               )
               :
-              <h1 className="mt-5 text-center">{lang === 'ua' ? 'Подій поки що немає' : 'No events exist'}</h1>
+              <h1 className="mt-2 text-center">{lang === 'ua' ? 'Подій поки що немає' : 'No events exist'}</h1>
           }
         </div>
       </div>
