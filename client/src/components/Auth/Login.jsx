@@ -37,7 +37,7 @@ const Login = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || '/'
+    const from = location.state?.from?.pathname || '/events/?page=1'
 
     useEffect(() => {
         userRef.current.focus();

@@ -16,6 +16,7 @@ const ChangeProfile = () => {
     const errRef = useRef();
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('autorized'));
+
     const [errMsg, setErrMsg] = useState('');
 
     const [changedLogin, setChangedLogin] = useState('');
@@ -53,13 +54,14 @@ const ChangeProfile = () => {
     const UpdateUserData = async (e) => {
         e.preventDefault();
         try {
+            // console.log('fullName: ',changedFullName); 
             setLoading(true);
             const response = await axios.patch(`/api/users/${user.userId}/${user.accessToken}`, JSON.stringify({ login: changedLogin, email: changedEmail, full_name: changedFullName }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             }) 
             localStorage.setItem('autorized', JSON.stringify({ accessToken: user.accessToken, role: user.role, user: changedLogin, userId: user.userId }))
-            // console.log(response); 
+            
             setLoading(false);
             navigate(`/user/${user.userId}`);
             document.location.reload();
@@ -81,7 +83,7 @@ const ChangeProfile = () => {
     const getUserInfo = async () => {
         try {
             const response = await axios.get(`/api/users/${user.userId}`);
-            console.log(response);
+            // console.log(response);
             setChangedLogin(response.data.values.values.login);
             setChangedFullName(response.data.values.values.full_name);
             setChangedEmail(response.data.values.values.email);

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,7 +26,9 @@ const COUNT_REGEX = /^[0-9]{1,4}$/;
 const Event = () => {
   const lang = localStorage.getItem('lang');
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
-
+  const { search } = useLocation();
+  const page = search.split('=');
+  // console.log(page);
   const [events, setEvents] = useState([]);
   const [searchEvents, setSearchEvents] = useState('');
 
@@ -95,7 +97,7 @@ const Event = () => {
       const data = { value: value.id, label: value.title }
       return data
     }))
-    setAllLocationsFilter(locationsFilter => [...locationsFilter, {value: 'All', label: 'All' }]);
+    setAllLocationsFilter(locationsFilter => [...locationsFilter, { value: 'All', label: 'All' }]);
   }
 
   useEffect(() => {
@@ -118,16 +120,20 @@ const Event = () => {
     }
   }
 
-  const getEvents = async (dateFilter, locationFilter) => {
+  const getEvents = async (dateFilter, locationFilter, pageNumber) => {
     setChosenLocationFilter(locationFilter);
     setDateFilter(dateFilter);
-    const response = await axios.get(`/api/events/?page=1&filter=${dateFilter}&filterL=${locationFilter.value}`)
+    console.log(searchEvents);
+    const response = await axios.get(`/api/events/?page=${pageNumber}&filter=${dateFilter}&filterL=${locationFilter.value}&filterND=${searchEvents}`)
     setEvents(response.data.values.data);
     setPageCount(response.data.values.meta.totalPages);
   }
 
   useEffect(() => {
-    getEvents('ASC',{value: 'All',label:'All'});
+    if (page[0] !== '?page') {
+      navigate('/not-found');
+    }
+    getEvents('ASC', { value: 'All', label: 'All' }, page[1]);
   }, [])
 
 
@@ -247,8 +253,6 @@ const Event = () => {
   const updateEvent = async (e) => {
     try {
       setLoading(true);
-      // console.log(selectedThemes);
-      console.log(eventPosterPath);
       const themesId = selectedThemes.map((theme) => theme.value);
       const response = await axios.patch(`/api/events/${eventId}/${currentUser.accessToken}`, JSON.stringify({
         title: eventName,
@@ -266,7 +270,6 @@ const Event = () => {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true
       })
-      console.log('ku')
       console.log(response);
       setLoading(false);
       navigate(`/events`);
@@ -331,63 +334,58 @@ const Event = () => {
   };
 
 
-
+const dateOptions = [{value: 'ASC', label: 'Від нових до старих'}, {value: 'DESC', label: 'Від старих до нових'}]
   // pagination
 
   const [pageCount, setPageCount] = useState(0);
 
-  const paginatePosts = async (currentPage) => {
-    console.log(currentPage)
-    const response = await axios.get(`/api/events/?page=${currentPage}&filter=${dateFilter}`);
-    return response;
-  }
+  // const paginatePosts = async (currentPage) => {
+  //   console.log(currentPage)
+  //   const response = await axios.get(`/api/events/?page=${currentPage}&filter=${dateFilter}`);
+  //   return response;
+  // }
 
   const handlePageClick = async (data) => {
-    const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter}&filterL=${chosenLocationFilter.value}`);
+    navigate(`/events/?page=${data.selected + 1}`);
+    const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter}&filterL=${chosenLocationFilter.value}&filterND=${searchEvents}`);
     console.log(response);
     setEvents(response.data.values.data);
-  }
-
-
-  const search = async () => {
-    const response = await axios.get(`/api/events/search/${searchEvents}`);
-    setEvents(response.data.values.values);
   }
 
   return (
     <>
 
       <div className="container-xxl d-flex flex-column mt-2 ">
-        <Form className="d-flex w-50 mx-auto mt-3 mb-3">
-          <Form.Control
-            type="input"
-            placeholder="Search"
-            className="me-2"
-            aria-label="Search"
-            value={searchEvents}
-            onChange={(e) => setSearchEvents(e.target.value)}
-          />
-          <Button variant="secondary" onClick={() => search()}>Search</Button>
+        <div className="d-flex align-items-center justify-content-between ms-3 me-5">
 
-          <div className='w-25 p-3 float-right position-relative'>
-            <select value={dateFilter} onChange={(e) => getEvents(e.target.value, chosenLocationFilter)} style={customStyles} className="form-select form-select-sm position-absolute top-50 start-50" aria-label=".form-select-sm example">
-              <option selected value="ASC">Від нових до старих</option>
-              <option value="DESC">Від старих до нових</option>
-            </select>
-          </div>
-
-        </Form>
+          <select
+            value={dateFilter}
+            onChange={(e) => getEvents(e.target.value, chosenLocationFilter, page[1])} style={customStyles} className="form-select bg-dark text-white w-25" aria-label=".form-select-sm example">
+            <option selected value="ASC" className="p-3 bg-grey">Від нових до старих</option>
+            <option value="DESC" className="p-3 bg-grey">Від старих до нових</option>
+          </select>
           <Select
-          placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
-          value={chosenLocationFilter}
-          styles={customStyles}
-          id='location'
-          options={locationsFilter}
-          onChange={(option) => getEvents(dateFilter, option)} 
+            placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
+            value={chosenLocationFilter}
+            className='w-25 bg-dark'
+            styles={customStyles}
+            id='location'
+            options={locationsFilter}
+            onChange={(option) => getEvents(dateFilter, option, '1')}
           />
+          <Form className="d-flex w-25 mt-3 mb-3">
+            <Form.Control
+              type="input"
+              placeholder="Search"
+              className="bg-dark me-2 text-white"
+              aria-label="Search"
+              value={searchEvents}
+              onChange={(e) => setSearchEvents(e.target.value)}
+            />
+            <Button variant="secondary" onClick={() => getEvents(dateFilter, chosenLocationFilter, page[1])}>Search</Button>
+          </Form>
 
-
-
+        </div>
 
 
         <div className='d-flex flex-wrap'>
@@ -410,24 +408,24 @@ const Event = () => {
                   <>
 
 
-                    <div  className="p-3 me-3">
-                      <ListGroup> 
-                        <div  className="card bg-dark">
-                          <div  className="position-relative text-center text-black">
+                    <div className="p-3 me-3">
+                      <ListGroup>
+                        <div className="card bg-dark">
+                          <div className="position-relative text-center text-black">
                             {
-                              new Date() > new Date(event.dateEnd) ? 
-                              <>
-                              <img  id = "blurred" src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
-                              style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img> <div className="centered ">{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</div> </>
-                              :
-                              <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
-                              style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
+                              new Date() > new Date(event.dateEnd) ?
+                                <>
+                                  <img id="blurred" src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
+                                    style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img> <div className="centered ">{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</div> </>
+                                :
+                                <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
+                                  style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
 
                             }
-                     
+
                           </div>
-                          <div  className="card-body">
-                          {/* {
+                          <div className="card-body">
+                            {/* {
                               new Date() > new Date(event.dateEnd) ? 
                               
                               <p>{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</p>
@@ -452,7 +450,7 @@ const Event = () => {
                               <span className="px-2">{event.formatName}</span>
                             </span> <br />
 
-                            
+
 
                             <span className="bi bi-building">
                               <span className="mb-3 px-2" style={{ cursor: 'pointer' }} onClick={() => window.location = `/company/${event.company_id}`} >{event.companyName}</span>
@@ -675,6 +673,7 @@ const Event = () => {
         breakLabel={'...'}
         pageCount={pageCount}
         marginPagesDisplayed={2}
+        forcePage={+page[1] - 1}
         pageRangeDisplayed={3}
         onPageChange={handlePageClick}
         containerClassName={'pagination justify-content-center'}

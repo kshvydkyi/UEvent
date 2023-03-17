@@ -38,6 +38,8 @@ const CurrentEvent = () => {
   const [eventLocation, setEventLocation] = useState([]);
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
+  const [errMsg, setErrMsg] = useState('');
+
   const [eventName, setEventName] = useState('');
   const [validCompanyName, setValidCompanyName] = useState(false);
 
@@ -45,6 +47,12 @@ const CurrentEvent = () => {
   const [validcompanyDescr, setValidCompanyDescr] = useState(false);
 
   const [usersEvents, setUsersEvents] = useState([]);
+
+  const [promocodes, setPromocodes] = useState([]);
+  const [usePromocode, setUsePromocode] = useState('');
+  const [isPromocode, setIsPromocode] = useState(false);
+
+  const [changedPrice, setChangedPrice] = useState();
 
   const [eventId, setEventId] = useState();
 
@@ -82,6 +90,16 @@ const CurrentEvent = () => {
     getUsersOfEvent();
   }, [])
 
+  const getPromocodes = async () => {  
+    const response = await axios.get(`/api/promocodes/selectByEventId/${currentId}`);
+    setPromocodes(response.data.values.values)
+    // console.log('promocodes',response.data.values.values)
+  }
+
+  useEffect(() => {
+    getPromocodes();
+  }, [])
+
 
   const normalFormat = moment(events.dateStart, moment.defaultFormat).toDate();
   const formatedDate = moment(normalFormat).format('D MMMM, HH:mm');
@@ -116,6 +134,35 @@ const CurrentEvent = () => {
     setSuccesPurchase(response.data.status === 200 ? true : false)
     console.log(succesPurchase);
     document.location.reload();
+  }
+
+  const [openModal, setOpenModal] = useState(false);
+
+  async function openTheModal() { 
+    setOpenModal(true);
+  }
+
+  async function closeTheModal() {
+    setOpenModal(false);
+  }
+
+  async function checkPromocode() {
+    setErrMsg('')
+    setIsPromocode(false)
+    for(let i = 0; i < promocodes.length; i++) {
+      if(usePromocode === promocodes[i].code) {
+        if(promocodes[i].count === 0 || new Date() > new Date(promocodes.expiresAt)) {
+          setErrMsg('Promocode expired')
+        }
+        else {
+          setIsPromocode(true)
+          setChangedPrice(events.price - (events.price * (promocodes[i].discount / 100)))
+        }
+      }
+      else {
+        setErrMsg('Such promocode does not exist')
+      }
+    }
   }
 
 
@@ -161,7 +208,7 @@ const CurrentEvent = () => {
                       </span>
                       </div>
                     
-                    <div className="mt-3">
+                    <div className="mt-3 d-flex">
                       <span className="bi bi-card-text">
                         <span className="ms-1">{events.description}</span>
                       </span>
@@ -204,6 +251,7 @@ const CurrentEvent = () => {
                           {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
                         </Button>
                         :
+                        <>
                         <StripeCheckout
                           disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd) ? true : false}
                           className="text-black mb-5"
@@ -215,10 +263,16 @@ const CurrentEvent = () => {
                           currency="UAH"
                           token={handleToken}
                         >
-                          <Button variant="secondary" className="" disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd)  ? true : false}>
+                          <Button variant="secondary" className="me-3" disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd)  ? true : false}>
                             {lang === 'ua' ? 'Купити квиток' : 'Buy ticket'}
                           </Button>
                         </StripeCheckout>
+
+                        <Button onClick={() => openTheModal()} variant="warning" className="">
+                            {lang === 'ua' ? 'Використати промокод' : 'Use Promocode'}
+                          </Button>
+                        </>
+                        
                       }
                       {
                         events.showUserList === 1 ? 
@@ -256,6 +310,56 @@ const CurrentEvent = () => {
                         </Toast.Header>
                         <Toast.Body className='dark'>{lang === 'ua' ? 'Ви успішно записалися на подію!' : 'You\'ve been successfully signed up at the event!'}</Toast.Body>
                       </Toast>
+
+
+                      {/* Promocode Modal Window */}
+
+                      <Modal className="bg-dark" centered show={openModal} onHide={() => closeTheModal()}>
+                        <div className="border border-secondary rounded">
+                          <Modal.Header className="bg-dark" closeButton closeVariant='white'>
+                            <Modal.Title className="text-white">{lang === 'ua' ? 'Промокод' : 'Promocode'}</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body className="bg-dark text-white rounded-bottom">
+                            <Form className="d-flex flex-column  justify-content-center">
+                              <p className ='text-danger'>{errMsg}</p>
+                              <Form.Label className="form_label text-white" htmlFor="prom">{lang === 'ua' ? 'Назва Промокоду' : 'Promocode'}
+                              </Form.Label>
+                              <Form.Control
+                                type="text"
+                                className="bg-dark text-white mb-3"
+                                id="prom"
+                                autoComplete="off"
+                                onChange={(e) => setUsePromocode(e.target.value)}
+                                value={usePromocode}
+                              />
+
+                            <Button className = 'mb-2' variant="warning" onClick={() => checkPromocode()}>{lang === 'ua' ? 'Використати промокод' : 'Use Promocode'}</Button>
+                            </Form>
+
+                            {
+                              isPromocode ?
+                            <StripeCheckout
+                            disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd) ? true : false}
+                            className="text-black mb-5 "
+                            panelLabel="Pay"
+                            image={`${route.serverURL}/event-pic/${events.event_pic}`}
+                            stripeKey='pk_test_51Mixi5EPLqByaBcpL2haakXv0c55d86UjBgpP7F9KxWVYE1mnedNH9PoCDftvaAfUAaBRcALgfODpCdWJERP8eH200XPb8qa6m'
+                            amount={+changedPrice * 100}
+                            name={events.title}
+                            currency="UAH"
+                            token={handleToken}
+                          >
+                            <Button variant="secondary" className="" disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd)  ? true : false}>
+                              {lang === 'ua' ? 'Купити квиток' : 'Buy ticket'}
+                            </Button>
+                          </StripeCheckout>
+                          : <> </>
+                          }
+
+                          </Modal.Body>
+
+                        </div>
+                      </Modal>
 
 
                     </div>

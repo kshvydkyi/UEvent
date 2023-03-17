@@ -108,7 +108,7 @@ function Header() {
         <Container className='d-flex justify-content-around'>
           {/* <img src={logo} height={40} alt='logo' /> */}
 
-          <Navbar.Brand className="" href="/" data-value="Kvitochok">Kvit😊chok</Navbar.Brand>
+          <Navbar.Brand className="" href="/events/?page=1" data-value="Kvitochok">Kvit😊chok</Navbar.Brand>
           {/* <Navbar.Brand href="/" target={'_blank'}>Concertik</Navbar.Brand> */}
 
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />

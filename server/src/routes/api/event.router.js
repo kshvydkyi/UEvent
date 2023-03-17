@@ -23,15 +23,20 @@ eventRouter.get(
     tryCatchPagination(eventController.selectAll.bind(eventController))
 );
 
-eventRouter.get(
-    '/search/:search',
-    tryCatch(eventController.search.bind(eventController))
-)
+// eventRouter.get(
+//     '/search/:search',
+//     tryCatchPagination(eventController.search.bind(eventController))
+// )
 
 eventRouter.get(
     '/:id',
     isNotExistById(EventService),
     tryCatch(eventController.selectById.bind(eventController))
+);
+
+eventRouter.get(
+    '/selectByCompanyId/:id',
+    tryCatch(eventController.selectByCompanyId.bind(eventController))
 );
 
 eventRouter.post(

@@ -1,4 +1,5 @@
 import db from '../config/db.connection.js';
+import toSQLDate from 'js-date-to-sql-datetime';
 
 export default class PromocodeService {
     async selectAll() {
@@ -13,8 +14,15 @@ export default class PromocodeService {
         return row[0];
     }
 
+    async selectByEventId(id) {
+        let sql = `SELECT * FROM promocodes WHERE event_id = ${id}`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
+
     async create(body) {
-        var sql = `INSERT INTO promocodes (code, discount, company_id, event_id, expiresAt, used, count) VALUES ('${body.title}', '${body.discount}', ${body.company_id}, ${body.event_id}, '${body.expiresAt}', '${body.used}', '${body.count}')`;
+        const date1 = toSQLDate(new Date(body.expiresAt));
+        var sql = `INSERT INTO promocodes (code, discount, company_id, event_id, expiresAt, used, count) VALUES ('${body.title}', '${body.discount}', ${body.company_id}, ${body.event_id}, '${date1}', '${body.used}', '${body.count}')`;
         const [row] = await db.execute(sql);
         return row;
     }

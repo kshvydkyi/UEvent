@@ -97,9 +97,14 @@ const CurrentCompany = () => {
       
 
       <div className="card d-flex justify-content-center w-25 mt-2 m-auto bg-dark text-white">
-        <div className="card-body">
-          <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{companies.title}</h5>
-          <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{companies.description}</p>
+        <div className='d-flex'>
+            <div className='d-flex flex-column align-items-center'>
+              <img src={`${route.serverURL}/company-pic/${companies.company_pic}`} alt="company pic" width={100} height={100} />
+            </div>
+            <div className='d-flex flex-column'>
+              <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{companies.title}</h5>
+              <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{companies.description}</p>
+            </div>
         </div>
         {
         companies.user_id === currentUser.userId ?

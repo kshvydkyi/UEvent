@@ -74,7 +74,7 @@ export const updateProfileDataValidationChainMethod = [
     .exists({ checkFalsy: true })
     .isEmail()
     .withMessage("invalid format"),
-  body('fullName')
+  body('full_name')
     .exists({ checkFalsy: true })
     .isString()
     .withMessage('invalid format')

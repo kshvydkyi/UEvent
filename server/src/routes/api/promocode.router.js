@@ -21,6 +21,11 @@ promocodeRouter.get(
     tryCatch(promocodeController.selectById.bind(promocodeController))
 );
 
+promocodeRouter.get(
+    '/selectByEventId/:id',
+    tryCatch(promocodeController.selectByEventId.bind(promocodeController))
+);
+
 promocodeRouter.post(
     '/:token',
     isAutorised,

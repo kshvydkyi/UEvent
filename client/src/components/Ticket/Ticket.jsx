@@ -17,6 +17,7 @@ import moment from 'moment';
 const Ticket = () => {
   const lang = localStorage.getItem('lang');
   const [tickets, setTickets] = useState([]);
+  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
   const [isLoading, setLoading] = useState(false);
@@ -37,8 +38,9 @@ const Ticket = () => {
 
 
   const handlePageClick = async (data) => {
-    const response = await axios.get(`/api/tickets/?page=${data.selected + 1}`);
-    console.log(response);
+    navigate(`/tickets/?page=${data.selected + 1}`);
+    const response = await axios.get(`/api/tickets/byUserId/${currentUser.userId}/?page=${data.selected + 1}`);
+    // console.log(response);
     setTickets(response.data.values.data);
   }
 
@@ -52,18 +54,18 @@ const Ticket = () => {
         (tickets.length !== 0) && (Array.isArray(tickets))
           ?
           tickets.map((ticket) => {
-            const normalFormatStart = moment(ticket.event.dateStart, moment.defaultFormat).toDate();
+            const normalFormatStart = moment(ticket?.event?.dateStart, moment.defaultFormat).toDate();
             const formatedDateStart = moment(normalFormatStart).format('D MMMM, HH:mm');
-            const normalFormatEnd = moment(ticket.event.dateEnd, moment.defaultFormat).toDate();
+            const normalFormatEnd = moment(ticket?.event?.dateEnd, moment.defaultFormat).toDate();
             const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, HH:mm');
 
             return (
               <>
                 <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-2">
                   <div className="card-body d-flex">
-                    <img src={`${route.serverURL}/event-pic/${ticket.event.event_pic}`} className="rounded" width='200px' height="300px" alt='Шарікс'></img>
+                    <img src={`${route.serverURL}/event-pic/${ticket?.event?.event_pic}`} className="rounded" width='200px' height="300px" alt='Шарікс'></img>
                     <div className="ms-3">
-                      <a className="card-title text-underline-none text-white" href={`/event/${ticket.event.id}`} >{ticket.event.title}</a>
+                      <a className="card-title text-underline-none text-white" href={`/event/${ticket?.event?.id}`} >{ticket?.event?.title}</a>
                       <div className="mt-2">
                         <span className="bi bi-calendar">
                           <span className='px-2'>{formatedDateStart} - {formatedDateEnd}</span>
@@ -71,12 +73,12 @@ const Ticket = () => {
                       </div>
                       <div className="mt-2">
                         <span className="bi bi-geo mt-5">
-                          <span className='px-2'>{ticket.location.title}</span>
+                          <span className='px-2'>{ticket?.location.title}</span>
                         </span>
                       </div>
-                      <img src={`${route.serverURL}/qr-codes/${ticket.secret_code}.png`} className="rounded mt-2" width='200px' height="200px" alt='Шарікс'></img>
+                      <img src={`${route.serverURL}/qr-codes/${ticket?.secret_code}.png`} className="rounded mt-2" width='200px' height="200px" alt='Шарікс'></img>
                     </div>
-                    {/* <img src={`${route.serverURL}/qr-codes/${ticket.secret_code}.png`} className="rounded" width='200px' height="200px" alt='Шарікс'></img> */}
+                    {/* <img src={`${route.serverURL}/qr-codes/${ticket?.secret_code}.png`} className="rounded" width='200px' height="200px" alt='Шарікс'></img> */}
 
 
 
@@ -91,8 +93,8 @@ const Ticket = () => {
       }
 
       <ReactPaginate
-        previousLabel={'previous'}
-        nextLabel={'next'}
+        previousLabel={'<'}
+        nextLabel={'>'}
         breakLabel={'...'}
         pageCount={pageCount}
         marginPagesDisplayed={2}

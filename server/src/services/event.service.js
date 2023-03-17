@@ -2,14 +2,14 @@ import db from '../config/db.connection.js';
 import toSQLDate from 'js-date-to-sql-datetime';
 
 export default class EventService {
-    async selectAll(filterByDate, filterLoc) {
+    async selectAll(filterByDate, filterLoc, filterND) {
         let sql;
         if(filterByDate === 'undefined' || filterByDate === undefined) filterByDate='ASC';
         if(filterLoc === 'All') {
-            sql = `SELECT * FROM events ORDER BY dateStart ${filterByDate}`;
+            sql = `SELECT * FROM events WHERE (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
         }
         else {
-            sql = `SELECT * FROM events WHERE location_id=${filterLoc} ORDER BY dateStart ${filterByDate}`;
+            sql = `SELECT * FROM events WHERE location_id=${filterLoc} AND (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
         }
         
         const [row] = await db.execute(sql);
@@ -20,6 +20,12 @@ export default class EventService {
         let sql = `SELECT * FROM events WHERE id = ${id}`;
         const [row] = await db.execute(sql);
         return row[0];
+    }
+
+    async selectByCompanyId(id) {
+        let sql = `SELECT * FROM events WHERE company_id = ${id}`;
+        const [row] = await db.execute(sql);
+        return row;
     }
 
     async create(body) {
@@ -35,7 +41,7 @@ export default class EventService {
     }
 
     async update(body, id) {
-        console.log('check update',body)
+        // console.log('check update',body)
         if(Object.entries(body).length !== 0){
             await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => db.execute(`UPDATE events SET ${key} = '${value}' WHERE id = ${id}`))
         }
@@ -62,19 +68,25 @@ export default class EventService {
     async buyTicket(body) {
         var sql = `UPDATE events SET count=count-1 WHERE id = ${body.event_id}`;
         const [row] = await db.execute(sql);
-
-        let sql1 = `INSERT INTO tickets (user_id, event_id, secret_code) VALUES ('${body.user_id}', '${body.event_id}', '${body.token.id}')`;
+        let userId = body.user_id;
+        // console.log(userId);
+        if(userId === undefined){
+           let guestUser = `SELECT id FROM users WHERE login = 'guest_kvitochok'`
+           const [guestUserRow] = await db.execute(guestUser);
+           userId = guestUserRow[0].id;
+        }
+        let sql1 = `INSERT INTO tickets (user_id, event_id, secret_code) VALUES ('${userId}', '${body.event_id}', '${body.token.id}')`;
         const [row1] = await db.execute(sql1);
 
-        let sql2 = `INSERT INTO notifications (user_id, title, descriptiob) VALUES ('${body.user_id}', '${body.title}', '${body.title}')`;
+        let sql2 = `INSERT INTO notifications (user_id, title, descriptiob) VALUES ('${userId}', '${body.title}', '${body.title}')`;
         const [row2] = await db.execute(sql2);
 
         return row;
     }
 
-    async search(data) {
-        let sql = `SELECT * FROM events WHERE (title LIKE '%${data}%' OR description LIKE '%${data}%')`
-        const [row] = await db.execute(sql);
-        return row;
-    }
+    // async search(data) {
+    //     let sql = `SELECT * FROM events WHERE (title LIKE '%${data}%' OR description LIKE '%${data}%')`
+    //     const [row] = await db.execute(sql);
+    //     return row;
+    // }
 }

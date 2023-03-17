@@ -97,8 +97,6 @@ const User = () => {
                             <p>{ lang === 'ua' ? 'Пошта' : 'Email' }: {email}</p>
 
                         </div>
-                      
-
                     </div>
 
                 </section>

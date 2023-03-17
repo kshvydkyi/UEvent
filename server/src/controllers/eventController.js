@@ -22,7 +22,7 @@ export class EventController {
     }
 
     async selectAll(req, res) {
-        const result = await this.service.selectAll(req.query.filter, req.query.filterL);
+        const result = await this.service.selectAll(req.query.filter, req.query.filterL, req.query.filterND);
         const data = result.map(async (item) => {
             const company = await this.companyService.selectById(item.company_id);
             const format = await this.formatService.selectById(item.format_id);
@@ -82,6 +82,11 @@ export class EventController {
         return data;
     }
 
+    async selectByCompanyId(req,res) {
+        const result = await this.service.selectByCompanyId(req.params.id);
+        return result;
+    }
+
     async create(req, res) {
         stripe('sk_test_51Mixi5EPLqByaBcpNGY0T2xiailUqTSHqwzHYeYD7gNu58HT1mGljO548Z701MRR9uWZRtFQLFoDtR1AquR0hZjB00iAOmm44E');
         
@@ -104,7 +109,7 @@ export class EventController {
     
     async payment(req, res) {
         stripe('sk_test_51Mixi5EPLqByaBcpNGY0T2xiailUqTSHqwzHYeYD7gNu58HT1mGljO548Z701MRR9uWZRtFQLFoDtR1AquR0hZjB00iAOmm44E')
-        const { name, price, token, user_id, eventId, startDate, endDate, location, event_pic,user_login } = req.body;
+        const { name, price, token, user_id, eventId, startDate, endDate, location, event_pic, user_login } = req.body;
         const purchase = {
             title: name,
             price: price,
@@ -129,38 +134,38 @@ export class EventController {
         await this.service.deleteById(req.params.id);
     }
 
-    async search(req,res) {
-        const result = await this.service.search(req.params.search);
-        const data = result.map(async (item) => {
-            const company = await this.companyService.selectById(item.company_id);
-            const format = await this.formatService.selectById(item.format_id);
-            const location = await this.locationService.selectById(item.location_id);
-            const themes = await this.themeService.selectByEventId(item.id);
-            return {
-                id: item.id,
-                title: item.title,
-                description: item.description,
-                event_pic: item.event_pic,
-                company_id: item.company_id,
-                format_id: item.format_id,
-                dateStart: item.dateStart,
-                dateEnd: item.dateEnd,
-                ticketsCount: item.count,
-                status: item.status,
-                showUserList: item.userlist_public,
-                price: item.price,
-                themes: themes,
-                location: location,
-                companyName: company.title,
-                companyOwner: company.user_id,
-                formatName: format.title,
-            }
-        })
-        const returnData = await Promise.all(data);
+    // async search(req,res) {
+    //     const result = await this.service.search(req.params.search);
+    //     const data = result.map(async (item) => {
+    //         const company = await this.companyService.selectById(item.company_id);
+    //         const format = await this.formatService.selectById(item.format_id);
+    //         const location = await this.locationService.selectById(item.location_id);
+    //         const themes = await this.themeService.selectByEventId(item.id);
+    //         return {
+    //             id: item.id,
+    //             title: item.title,
+    //             description: item.description,
+    //             event_pic: item.event_pic,
+    //             company_id: item.company_id,
+    //             format_id: item.format_id,
+    //             dateStart: item.dateStart,
+    //             dateEnd: item.dateEnd,
+    //             ticketsCount: item.count,
+    //             status: item.status,
+    //             showUserList: item.userlist_public,
+    //             price: item.price,
+    //             themes: themes,
+    //             location: location,
+    //             companyName: company.title,
+    //             companyOwner: company.user_id,
+    //             formatName: format.title,
+    //         }
+    //     })
+    //     const returnData = await Promise.all(data);
 
 
-        return returnData;
-    }
+    //     return returnData;
+    // }
 }
 
 const eventController = new EventController(new EventService(), new CompanyService(), new FormatService(), new LocationService(), new ThemeService());

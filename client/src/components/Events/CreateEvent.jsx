@@ -188,7 +188,7 @@ const CreateEvent = () => {
             // console.log(response);
             // console.log('Розміщеня вдалось')
             setLoading(false);
-            navigate(`/events`);
+            navigate(`/events/?page=1`);
             // document.location.reload();
         }
         catch (err) {
@@ -336,7 +336,6 @@ const CreateEvent = () => {
                         />
                         <Form.Label className="mt-2" htmlFor="location">{lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}</Form.Label>
                         <Select
-
                             placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
                             value={chosenLocation}
                             styles={customStyles}

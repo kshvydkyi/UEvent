@@ -15,6 +15,11 @@ export class PromocodeController {
         return result;
     }
 
+    async selectByEventId(req,res) {
+        const result = await this.service.selectByEventId(req.params.id);
+        return result;
+    }
+
     async create(req, res) {
         await this.service.create(req.body);
     }
