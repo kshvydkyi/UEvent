@@ -49,8 +49,6 @@ export class EventController {
             }
         })
         const returnData = await Promise.all(data);
-
-
         return returnData;
     }
 
