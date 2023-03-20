@@ -41,9 +41,23 @@ export default class EventService {
     }
 
     async update(body, id) {
-        // console.log('check update',body)
+        body.userlist_public === true ? body.userlist_public = 1 : body.userlist_public = 0;
         if(Object.entries(body).length !== 0){
-            await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => db.execute(`UPDATE events SET ${key} = '${value}' WHERE id = ${id}`))
+            await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => {
+                if(key === 'dateStart' || key === 'dateEnd') {
+                    value = toSQLDate(new Date(value));
+                } 
+                if(key === "themes_id") {
+                    db.execute(`DELETE FROM themes_events WHERE event_id = ${id}`);
+                    value.forEach(async (element) => {
+                        db.execute(`INSERT INTO themes_events (theme_id, event_id) VALUES (${element}, ${id})`);
+                    });
+                }
+                else {
+                    db.execute(`UPDATE events SET ${key} = '${value}' WHERE id = ${id}`);
+                }
+                
+            })
         }
 	}
 
@@ -69,7 +83,6 @@ export default class EventService {
         var sql = `UPDATE events SET count=count-1 WHERE id = ${body.event_id}`;
         const [row] = await db.execute(sql);
         let userId = body.user_id;
-        // console.log(userId);
         if(userId === undefined){
            let guestUser = `SELECT id FROM users WHERE login = 'guest_kvitochok'`
            const [guestUserRow] = await db.execute(guestUser);

@@ -8,7 +8,6 @@ export const ifUserExist = (Service) => async (req, res, next) => {
         return response(409, { message: "User with this login or email already exists" }, res);
     }
     next();
-
 }
 
 export const ifUserNotExist = (Service) => async (req, res, next) => {

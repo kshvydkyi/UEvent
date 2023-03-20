@@ -31,6 +31,10 @@ export class PromocodeController {
     async deleteById(req, res) {
         await this.service.deleteById(req.params.id);
     }
+
+    async decrease(req, res) {
+        await this.service.decrease(req.params.id);
+    }
 }
 
 const promocodeController = new PromocodeController(new PromocodeService());

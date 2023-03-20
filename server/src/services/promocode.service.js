@@ -44,4 +44,10 @@ export default class PromocodeService {
         const [row] = await db.execute(sql);
         return row.length !== 0;
     }
+
+    async decrease(id) {
+        var sql = `UPDATE promocodes SET count=count-1 WHERE id = ${id}`;
+        const [row] = await db.execute(sql);
+        return row;
+    }
 }

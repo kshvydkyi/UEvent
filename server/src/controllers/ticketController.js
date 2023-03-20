@@ -28,12 +28,11 @@ export class TicketController {
     async selectByUserId(req, res) {
         const result = await this.service.selectByUserId(req.params.user_id);
         const data = result.map(async(value) => {
-            // console.log(value)
             const event = await this.eventService.selectById(value.event_id);
             const location = await this.locationService.selectById(event.location_id);
             const format = await this.formatService.selectById(event.format_id);
             const themes = await this.themeService.selectByEventId(event.id);
-            const company = await this.companyService.selectById(event.company_id)
+            const company = await this.companyService.selectById(event.company_id);
             return{
                 id: value.id,
                 user_id: value.user_id,
@@ -45,8 +44,7 @@ export class TicketController {
                 company: company
             }
         })
-        const promiseData = await Promise.all(data)
-        console.log(promiseData)
+        const promiseData = await Promise.all(data);
         return promiseData;
     }
 

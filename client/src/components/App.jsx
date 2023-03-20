@@ -26,6 +26,7 @@ import CreateLocation from './Locations/CreateLocation';
 import NotFound from './Other/NotFound';
 import ServerError from './Other/ServerError';
 import { CheckTicket } from './Ticket/CheckTicket';
+import { WelcomePage } from './Other/WelcomePage';
 
 
 function App() {
@@ -52,7 +53,7 @@ function App() {
 				<Route path="*" element={<NotFound />} />
 				<Route path="500" element={<ServerError />} />
 				<Route path='events' element={<Event />} />
-				<Route path='/' element={<Event />} />
+				<Route path='/' element={<WelcomePage />} />
 				<Route path='event/:id' element={<CurrentEvent />} />
 				<Route path='company/:id' element={<CurrentCompany />} />
 				<Route path='check-ticket/:secretCode' element={<CheckTicket />} />

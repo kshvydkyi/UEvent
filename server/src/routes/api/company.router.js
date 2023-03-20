@@ -56,9 +56,9 @@ companyRouter.post(
 );
 
 companyRouter.post(
-    '/addUser/:token',
+    '/addUser/:id/:token',
     isAutorised,
-    isAccess,
+    isAccess(CompanyService),
     tryCatch(companyController.addUser.bind(companyController))
 );
 

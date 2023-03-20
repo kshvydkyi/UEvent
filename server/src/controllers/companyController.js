@@ -30,7 +30,7 @@ export class CompanyController {
     }
 
     async addUser(req, res) {
-        await this.service.addUser(req.body);
+        await this.service.addUser(req.params.id,req.body);
     }
 
     async update(req, res){

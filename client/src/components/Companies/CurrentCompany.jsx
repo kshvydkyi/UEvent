@@ -16,6 +16,7 @@ import route from "../../api/route";
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
+import AsyncSelect from 'react-select/async';
 
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
@@ -32,11 +33,11 @@ const CurrentCompany = () => {
   const [companies, setCompanies] = useState([]);
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
-  const [employeeLogin, setEmployeeLogin] = useState('');
+  const [employeeId, setEmployeeId] = useState('');
 
   const navigate = useNavigate();
 
-
+  const [allUsers, setAllUsers] = useState([]);
 
 
   const getCompanies = async () => {
@@ -65,30 +66,84 @@ const CurrentCompany = () => {
   }
 
 
+  const getUsers = async () => {
+    const response = await axios.get(`/api/users/`);
+    setAllUsers(response.data.values.values.map((value) => {
+      const data = { value: value.id, label: value.login }
+      return data;
+    }));
+  }
+
+  useEffect(() => {
+    getUsers();
+  }, [])
+
+
   const addEmployee = async (e) => {
+    // e.preventDefault();
     try {
-      console.log('add emplyee')
-      const response = await axios.post(`/api/companies/addUser/${currentUser.accessToken}`, JSON.stringify({
-        user_id: +employeeLogin,
-        company_id: +currentId,
-      }), {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
-      })
-      console.log(response);
-      document.location.reload();
+        const response = await axios.post(`/api/companies/addUser/${currentId}/${currentUser.accessToken}`, 
+        JSON.stringify({       
+            user_id: +employeeId.value
+          }), 
+        {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+        })
+        console.log('res',response);
+
+        document.location.reload();
     }
     catch (err) {
-      console.log(err?.response)
-      if (err?.response.data.status === 404) {
-        navigate('/404');
-      }
-      else {
-        console.log(err)
-        // navigate('/500')
-      }
+
+        if (err?.response.data.status === 404) {
+            navigate('/404');
+        }
+        else {
+            navigate('/500')
+        }
     }
-  }
+}
+
+const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'none',
+    boxShadow: state.isFocused ? `` : '',
+    transition: 'box-shadow 0.1s ease-in-out',
+  }),
+
+  placeholder: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+
+  input: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isFocused
+      ? 'grey'
+      : 'transparent',
+    transition: '0.3s',
+    color: 'white',
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'white'
+  }),
+  singleValueLabel: (provided) => ({
+    ...provided,
+    color: 'white'
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: 'rgb(45, 45, 45)',
+  }),
+}
 
 
 
@@ -96,21 +151,25 @@ const CurrentCompany = () => {
     <>
       
 
-      <div className="card d-flex justify-content-center w-25 mt-2 m-auto bg-dark text-white">
-        <div className='d-flex'>
-            <div className='d-flex flex-column align-items-center'>
+      <div className="card d-flex justify-content-center w-25 mt-3 m-auto bg-dark text-white">
+        <div className='d-flex card-body'>
+            <div className='d-flex flex-column align-items-center me-2'>
               <img src={`${route.serverURL}/company-pic/${companies.company_pic}`} alt="company pic" width={100} height={100} />
             </div>
             <div className='d-flex flex-column'>
-              <h5 className="card-title">{lang === 'ua' ? 'Назва: ' : 'Title: '}{companies.title}</h5>
-              <p className="card-text">{lang === 'ua' ? 'Опис: ' : 'Description: '}{companies.description}</p>
+              <h5 className="card-title">{companies.title}</h5>
+              <div className="d-flex">
+                        <span className="bi bi-card-text ">
+                        <span className="card-text ms-2 text-align-justify">{companies.description}</span>
+                        </span>
+                      </div>
             </div>
         </div>
         {
         companies.user_id === currentUser.userId ?
-          <div className="upload-btn-wrapper">
+          <div className="ms-3 mb-3">
             <Button onClick={() => openTheModal()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? `Додати співробітника` : `Add employee`}</Button>
-            <input type="button" name="myfile" />
+         
           </div>
           : <div className = 'mx-auto'> <br/>  </div>
       }
@@ -124,15 +183,16 @@ const CurrentCompany = () => {
         </Modal.Header>
         <Modal.Body className="bg-dark">
 
-          <Form.Label className="form_label " htmlFor="compName">{lang === 'ua' ? 'Логін користувача' : 'User Login'}
-          </Form.Label>
-          <Form.Control
-            type="text"
-            className="bg-dark text-white mb-3"
-            id="compName"
-            autoComplete="off"
-            onChange={(e) => setEmployeeLogin(e.target.value)}
-            value={employeeLogin}
+            <Select
+            placeholder={lang === 'ua' ? 'Оберіть користувача' : 'Choose user'}
+            value={employeeId}
+            className='bg-dark'
+            styles={customStyles}
+            id='user'
+            options={allUsers}
+            onChange={(option) => {
+              setEmployeeId(option);
+            }}
           />
 
         </Modal.Body>

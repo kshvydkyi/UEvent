@@ -52,4 +52,9 @@ promocodeRouter.delete(
     tryCatch(promocodeController.deleteById.bind(promocodeController))
 );
 
+promocodeRouter.patch(
+    '/decrease/:id/',
+    tryCatch(promocodeController.decrease.bind(promocodeController))
+);
+
 export default promocodeRouter;

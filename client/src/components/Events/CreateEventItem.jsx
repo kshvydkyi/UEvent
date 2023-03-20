@@ -273,7 +273,7 @@ const CreateEventItem = () => {
                         </Form.Label>
                         <textarea
                             className="bg-dark text-white mb-3"
-                            class="bg-dark text-white mb-3" id="compDescr" rows="3"
+                            id="compDescr" rows="3"
                             autoComplete="off"
                             onChange={(e) => setEventItemDescr(e.target.value)}
                             value={eventItemDescr}

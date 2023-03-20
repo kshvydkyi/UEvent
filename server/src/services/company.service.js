@@ -31,9 +31,8 @@ export default class CompanyService {
         return row;
     }
 
-    async addUser(body) {
-        console.log(body)
-        var sql = `INSERT INTO users_companies (user_id, company_id) VALUES (${body.user_id}, ${body.company_id})`;
+    async addUser(id, body) {
+        var sql = `INSERT INTO users_companies (user_id, company_id) VALUES (${body.user_id}, ${id})`;
         const [row] = await db.execute(sql);
         return row;
     }

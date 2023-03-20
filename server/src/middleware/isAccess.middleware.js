@@ -52,15 +52,27 @@ export const isAccessOrAdminUserService = (Service) => async (req, res, next) =>
 export const isAccessCompanyOrAdmin = (Service) => async (req, res, next) => {
     const service = new Service();
     let result;
-    if(!req.body.company_id){
-         result = await service.selectById(req.params.company_id);
+    let userlist;
+    if (!req.body.company_id) {
+        result = await service.selectById(req.params.company_id);
+        userlist = await service.selectUsersByCompanyId(req.params.company_id);
     }
-    else{
+    else {
         result = await service.selectById(req.body.company_id);
+        userlist = await service.selectUsersByCompanyId(req.body.company_id);
     }    
-    console.log(result);
+
     const userData = jwt.verify(req.params.token, 'jwt-key');
-    if (result.user_id !== userData.userId && userData.role !== 'admin') {
+
+    let check = false;
+    userlist.forEach(async (element) => {
+        
+        if (element.user_id !== userData.userId) {
+            check = true;
+        }
+    });
+
+    if ((result.user_id !== userData.userId || check === false) && userData.role !== 'admin') {
         return response(403, { message: 'access denied' }, res);
     }
     next();

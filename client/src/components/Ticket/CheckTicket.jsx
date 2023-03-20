@@ -22,7 +22,7 @@ export const CheckTicket = () => {
             catch (e) {
                 if(e?.response.data.status === 404){
                     setActive(lang === 'ua' ? "Цей квиток більше не активний" : 'This ticket is inactive');
-                    setTimeout(() => navigate('/'), 20000);
+                    setTimeout(() => navigate('/?page=1'), 20000);
                 }
                 else{
                     setActive(lang === 'ua' ? "Виникла помилка на сервеві" : 'An server error occured');

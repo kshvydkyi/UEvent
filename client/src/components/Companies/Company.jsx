@@ -217,7 +217,7 @@ const Company = () => {
   }
 
 
-
+// console.log(companies)
   return (
     <>
       {
@@ -225,7 +225,7 @@ const Company = () => {
           ?
           companies.map((company) =>
             <>
-              <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-2">
+              <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-3">
                 <div className="card-body">
 
                   <div className="d-flex mb-3">
@@ -235,22 +235,25 @@ const Company = () => {
                     </div>
                     <div className="d-flex flex-column ms-3">
                       <a className="card-title text-white h3 text-decoration-none" href={`/company/${company.id}`}>{company.title}</a>
-                      <div>
-                        <span className="card-text">{company.description}</span>
+                      <div className="d-flex">
+                        <span className="bi bi-card-text ">
+                        <span className="card-text ms-2 text-align-justify">{company.description}</span>
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <Button onClick={() => openTheModal(company.id)} type="button" className="btn btn-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <Button onClick={() => openTheModalToAddProm(company.id)} type="button" variant="secondary" className="me-2 ">
+                    {lang === 'ua' ? 'Додати промокод' : 'Add promocode'}
+                  </Button>
+                  <Button onClick={() => openTheModal(company.id)} type="button" className="btn btn-warning me-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                   </svg></Button>
-                  <Button onClick={() => openTheModalToDelete(company.id)} type="button" className="btn btn-danger" style={{ marginLeft: '10px' }}><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                  <Button onClick={() => openTheModalToDelete(company.id)} type="button" className="btn btn-danger me-2" ><svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                     <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
                   </svg></Button>
 
-                  <Button onClick={() => openTheModalToAddProm(company.id)} type="button" className="btn btn-primary" style={{ marginLeft: '10px' }}>
-                    Add promocode
-                  </Button>
+                 
 
                 </div>
 

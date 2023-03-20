@@ -121,7 +121,6 @@ export class EventController {
             token: token,
             user_login: user_login
         }
-        // console.log('purchase: ', purchase)
         await createPdf(purchase);
         sendMailUtils.send(purchase.email, purchase.token.id, 'buyTicket');
         await this.service.buyTicket(purchase);

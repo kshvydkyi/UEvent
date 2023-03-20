@@ -39,6 +39,7 @@ const Ticket = () => {
 
   const handlePageClick = async (data) => {
     navigate(`/tickets/?page=${data.selected + 1}`);
+    window.scrollTo(0,0)
     const response = await axios.get(`/api/tickets/byUserId/${currentUser.userId}/?page=${data.selected + 1}`);
     // console.log(response);
     setTickets(response.data.values.data);
@@ -61,8 +62,8 @@ const Ticket = () => {
 
             return (
               <>
-                <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-2">
-                  <div className="card-body d-flex">
+                <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-3">
+                  <div className="card-body d-flex justify-content-center">
                     <img src={`${route.serverURL}/event-pic/${ticket?.event?.event_pic}`} className="rounded" width='200px' height="300px" alt='Шарікс'></img>
                     <div className="ms-3">
                       <a className="card-title text-underline-none text-white" href={`/event/${ticket?.event?.id}`} >{ticket?.event?.title}</a>
@@ -93,22 +94,22 @@ const Ticket = () => {
       }
 
       <ReactPaginate
-        previousLabel={'<'}
-        nextLabel={'>'}
+        previousLabel={'previous'}
+        nextLabel={'next'}
         breakLabel={'...'}
         pageCount={pageCount}
         marginPagesDisplayed={2}
         pageRangeDisplayed={3}
         onPageChange={handlePageClick}
         containerClassName={'pagination justify-content-center'}
-        pageClassName={'page-item'}
-        pageLinkClassName={'page-link'}
-        previousClassName={'page-item'}
-        previousLinkClassName={'page-link'}
-        nextClassItem={'page-item'}
-        nextLinkClassName={'page-link'}
-        breakClassName={'page-item'}
-        breakLinkClassName={'page-link'}
+        pageClassName={''}
+        pageLinkClassName={''}
+        previousClassName={''}
+        previousLinkClassName={''}
+        nextClassItem={''}
+        nextLinkClassName={''}
+        breakClassName={''}
+        breakLinkClassName={''}
         activeClassName={'active'}
       />
 

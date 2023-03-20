@@ -20,7 +20,7 @@ import { ToastContainer } from 'react-toastify';
 
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,50}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,300}$/;
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,1000}$/;
 const PRICE_REGEX = /^[0-9]{1,5}$/;
 const COUNT_REGEX = /^[0-9]{1,4}$/;
 const Event = () => {
@@ -42,6 +42,10 @@ const Event = () => {
   const [chosenLocation, setChosenLocation] = useState('')
 
   const [chosenLocationFilter, setChosenLocationFilter] = useState('All')
+  const dateOptions = [{ value: 'ASC', label: 'Скоро початок' }, { value: 'DESC', label: 'Початок нескоро' }]
+
+  const [dateFilter, setDateFilter] = useState();
+
 
   const [validCompanyName, setValidCompanyName] = useState(false);
 
@@ -78,7 +82,7 @@ const Event = () => {
   const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const [dateFilter, setDateFilter] = useState('ASC');
+
   useEffect(() => {
     setValidPrice(PRICE_REGEX.test(priceOfEvent));
   }, [priceOfEvent]);
@@ -123,8 +127,9 @@ const Event = () => {
   const getEvents = async (dateFilter, locationFilter, pageNumber) => {
     setChosenLocationFilter(locationFilter);
     setDateFilter(dateFilter);
+    // console.log(dateFilter.value)
     console.log(searchEvents);
-    const response = await axios.get(`/api/events/?page=${pageNumber}&filter=${dateFilter}&filterL=${locationFilter.value}&filterND=${searchEvents}`)
+    const response = await axios.get(`/api/events/?page=${pageNumber}&filter=${dateFilter.value}&filterL=${locationFilter.value}&filterND=${searchEvents}`)
     setEvents(response.data.values.data);
     setPageCount(response.data.values.meta.totalPages);
   }
@@ -133,7 +138,7 @@ const Event = () => {
     if (page[0] !== '?page') {
       navigate('/not-found');
     }
-    getEvents('ASC', { value: 'All', label: 'All' }, page[1]);
+    getEvents(dateOptions[0], { value: 'All', label: 'All' }, page[1]);
   }, [])
 
 
@@ -209,7 +214,7 @@ const Event = () => {
       setPriceOfEvent(response.data.values.values.price);
       setCountOfPeople(response.data.values.values.ticketsCount);
       setChosenLocation({ value: response.data.values.values.location.id, label: response.data.values.values.location.title });
-      setShowSignedInUsers(response.data.values.values.showUserList === 1 ? true : false);
+      setShowSignedInUsers(response.data.values.values.showUserList === 1 ? 1 : 0);
       console.log(response.data.values.values.event_pic)
       setEventPosterPath(response.data.values.values.event_pic)
     }
@@ -264,7 +269,7 @@ const Event = () => {
         themes_id: themesId,
         price: +priceOfEvent,
         count: +countOfPeople,
-        userlist_public: showSignedInUsers,
+        userlist_public: +showSignedInUsers,
         location_id: +chosenLocation.value
       }), {
         headers: { 'Content-Type': 'application/json' },
@@ -272,7 +277,7 @@ const Event = () => {
       })
       console.log(response);
       setLoading(false);
-      navigate(`/events`);
+      navigate(`/events/?page=1`);
       document.location.reload();
     }
     catch (err) {
@@ -334,7 +339,6 @@ const Event = () => {
   };
 
 
-const dateOptions = [{value: 'ASC', label: 'Від нових до старих'}, {value: 'DESC', label: 'Від старих до нових'}]
   // pagination
 
   const [pageCount, setPageCount] = useState(0);
@@ -347,7 +351,8 @@ const dateOptions = [{value: 'ASC', label: 'Від нових до старих'
 
   const handlePageClick = async (data) => {
     navigate(`/events/?page=${data.selected + 1}`);
-    const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter}&filterL=${chosenLocationFilter.value}&filterND=${searchEvents}`);
+    window.scrollTo(0,0)
+    const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter.value}&filterL=${chosenLocationFilter.value}&filterND=${searchEvents}`);
     console.log(response);
     setEvents(response.data.values.data);
   }
@@ -356,14 +361,25 @@ const dateOptions = [{value: 'ASC', label: 'Від нових до старих'
     <>
 
       <div className="container-xxl d-flex flex-column mt-2 ">
-        <div className="d-flex align-items-center justify-content-between ms-3 me-5">
-
-          <select
+        <div className="d-flex flex-wrap align-items-center justify-content-between ms-3 me-5">
+          <Select
+            // placeholder={lang === 'ua' ? 'Час' : 'Date'}
             value={dateFilter}
-            onChange={(e) => getEvents(e.target.value, chosenLocationFilter, page[1])} style={customStyles} className="form-select bg-dark text-white w-25" aria-label=".form-select-sm example">
+            options={dateOptions}
+            className='w-25 bg-dark'
+            id='dateFilter'
+            onChange={(option) => getEvents(option, chosenLocationFilter, page[1])}
+            styles={customStyles}
+          />
+          {/* <select
+            value={dateFilter}
+            onChange={(e) => getEvents(e.target.value, chosenLocationFilter, page[1])} 
+            style={customStyles} 
+            className="form-select bg-dark text-white w-25" 
+            aria-label=".form-select-sm example">
             <option selected value="ASC" className="p-3 bg-grey">Від нових до старих</option>
             <option value="DESC" className="p-3 bg-grey">Від старих до нових</option>
-          </select>
+          </select> */}
           <Select
             placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
             value={chosenLocationFilter}
@@ -416,10 +432,10 @@ const dateOptions = [{value: 'ASC', label: 'Від нових до старих'
                               new Date() > new Date(event.dateEnd) ?
                                 <>
                                   <img id="blurred" src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
-                                    style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img> <div className="centered ">{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</div> </>
+                                    style={{ cursor: 'pointer' }} onClick={() => navigate(`/event/${event.id}`)}></img> <div className="centered">{lang === 'ua' ? 'Подія закінчилась' : 'The event is over'}</div> </>
                                 :
                                 <img src={`${route.serverURL}/event-pic/${event.event_pic}`} className="rounded-top" width='270px' height="370px" alt='Шарікс'
-                                  style={{ cursor: 'pointer' }} onClick={() => window.location = `/event/${event.id}`}></img>
+                                  style={{ cursor: 'pointer' }} onClick={() => navigate(`/event/${event.id}`)}></img>
 
                             }
 
@@ -432,15 +448,16 @@ const dateOptions = [{value: 'ASC', label: 'Від нових до старих'
                               :
                               <></>
                             } */}
-                            <span className="bi bi-calendar-date">
-                              <span className='px-2'>{formatedDateStart}</span>
-                            </span> <br />
-                            <span className="bi bi-book">
-                              <span className="card-title px-2">{event.title.length < 24 ? event.title : <>
-                                {event.title.slice(0, 24)}
+                             <span className="bi bi-book">
+                              <span className="card-title px-2 fs-4">{event.title.length < 17 ? event.title : <>
+                                {event.title.slice(0, 17)}
                                 <a className="text-decoration-none text-white" href={`/events/${event.id}`} target={`_blank`}>...</a>
                               </>}</span>
                             </span> <br />
+                            <span className="bi bi-calendar-date">
+                              <span className='px-2'>{formatedDateStart}</span>
+                            </span> <br />
+                           
 
                             <span className="bi bi-geo">
                               <span className="px-2">{event.location.title}</span>
@@ -453,13 +470,13 @@ const dateOptions = [{value: 'ASC', label: 'Від нових до старих'
 
 
                             <span className="bi bi-building">
-                              <span className="mb-3 px-2" style={{ cursor: 'pointer' }} onClick={() => window.location = `/company/${event.company_id}`} >{event.companyName}</span>
+                              <span className="mb-3 px-2" style={{ cursor: 'pointer' }} onClick={() => navigate(`/company/${event.company_id}`)} >{event.companyName}</span>
                             </span>
                             <div className='d-flex justify-content-between'>
-                              <Button onClick={() => window.location = `/event/${event.id}`} className="btn btn-secondary">{lang === 'ua' ? 'Читати більше...' : 'Read more...'}</Button>
+                              <Button onClick={() => navigate(`/event/${event.id}`)} className="btn btn-secondary">{lang === 'ua' ? 'Читати більше...' : 'Read more...'}</Button>
                               <div>
                                 {
-                                  currentUser.role === 'admin' && currentUser.userId === event.companyOwner ?
+                                  currentUser.role === 'admin' || currentUser.userId === event.companyOwner ?
                                     <>
                                       <Button onClick={() => openTheModal(event.id)} type="button" className="btn btn-warning"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                                         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -525,6 +542,7 @@ const dateOptions = [{value: 'ASC', label: 'Від нових до старих'
                                 onChange={addImage}
                               // value={eventPoster}
                               />
+                            
                               <Form.Label className="mt-2" htmlFor="location">{lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}</Form.Label>
                               <Select
 
@@ -677,14 +695,14 @@ const dateOptions = [{value: 'ASC', label: 'Від нових до старих'
         pageRangeDisplayed={3}
         onPageChange={handlePageClick}
         containerClassName={'pagination justify-content-center'}
-        pageClassName={'page-item'}
-        pageLinkClassName={'page-link'}
-        previousClassName={'page-item'}
-        previousLinkClassName={'page-link'}
-        nextClassItem={'page-item'}
-        nextLinkClassName={'page-link'}
-        breakClassName={'page-item'}
-        breakLinkClassName={'page-link'}
+        pageClassName={''}
+        pageLinkClassName={''}
+        previousClassName={''}
+        previousLinkClassName={' '}
+        nextClassItem={''}
+        nextLinkClassName={' '}
+        breakClassName={''}
+        breakLinkClassName={''}
         activeClassName={'active'}
       />
 
