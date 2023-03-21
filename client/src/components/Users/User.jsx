@@ -24,6 +24,7 @@ const User = () => {
     const { auth, setAuth } = useAuth();
     const [isLoading, setLoading] = useState(false);
     const LOGOUT = '/api/auth/logout/'
+    const [isLoadingPage, setIsLoadingPage] = useState(true)
     const logout = async () => {
         try {
             setLoading(true)
@@ -40,7 +41,9 @@ const User = () => {
         }
     }
     const getUserInfo = async () => {
+       
         try {
+            
             const response = await axios.get(`/api/users/${id[2]}`);
             // console.log('user', response.data.values);
             setSelfProfile(currentUser.userId === +id[2] ? true : false)
@@ -51,10 +54,22 @@ const User = () => {
             setRoleId(response.data.values.values.role_id);
             const role = await axios.get(`/api/roles/${response.data.values.values.role_id}`);
             setRole(role.data.values.values.role_id)
+            setIsLoadingPage(false)
         }
         catch (e) {
-            console.log(e)
-            navigate('/500');
+            
+            // console.log(e)
+            if(e.response.status === 404){
+                navigate('/404')
+                setIsLoadingPage(false)
+            }
+            else{
+                navigate('/500')
+                setIsLoadingPage(false)
+            }
+           
+            // navigate('/500');
+            
         }
     }
     useEffect(() => {
@@ -63,7 +78,7 @@ const User = () => {
         }
     }, []);
 
-    return (
+    return isLoadingPage ? <SpinnerLoading style={{ style: 'page-loading' }}/> : (
         <>
             <div className="form-background p-5 d-flex justify-content-center">
                 <section className='bg-dark text-white rounded d-flex flex-column p-3 justify-content-center'>

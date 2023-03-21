@@ -32,7 +32,7 @@ const CurrentCompany = () => {
   const lang = localStorage.getItem('lang');
   const [companies, setCompanies] = useState([]);
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
-
+const [isLoadingPage, setIsLoadingPage] = useState(true);
   const [employeeId, setEmployeeId] = useState('');
 
   const navigate = useNavigate();
@@ -41,6 +41,14 @@ const CurrentCompany = () => {
 
 
   const getCompanies = async () => {
+    try {
+      const response = await axios.get(`/api/companies/${currentId}`);
+    setCompanies(response.data.values.values);
+    setIsLoadingPage(false)
+    } catch (error) {
+    setIsLoadingPage(false)
+      navigate('/500')
+    }
     const response = await axios.get(`/api/companies/${currentId}`);
     setCompanies(response.data.values.values);
   }
@@ -147,7 +155,7 @@ const customStyles = {
 
 
 
-  return (
+  return isLoadingPage ? <SpinnerLoading style={{style: 'page-loading'}} /> :  (
     <>
       
 

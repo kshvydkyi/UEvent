@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,16 +17,25 @@ import moment from 'moment';
 const Ticket = () => {
   const lang = localStorage.getItem('lang');
   const [tickets, setTickets] = useState([]);
+  const [isPageLoading, setIsLoadingPage] = useState(true);
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
-
+  const { search } = useLocation();
+  const page = search.split('=');
   const [isLoading, setLoading] = useState(false);
 
 
   const getTickets = async () => {
-    const response = await axios.get(`/api/tickets/byUserId/${currentUser.userId}/?page=1`);
-    setTickets(response.data.values.data);
-    setPageCount(response.data.values.meta.totalPages);
+    try {
+      const response = await axios.get(`/api/tickets/byUserId/${currentUser.userId}/?page=1`);
+      setTickets(response.data.values.data);
+      setPageCount(response.data.values.meta.totalPages);
+      setIsLoadingPage(false);
+    } catch (error) {
+      console.log(error)
+      setIsLoadingPage(false)
+    }
+
   }
 
   useEffect(() => {
@@ -39,17 +48,19 @@ const Ticket = () => {
 
   const handlePageClick = async (data) => {
     navigate(`/tickets/?page=${data.selected + 1}`);
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
+    setIsLoadingPage(true)
     const response = await axios.get(`/api/tickets/byUserId/${currentUser.userId}/?page=${data.selected + 1}`);
     // console.log(response);
     setTickets(response.data.values.data);
+    setIsLoadingPage(false)
   }
 
 
 
 
 
-  return (
+  return isPageLoading ? <SpinnerLoading style={{ style: 'page-loading' }} /> : (
     <>
       {
         (tickets.length !== 0) && (Array.isArray(tickets))
@@ -85,12 +96,14 @@ const Ticket = () => {
 
 
                   </div>
+
                 </div>
+
               </>
             )
           })
           :
-          <h1 className="mt-2 text-center">{lang === 'ua' ? 'У вас поки що немає квитків' : 'You still have no tickets'}</h1>
+           <h1 className="mt-2 text-center">{lang === 'ua' ? 'У вас поки що немає квитків' : 'You still have no tickets'}</h1>
       }
 
       <ReactPaginate
@@ -99,6 +112,7 @@ const Ticket = () => {
         breakLabel={'...'}
         pageCount={pageCount}
         marginPagesDisplayed={2}
+        forcePage={+page[1] - 1}
         pageRangeDisplayed={3}
         onPageChange={handlePageClick}
         containerClassName={'pagination justify-content-center'}

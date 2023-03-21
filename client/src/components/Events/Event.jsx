@@ -4,7 +4,7 @@ import axios from "../../api/axios";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
-import { Modal, Button, Form, ListGroup, ListGroupItem, } from "react-bootstrap";
+import { Modal, Button, Form, ListGroup, ListGroupItem, ModalFooter, } from "react-bootstrap";
 import { Nav, Collapse, Alert } from "react-bootstrap";
 import '../../App.css'
 import './Event.css'
@@ -79,9 +79,11 @@ const Event = () => {
   const [countOfPeople, setCountOfPeople] = useState('');
   const [validCount, setValidCount] = useState(false);
 
+  const [isModalLoading, setIsModalLoading] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const [isLoadingPage, setIsLoadingPage] = useState(true);
 
   useEffect(() => {
     setValidPrice(PRICE_REGEX.test(priceOfEvent));
@@ -125,6 +127,8 @@ const Event = () => {
   }
 
   const getEvents = async (dateFilter, locationFilter, pageNumber) => {
+    navigate(`/events/?page=${pageNumber}`)
+    setIsLoadingPage(true);
     setChosenLocationFilter(locationFilter);
     setDateFilter(dateFilter);
     // console.log(dateFilter.value)
@@ -132,6 +136,7 @@ const Event = () => {
     const response = await axios.get(`/api/events/?page=${pageNumber}&filter=${dateFilter.value}&filterL=${locationFilter.value}&filterND=${searchEvents}`)
     setEvents(response.data.values.data);
     setPageCount(response.data.values.meta.totalPages);
+    setIsLoadingPage(false);
   }
 
   useEffect(() => {
@@ -190,11 +195,12 @@ const Event = () => {
 
   // 💩💩💩💩💩 УВАГА В ДАНОМІ УЧАСТКЕ КОДІ НАСРАНО
   async function openTheModal(id) {
+
     setEventId(id)
     setOpenModal(true);
     try {
+      setIsModalLoading(true);
       const response = await axios.get(`/api/events/${id}`)
-      console.log(response);
       setEventName(response.data.values.values.title)
       setEventDescr(response.data.values.values.description)
       setChosenCompany({ value: response.data.values.values.company_id, label: response.data.values.values.companyName })
@@ -215,8 +221,8 @@ const Event = () => {
       setCountOfPeople(response.data.values.values.ticketsCount);
       setChosenLocation({ value: response.data.values.values.location.id, label: response.data.values.values.location.title });
       setShowSignedInUsers(response.data.values.values.showUserList === 1 ? 1 : 0);
-      console.log(response.data.values.values.event_pic)
       setEventPosterPath(response.data.values.values.event_pic)
+      setIsModalLoading(false);
     }
 
     catch (e) {
@@ -249,9 +255,18 @@ const Event = () => {
 
 
   async function toDeleteEvent() {
-    console.log('aboba')
-    const response = await axios.delete(`/api/events/${eventIdToDelete}/${companyIdToDelete}/${currentUser.accessToken}`)
-    document.location.reload();
+    // console.log('aboba')
+    try{
+      setLoading(true);
+      const response = await axios.delete(`/api/events/${eventIdToDelete}/${companyIdToDelete}/${currentUser.accessToken}`);
+      setLoading(false);
+      document.location.reload();
+    }
+    catch(e){
+      setLoading(false);
+      console.log(e)
+    }
+    
   }
 
 
@@ -352,12 +367,17 @@ const Event = () => {
   const handlePageClick = async (data) => {
     navigate(`/events/?page=${data.selected + 1}`);
     window.scrollTo(0,0)
-    const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter.value}&filterL=${chosenLocationFilter.value}&filterND=${searchEvents}`);
-    console.log(response);
-    setEvents(response.data.values.data);
+    setTimeout(async () => {
+      setIsLoadingPage(true);
+    
+      const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter.value}&filterL=${chosenLocationFilter.value}&filterND=${searchEvents}`);
+      // console.log(response);
+      setEvents(response.data.values.data);
+      setIsLoadingPage(false);
+    }, 600) 
   }
 
-  return (
+  return isLoadingPage ? <SpinnerLoading style={{style: 'page-loading'}} /> : (
     <>
 
       <div className="container-xxl d-flex flex-column mt-2 ">
@@ -398,7 +418,7 @@ const Event = () => {
               value={searchEvents}
               onChange={(e) => setSearchEvents(e.target.value)}
             />
-            <Button variant="secondary" onClick={() => getEvents(dateFilter, chosenLocationFilter, page[1])}>Search</Button>
+            <Button variant="secondary" onClick={() => getEvents(dateFilter, chosenLocationFilter,'1')}>Search</Button>
           </Form>
 
         </div>
@@ -503,7 +523,8 @@ const Event = () => {
                           <Modal.Header className="bg-dark" closeButton closeVariant='white'>
                             <Modal.Title className="text-white">{lang === 'ua' ? 'Зміна даних' : 'Change Event'}</Modal.Title>
                           </Modal.Header>
-                          <Modal.Body className="bg-dark text-white rounded-bottom">
+                          <Modal.Body className="bg-dark text-white">
+                          {isModalLoading ? <div className='d-flex justify-content-center'> <SpinnerLoading style={{style: 'modal-loading'}}/> </div> :
                             <Form className="d-flex flex-column  justify-content-center">
                               <Form.Label className="form_label text-white" htmlFor="compName">{lang === 'ua' ? 'Назва Події' : 'Event Name'}
                                 <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
@@ -649,12 +670,15 @@ const Event = () => {
                               />
                               <Form.Label className="mt-2" htmlFor="isShow">{lang === 'ua' ? 'Показувати користувачів, що записались на подію?' : 'Show users that signed in at the event?'}</Form.Label>
                               <Form.Check id="isShow" className="mb-2" type='switch' checked={showSignedInUsers} onChange={(e) => setShowSignedInUsers(e.target.checked)} />
-                              <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="secondary" onClick={() => updateEvent(event.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
 
                             </Form>
 
-                          </Modal.Body>
+                          }</Modal.Body>
+                          <Modal.Footer className="bg-dark">
+                         
+                          <Button disabled={!validCompanyName || !validcompanyDescr || isLoading || isModalLoading ? true : false} variant="secondary" onClick={() => updateEvent(event.id)}>{isLoading ? <SpinnerLoading style={{style: 'd-flex justify-content-center'}} /> : lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
 
+                          </Modal.Footer>
                         </div>
                       </Modal>
 
@@ -669,7 +693,7 @@ const Event = () => {
                           </Modal.Body>
                           <Modal.Footer className="bg-dark">
                             <Button variant="secondary" onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
-                            <Button variant="danger" onClick={() => toDeleteEvent()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
+                            <Button disabled={isLoading ? true : false } variant="danger" onClick={() => toDeleteEvent()}>{isLoading ? <SpinnerLoading style={{style: 'd-flex justify-content-center'}}/> : lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
 
                           </Modal.Footer>
                         </div>

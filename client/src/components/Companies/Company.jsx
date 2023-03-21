@@ -37,6 +37,8 @@ const Company = () => {
   const [companyId, setCompanyId] = useState();
 
   const [isLoading, setLoading] = useState(false);
+  const [isLoadingPage, setIsLoadingPage] = useState(true);
+  const [isLoadingModal, setIsLoadingModal] = useState(false);
 
   // for adding promocode
   const [codeProm, setCodeProm] = useState('');
@@ -44,9 +46,9 @@ const Company = () => {
   const [expiresAtProm, setExpiresAt] = useState('');
   const [usedProm, setUsedProm] = useState('');
   const [countProm, setCountProm] = useState('');
-  
-  const [chosenEvent, setChosenEvent] = useState('')
 
+  const [chosenEvent, setChosenEvent] = useState('')
+  const navigate = useNavigate();
   const [validDiscount, setValidDiscount] = useState(false);
   useEffect(() => {
     setValidDiscount(DISC_REGEX.test(discountProm));
@@ -66,11 +68,22 @@ const Company = () => {
   async function openTheModal(id) {
     setCompanyId(id)
     setOpenModal(true);
-    const response = await axios.get(`/api/companies/${id}`)
-    setCompanyName(response.data.values.values.title);
-    setCompanyDescr(response.data.values.values.description);
-    setCompanyLogo(response.data.values.values.company_pic);
-    console.log(response);
+    setIsLoadingModal(true)
+    try {
+      const response = await axios.get(`/api/companies/${id}`)
+      setCompanyName(response.data.values.values.title);
+      setCompanyDescr(response.data.values.values.description);
+      setCompanyLogo(response.data.values.values.company_pic);
+      console.log(response);
+      setIsLoadingModal(false)
+
+    } catch (error) {
+      setIsLoadingModal(false)
+      console.log(error)
+
+
+    }
+
   }
 
   async function closeTheModal() {
@@ -80,8 +93,15 @@ const Company = () => {
 
 
   const getCompanies = async () => {
-    const response = await axios.get(`/api/companies/user-companies/${currentUser.userId}`);
-    setCompanies(response.data.values.values);
+    try {
+      const response = await axios.get(`/api/companies/user-companies/${currentUser.userId}`);
+      setCompanies(response.data.values.values);
+      setIsLoadingPage(false)
+    } catch (error) {
+      setIsLoadingPage(false)
+      navigate('/500')
+    }
+
   }
 
   useEffect(() => {
@@ -93,36 +113,56 @@ const Company = () => {
 
 
   async function toDeleteCompany() {
-    const response = await axios.delete(`/api/companies/${companyIdToDelete}/${currentUser.accessToken}`)
-    document.location.reload();
+    try{
+      setLoading(true)
+      const response = await axios.delete(`/api/companies/${companyIdToDelete}/${currentUser.accessToken}`)
+      document.location.reload();
+      setLoading(false)
+
+      
+    }
+    catch(e){
+      setLoading(false)
+
+    }
+    
   }
   const addImage = async (e) => {
     const formData = new FormData();
     console.log(e.target.files[0]);
     formData.append('image', e.target.files[0]);
     try {
-        const response = await axios.post(`/api/companies/add-image/${currentUser.accessToken}`, formData,
-            {
-                headers: { "Content-Type": "multipart/form-data" },
-                withCredentials: true
-            }
-        )
-        console.log(response);
-        setCompanyLogo(response.data.values.values.pathFile);
+      const response = await axios.post(`/api/companies/add-image/${currentUser.accessToken}`, formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true
+        }
+      )
+      console.log(response);
+      setCompanyLogo(response.data.values.values.pathFile);
     } catch (e) {
-        console.log(e);
+      console.log(e);
     }
-}
+  }
   async function updateCompany(id) {
     // console.log(companyDescr, companyName, companyId)
-    const response = await axios.patch(`/api/companies/${companyId}/${currentUser.accessToken}`, JSON.stringify(
-      { description: companyDescr, title: companyName, company_pic: companyLogo }),
-      {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
-      })
-    // console.log(response)
-    document.location.reload();
+    try {
+      setLoading(true)
+      const response = await axios.patch(`/api/companies/${companyId}/${currentUser.accessToken}`, JSON.stringify(
+        { description: companyDescr, title: companyName, company_pic: companyLogo }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        })
+      // console.log(response)
+      setLoading(false)
+
+      document.location.reload();
+    } catch (error) {
+      setLoading(false)
+      console.log(error)
+    }
+    
   }
 
 
@@ -160,13 +200,15 @@ const Company = () => {
 
   async function addPromocode(id) {
     const response = await axios.post(`/api/promocodes/${currentUser.accessToken}`, JSON.stringify(
-      { company_id: companyIdToAddProm, 
-        event_id: +chosenEvent.value, 
+      {
+        company_id: companyIdToAddProm,
+        event_id: +chosenEvent.value,
         title: codeProm,
         discount: discountProm,
-        expiresAt: expiresAtProm, 
-        used: 1, 
-        count: countProm }),
+        expiresAt: expiresAtProm,
+        used: 1,
+        count: countProm
+      }),
       {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true
@@ -217,8 +259,8 @@ const Company = () => {
   }
 
 
-// console.log(companies)
-  return (
+  // console.log(companies)
+  return isLoadingPage ? <SpinnerLoading style={{ style: 'page-loading' }} /> : (
     <>
       {
         (companies.length !== 0) && (Array.isArray(companies))
@@ -237,7 +279,7 @@ const Company = () => {
                       <a className="card-title text-white h3 text-decoration-none" href={`/company/${company.id}`}>{company.title}</a>
                       <div className="d-flex">
                         <span className="bi bi-card-text ">
-                        <span className="card-text ms-2 text-align-justify">{company.description}</span>
+                          <span className="card-text ms-2 text-align-justify">{company.description}</span>
                         </span>
                       </div>
                     </div>
@@ -253,7 +295,7 @@ const Company = () => {
                     <path fill="#000000" d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z" />
                   </svg></Button>
 
-                 
+
 
                 </div>
 
@@ -263,44 +305,48 @@ const Company = () => {
                       <Modal.Title className="">{lang === 'ua' ? 'Зміна даних' : 'Change company'}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body className=" bg-dark d-flex flex-column  justify-content-center">
-                      <Form.Label className="" htmlFor="compName">{lang === 'ua' ? 'Назва Компанії' : 'Company Name'}
-                        <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
-                        <FontAwesomeIcon icon={faTimes} className={validCompanyName || !companyName ? "hide" : "invalid"} />
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        className="bg-dark text-white mb-3"
-                        id="compName"
-                        autoComplete="off"
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        value={companyName}
-                      />
+                      {isLoadingModal ? <div className='d-flex justify-content-center'> <SpinnerLoading style={{ style: 'modal-loading' }} /> </div> :
 
-                      <Form.Label className="" htmlFor="compDescr">{lang === 'ua' ? 'Опис Компанії' : 'Company Description'}
-                        <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
-                        <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !companyDescr ? "hide" : "invalid"} />
-                      </Form.Label>
-                      <textarea
-                        className="bg-dark text-white mb-3 p-2"
-                        id="compDescr"
-                        rows="3"
-                        autoComplete="off"
-                        onChange={(e) => setCompanyDescr(e.target.value)}
-                        value={companyDescr}
-                      >
-                      </textarea>
-                      <Form.Control
+                        <><Form.Label className="" htmlFor="compName">{lang === 'ua' ? 'Назва Компанії' : 'Company Name'}
+                          <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
+                          <FontAwesomeIcon icon={faTimes} className={validCompanyName || !companyName ? "hide" : "invalid"} />
+                        </Form.Label>
+                          <Form.Control
+                            type="text"
+                            className="bg-dark text-white mb-3"
+                            id="compName"
+                            autoComplete="off"
+                            onChange={(e) => setCompanyName(e.target.value)}
+                            value={companyName}
+                          />
+
+                          <Form.Label className="" htmlFor="compDescr">{lang === 'ua' ? 'Опис Компанії' : 'Company Description'}
+                            <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
+                            <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !companyDescr ? "hide" : "invalid"} />
+                          </Form.Label>
+                          <textarea
+                            className="bg-dark text-white mb-3 p-2"
+                            id="compDescr"
+                            rows="3"
+                            autoComplete="off"
+                            onChange={(e) => setCompanyDescr(e.target.value)}
+                            value={companyDescr}
+                          >
+                          </textarea>
+                          <Form.Control
                             type="file"
                             className="bg-dark text-white mb-3"
                             id="posteer"
                             autoComplete="off"
                             accept="image/jpeg,image/png,image/jpg"
                             onChange={addImage}
-                        // value={eventPoster}
-                        />
+                          // value={eventPoster}
+                          />
+                        </>
+                      }
                     </Modal.Body>
                     <Modal.Footer className="bg-dark">
-                      <Button disabled={!validCompanyName || !validcompanyDescr ? true : false} variant="secondary" onClick={() => updateCompany(company.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
+                      <Button disabled={!validCompanyName || !validcompanyDescr || isLoading || isLoadingModal ? true : false} variant="secondary" onClick={() => updateCompany(company.id)}>{isLoading ? <SpinnerLoading style={{ style: 'd-flex justify-content-center' }} /> : lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
                     </Modal.Footer>
                   </div>
                 </Modal>
@@ -317,7 +363,7 @@ const Company = () => {
                     </Modal.Body>
                     <Modal.Footer className="bg-dark">
                       <Button variant="secondary" onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
-                      <Button variant="danger" onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
+                      <Button variant="danger" disabled={isLoading ? true : false} onClick={() => toDeleteCompany()}>{isLoading ? <SpinnerLoading style={{ style: 'd-flex justify-content-center' }} /> : lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
                     </Modal.Footer>
                   </div>
                 </Modal>
@@ -328,85 +374,85 @@ const Company = () => {
               {/* Adding promocode */}
 
               <Modal className="bg-dark" centered show={openModalToAddProm} onHide={() => closeTheModalToAddProm()}>
-                  <div className="border border-secondary rounded">
-                    <Modal.Header className="bg-dark " closeButton closeVariant="white">
-                      <Modal.Title className="">{lang === 'ua' ? 'Додавання промокоду' : 'Add promocode'}</Modal.Title>
-                    </Modal.Header>
+                <div className="border border-secondary rounded">
+                  <Modal.Header className="bg-dark " closeButton closeVariant="white">
+                    <Modal.Title className="">{lang === 'ua' ? 'Додавання промокоду' : 'Add promocode'}</Modal.Title>
+                  </Modal.Header>
 
-                    <Modal.Body className=" bg-dark d-flex flex-column  justify-content-center">
-                      <Form.Label className="" htmlFor="codeProm">{lang === 'ua' ? 'Назва промокоду' : 'Promocode'}
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        className="bg-dark text-white mb-3"
-                        id="codeProm"
-                        autoComplete="off"
-                        onChange={(e) => setCodeProm(e.target.value)}
-                        value={codeProm}
-                      />
+                  <Modal.Body className=" bg-dark d-flex flex-column  justify-content-center">
+                    <Form.Label className="" htmlFor="codeProm">{lang === 'ua' ? 'Назва промокоду' : 'Promocode'}
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      className="bg-dark text-white mb-3"
+                      id="codeProm"
+                      autoComplete="off"
+                      onChange={(e) => setCodeProm(e.target.value)}
+                      value={codeProm}
+                    />
 
-                      <Form.Label className="mt-2" htmlFor="events">{lang === 'ua' ? 'Оберіть подію' : 'Choose event'}</Form.Label>
-                        <Select
-                            placeholder={lang === 'ua' ? 'Оберіть подію' : 'Choose event'}
-                            value={chosenEvent}
-                            styles={customStyles}
-                            id='events'
-                            options={usersEvents}
-                            onChange={(option) => {
-                                setChosenEvent(option);
-                            }}
-                        />
+                    <Form.Label className="mt-2" htmlFor="events">{lang === 'ua' ? 'Оберіть подію' : 'Choose event'}</Form.Label>
+                    <Select
+                      placeholder={lang === 'ua' ? 'Оберіть подію' : 'Choose event'}
+                      value={chosenEvent}
+                      styles={customStyles}
+                      id='events'
+                      options={usersEvents}
+                      onChange={(option) => {
+                        setChosenEvent(option);
+                      }}
+                    />
 
-                          <Form.Label className="mt-2" htmlFor="disc">
-                            {lang === 'ua' ? 'Знижка (%) (мін - 1, макс - 100)' : 'Discount (%) ( min - 1, max - 100)'}
-                            <FontAwesomeIcon icon={faCheck} className={validDiscount ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validDiscount || !discountProm ? "hide" : "invalid"} />
-                        </Form.Label>
-                        <Form.Control
-                            type="number"
-                            className="bg-dark text-white"
-                            id="disc"
-                            autoComplete="off"
-                            onChange={(e) => setDiscountProm(e.target.value)}
-                            value={discountProm}
-                            min={1}
-                            max={100}
-                        />
+                    <Form.Label className="mt-2" htmlFor="disc">
+                      {lang === 'ua' ? 'Знижка (%) (мін - 1, макс - 100)' : 'Discount (%) ( min - 1, max - 100)'}
+                      <FontAwesomeIcon icon={faCheck} className={validDiscount ? "valid" : "hide"} />
+                      <FontAwesomeIcon icon={faTimes} className={validDiscount || !discountProm ? "hide" : "invalid"} />
+                    </Form.Label>
+                    <Form.Control
+                      type="number"
+                      className="bg-dark text-white"
+                      id="disc"
+                      autoComplete="off"
+                      onChange={(e) => setDiscountProm(e.target.value)}
+                      value={discountProm}
+                      min={1}
+                      max={100}
+                    />
 
-                        <Form.Label className="mt-2" htmlFor="disc">
-                            {lang === 'ua' ? 'К-сть промокодів' : 'Quantity of promocodes'}
-                        </Form.Label>
-                        <Form.Control
-                            type="number"
-                            className="bg-dark text-white"
-                            id="disc"
-                            autoComplete="off"
-                            onChange={(e) => setCountProm(e.target.value)}
-                            value={countProm}
-                            min={1}
-                            max={2000}
-                        />
+                    <Form.Label className="mt-2" htmlFor="disc">
+                      {lang === 'ua' ? 'К-сть промокодів' : 'Quantity of promocodes'}
+                    </Form.Label>
+                    <Form.Control
+                      type="number"
+                      className="bg-dark text-white"
+                      id="disc"
+                      autoComplete="off"
+                      onChange={(e) => setCountProm(e.target.value)}
+                      value={countProm}
+                      min={1}
+                      max={2000}
+                    />
 
-                        <Form.Label className="mt-2"> {lang === 'ua' ? 'Дійсний до' : 'Expires at'}</Form.Label>
-                        <DatePicker
-                            className="rounded w-100 p-1 bg-dark text-white border"
-                            selected={expiresAtProm}
-                            timeFormat="HH:mm"
-                            minDate={moment().toDate()}
-                            onChange={date => setExpiresAt(date)}
-                            timeIntervals={15}
-                            dateFormat="d MMMM yyyy, HH:mm "
-                            timeCaption="time"
-                            showTimeInput
-                            required
-                        />
+                    <Form.Label className="mt-2"> {lang === 'ua' ? 'Дійсний до' : 'Expires at'}</Form.Label>
+                    <DatePicker
+                      className="rounded w-100 p-1 bg-dark text-white border"
+                      selected={expiresAtProm}
+                      timeFormat="HH:mm"
+                      minDate={moment().toDate()}
+                      onChange={date => setExpiresAt(date)}
+                      timeIntervals={15}
+                      dateFormat="d MMMM yyyy, HH:mm "
+                      timeCaption="time"
+                      showTimeInput
+                      required
+                    />
 
-                    </Modal.Body>
-                    <Modal.Footer className="bg-dark">
-                      <Button disabled = {!validDiscount} variant="secondary" onClick={() => addPromocode(company.id)}>{lang === 'ua' ? 'Додати промокод' : 'Add Promocode'}</Button>
-                    </Modal.Footer>
-                  </div>
-                </Modal>
+                  </Modal.Body>
+                  <Modal.Footer className="bg-dark">
+                    <Button disabled={!validDiscount} variant="secondary" onClick={() => addPromocode(company.id)}>{lang === 'ua' ? 'Додати промокод' : 'Add Promocode'}</Button>
+                  </Modal.Footer>
+                </div>
+              </Modal>
 
 
 

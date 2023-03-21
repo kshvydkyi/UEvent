@@ -22,7 +22,9 @@ const Location = () => {
     const currentUser = JSON.parse(localStorage.getItem('autorized'));
 
     const [locationId, setLocationId] = useState();
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingPage, setIsLoadinPage] = useState(true);
+    const [isLoadingModal, setIsLoadingModal] = useState(false);
 
     const navigate = useNavigate();
 
@@ -42,16 +44,25 @@ const Location = () => {
     async function openTheModal(id) {
         setLocationId(id)
         setOpenModal(true);
-        console.log(id)
-        const response = await axios.get(`/api/location/${id}`)
-        console.log(response.data.values.values)
-        setlocationDescr(response.data.values.values.description);
-        setlocationName(response.data.values.values.title)
-        setCountry(response.data.values.values.country)
-        setCity(response.data.values.values.city)
-        setHouse(response.data.values.values.house)
-        setStreet(response.data.values.values.street)
-        setLocationPicture(response.data.values.values.location_pic)
+        setIsLoadingModal(true)
+        // console.log(id)
+        try {
+            const response = await axios.get(`/api/location/${id}`)
+            console.log(response.data.values.values)
+            setlocationDescr(response.data.values.values.description);
+            setlocationName(response.data.values.values.title)
+            setCountry(response.data.values.values.country)
+            setCity(response.data.values.values.city)
+            setHouse(response.data.values.values.house)
+            setStreet(response.data.values.values.street)
+            setLocationPicture(response.data.values.values.location_pic)
+            setIsLoadingModal(false);
+        } catch (error) {
+            setIsLoadingModal(false);
+            console.log(error)
+            navigate('/500')
+        }
+
     }
 
     async function closeTheModal() {
@@ -61,8 +72,15 @@ const Location = () => {
 
 
     const getLocations = async () => {
-        const response = await axios.get(`/api/location`);
-        setLocations(response.data.values.values);
+        try {
+            const response = await axios.get(`/api/location`);
+            setLocations(response.data.values.values);
+            setIsLoadinPage(false)
+        } catch (error) {
+            setIsLoadinPage(false)
+            navigate('/500')
+        }
+
     }
 
     useEffect(() => {
@@ -70,14 +88,24 @@ const Location = () => {
     }, [])
 
     async function toDeleteCompany() {
-        console.log("aaa")
-        const response = await axios.delete(`/api/location/${locationIdToDelete}/${currentUser.accessToken}`)
-        document.location.reload();
+        // console.log("aaa")
+        try {
+            setIsLoading(true)
+            const response = await axios.delete(`/api/location/${locationIdToDelete}/${currentUser.accessToken}`)
+            setIsLoading(false)
+            document.location.reload();
+        } catch (error) {
+            setIsLoading(false)
+
+            console.log(error)
+            navigate('/500')
+        }
+
     }
 
     const addImage = async (e) => {
         const formData = new FormData();
-        console.log(e.target.files[0]);
+        // console.log(e.target.files[0]);
         formData.append('image', e.target.files[0]);
         try {
             const response = await axios.post(`/api/location/add-image/${currentUser.accessToken}`, formData,
@@ -86,7 +114,7 @@ const Location = () => {
                     withCredentials: true
                 }
             )
-            console.log(response);
+            // console.log(response);
             setLocationPicture(response.data.values.values.pathFile);
         } catch (e) {
             console.log(e);
@@ -94,7 +122,8 @@ const Location = () => {
     }
 
     async function updateLocation(id) {
-        try{
+        setIsLoading(true)
+        try {
             const response = await axios.patch(`/api/location/${locationId}/${currentUser.accessToken}`, JSON.stringify({
                 description: locationDescr,
                 title: locationName,
@@ -108,12 +137,13 @@ const Location = () => {
                 withCredentials: true
             })
             console.log(response);
+            setIsLoading(false)
             document.location.reload();
         }
-        catch(e){
+        catch (e) {
             console.log(e);
         }
-        
+
     }
 
     function toRedirect() {
@@ -135,7 +165,7 @@ const Location = () => {
 
 
 
-    return (
+    return isLoadingPage ? <SpinnerLoading style={{ style: 'page-loading' }} /> : (
         <>
             {
                 (locations.length !== 0) && (Array.isArray(locations))
@@ -183,89 +213,92 @@ const Location = () => {
                                             <Modal.Title className="">{lang === 'ua' ? 'Зміна даних' : 'Change Location'}</Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body className=" bg-dark d-flex flex-column  justify-content-center">
+                                            {isLoadingModal ? <div className='d-flex justify-content-center'> <SpinnerLoading style={{ style: 'modal-loading' }} /> </div> :
+                                                <>
+                                                    <Form.Label className="form_label" htmlFor="locName">{lang === 'ua' ? 'Назва Локації' : 'Location Name'}
+                                                    </Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        className="bg-dark text-white mb-3"
+                                                        id="locName"
+                                                        autoComplete="off"
+                                                        onChange={(e) => setlocationName(e.target.value)}
+                                                        value={locationName}
+                                                    />
 
-                                            <Form.Label className="form_label" htmlFor="locName">{lang === 'ua' ? 'Назва Локації' : 'Location Name'}
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                className="bg-dark text-white mb-3"
-                                                id="locName"
-                                                autoComplete="off"
-                                                onChange={(e) => setlocationName(e.target.value)}
-                                                value={locationName}
-                                            />
+                                                    <Form.Label className="form_label" htmlFor="compDescr">{lang === 'ua' ? 'Опис Локації' : 'Location Description'}
+                                                    </Form.Label>
+                                                    <textarea
+                                                        className="bg-dark text-white mb-3 p-2"
+                                                        id="compDescr" rows="3"
+                                                        autoComplete="off"
+                                                        onChange={(e) => setlocationDescr(e.target.value)}
+                                                        value={locationDescr}
+                                                    >
+                                                    </textarea>
 
-                                            <Form.Label className="form_label" htmlFor="compDescr">{lang === 'ua' ? 'Опис Локації' : 'Location Description'}
-                                            </Form.Label>
-                                            <textarea
-                                                className="bg-dark text-white mb-3 p-2"
-                                                id="compDescr" rows="3"
-                                                autoComplete="off"
-                                                onChange={(e) => setlocationDescr(e.target.value)}
-                                                value={locationDescr}
-                                            >
-                                            </textarea>
+                                                    <Form.Label className="form_label" htmlFor="country">{lang === 'ua' ? 'Країна' : 'Country'}
+                                                    </Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        className="bg-dark text-white mb-3"
+                                                        id="country"
+                                                        autoComplete="off"
+                                                        onChange={(e) => setCountry(e.target.value)}
+                                                        value={country}
+                                                    // defaultValue={''}
+                                                    />
 
-                                            <Form.Label className="form_label" htmlFor="country">{lang === 'ua' ? 'Країна' : 'Country'}
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                className="bg-dark text-white mb-3"
-                                                id="country"
-                                                autoComplete="off"
-                                                onChange={(e) => setCountry(e.target.value)}
-                                                value={country}
-                                            // defaultValue={''}
-                                            />
+                                                    <Form.Label className="form_label" htmlFor="city">{lang === 'ua' ? 'Місто' : 'City'}
+                                                    </Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        className="bg-dark text-white mb-3"
+                                                        id="city"
+                                                        autoComplete="off"
+                                                        onChange={(e) => setCity(e.target.value)}
+                                                        value={city}
+                                                    // defaultValue={''}
+                                                    />
 
-                                            <Form.Label className="form_label" htmlFor="city">{lang === 'ua' ? 'Місто' : 'City'}
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                className="bg-dark text-white mb-3"
-                                                id="city"
-                                                autoComplete="off"
-                                                onChange={(e) => setCity(e.target.value)}
-                                                value={city}
-                                            // defaultValue={''}
-                                            />
+                                                    <Form.Label className="form_label" htmlFor="street">{lang === 'ua' ? 'Вулиця' : 'Street'}
+                                                    </Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        className="bg-dark text-white mb-3"
+                                                        id="street"
+                                                        autoComplete="off"
+                                                        onChange={(e) => setStreet(e.target.value)}
+                                                        value={street}
+                                                    // defaultValue={''}
+                                                    />
 
-                                            <Form.Label className="form_label" htmlFor="street">{lang === 'ua' ? 'Вулиця' : 'Street'}
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                className="bg-dark text-white mb-3"
-                                                id="street"
-                                                autoComplete="off"
-                                                onChange={(e) => setStreet(e.target.value)}
-                                                value={street}
-                                            // defaultValue={''}
-                                            />
-
-                                            <Form.Label className="form_label" htmlFor="house">{lang === 'ua' ? 'Дім' : 'House'}
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                className="bg-dark text-white mb-3"
-                                                id="house"
-                                                autoComplete="off"
-                                                onChange={(e) => setHouse(e.target.value)}
-                                                value={house}
-                                            // defaultValue={''}
-                                            />
-                                            <Form.Label className="" htmlFor="posteer">{lang === 'ua' ? 'Фото' : 'Photo'}</Form.Label>
-                                            <Form.Control
-                                                type="file"
-                                                className="bg-dark text-white mb-3"
-                                                id="posteer"
-                                                autoComplete="off"
-                                                accept="image/jpeg,image/png,image/jpg"
-                                                onChange={addImage}
-                                            // value={eventPoster}
-                                            />
+                                                    <Form.Label className="form_label" htmlFor="house">{lang === 'ua' ? 'Дім' : 'House'}
+                                                    </Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        className="bg-dark text-white mb-3"
+                                                        id="house"
+                                                        autoComplete="off"
+                                                        onChange={(e) => setHouse(e.target.value)}
+                                                        value={house}
+                                                    // defaultValue={''}
+                                                    />
+                                                    <Form.Label className="" htmlFor="posteer">{lang === 'ua' ? 'Фото' : 'Photo'}</Form.Label>
+                                                    <Form.Control
+                                                        type="file"
+                                                        className="bg-dark text-white mb-3"
+                                                        id="posteer"
+                                                        autoComplete="off"
+                                                        accept="image/jpeg,image/png,image/jpg"
+                                                        onChange={addImage}
+                                                    // value={eventPoster}
+                                                    />
+                                                </>
+                                            }
                                         </Modal.Body>
                                         <Modal.Footer className="bg-dark">
-                                            <Button variant="secondary" style={{ textAlign: 'center' }} onClick={() => updateLocation(location.id)}>{lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
+                                            <Button variant="secondary" disabled={isLoading ? true : false}  onClick={() => updateLocation(location.id)}>{isLoading || isLoadingModal ? <SpinnerLoading style={{style: 'd-flex justify-content-center'}}/> : lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
                                         </Modal.Footer>
                                     </div>
                                 </Modal>
@@ -281,9 +314,8 @@ const Location = () => {
                                             <h1 className="h5">{lang === 'ua' ? 'Ви впевнені що хочете видалити локацію?' : 'Are you sure to delete location?'}</h1>
                                         </Modal.Body>
                                         <Modal.Footer className="bg-dark">
-
-                                            <Button variant="danger" onClick={() => toDeleteCompany()}>{lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
                                             <Button variant="secondary" onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
+                                            <Button variant="danger" disabled={isLoading ? true : false} onClick={() => toDeleteCompany()}>{isLoading ? <SpinnerLoading style={{style: 'd-flex justify-content-center'}}/> : lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
                                         </Modal.Footer>
                                     </div>
                                 </Modal>

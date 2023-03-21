@@ -47,7 +47,7 @@ const CurrentEvent = () => {
   const [validcompanyDescr, setValidCompanyDescr] = useState(false);
 
   const [usersEvents, setUsersEvents] = useState([]);
-
+  const [isPageLoading, setIsPageLoading] = useState(false);
   const [promocodes, setPromocodes] = useState([]);
   const [usePromocode, setUsePromocode] = useState('');
   const [isPromocode, setIsPromocode] = useState(false);
@@ -71,8 +71,17 @@ const CurrentEvent = () => {
 
 
   const getEvents = async () => {
-    const response = await axios.get(`/api/events/${currentId}`);
+    try{
+      setIsPageLoading(true)
+      const response = await axios.get(`/api/events/${currentId}`);
     setEvents(response.data.values.values);
+    setIsPageLoading(false);
+    }
+    catch(e){
+      setIsPageLoading(false);  
+      navigate('/500');
+    }
+    
   }
 
   useEffect(() => {
@@ -169,7 +178,7 @@ const CurrentEvent = () => {
 
 
 
-  return (
+  return  isPageLoading ? <SpinnerLoading style={{style: 'page-loading'}} /> : (
     <>
       {events ?
 
