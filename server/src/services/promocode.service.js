@@ -19,6 +19,11 @@ export default class PromocodeService {
         const [row] = await db.execute(sql);
         return row;
     }
+    async selectByCompanyId(id) {
+        let sql = `SELECT * FROM promocodes WHERE company_id = ${id}`
+        const [row] = await db.execute(sql)
+        return row;
+    }
 
     async create(body) {
         const date1 = toSQLDate(new Date(body.expiresAt));

@@ -74,10 +74,10 @@ const Ticket = () => {
             return (
               <>
                 <div className="card d-flex justify-content-center w-50 m-auto bg-dark text-white mb-3 mt-3">
-                  <div className="card-body d-flex justify-content-center">
+                  <div className="card-body d-flex justify-content-center align-items-center">
                     <img src={`${route.serverURL}/event-pic/${ticket?.event?.event_pic}`} className="rounded" width='200px' height="300px" alt='Шарікс'></img>
                     <div className="ms-3">
-                      <a className="card-title text-underline-none text-white" href={`/event/${ticket?.event?.id}`} >{ticket?.event?.title}</a>
+                      <a className="card-title text-decoration-none text-white h4" href={`/event/${ticket?.event?.id}`} >{ticket?.event?.title}</a>
                       <div className="mt-2">
                         <span className="bi bi-calendar">
                           <span className='px-2'>{formatedDateStart} - {formatedDateEnd}</span>
@@ -87,9 +87,12 @@ const Ticket = () => {
                         <span className="bi bi-geo mt-5">
                           <span className='px-2'>{ticket?.location.title}</span>
                         </span>
+
                       </div>
-                      <img src={`${route.serverURL}/qr-codes/${ticket?.secret_code}.png`} className="rounded mt-2" width='200px' height="200px" alt='Шарікс'></img>
+                      <Button variant="secondary" className="mt-2" target="_blank" href={`${route.serverURL}/tickets/${ticket?.secret_code}.pdf`} >{lang === 'ua' ? 'Подивитись квиток' : "See ticket"}</Button>
+                      
                     </div>
+                    <img src={`${route.serverURL}/qr-codes/${ticket?.secret_code}.png`} className="rounded ms-2" width='200px' height="200px" alt='Шарікс'></img>
                     {/* <img src={`${route.serverURL}/qr-codes/${ticket?.secret_code}.png`} className="rounded" width='200px' height="200px" alt='Шарікс'></img> */}
 
 

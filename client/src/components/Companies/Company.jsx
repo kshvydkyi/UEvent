@@ -199,22 +199,32 @@ const Company = () => {
   }
 
   async function addPromocode(id) {
-    const response = await axios.post(`/api/promocodes/${currentUser.accessToken}`, JSON.stringify(
-      {
-        company_id: companyIdToAddProm,
-        event_id: +chosenEvent.value,
-        title: codeProm,
-        discount: discountProm,
-        expiresAt: expiresAtProm,
-        used: 1,
-        count: countProm
-      }),
-      {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true
-      })
-    console.log(response)
-    document.location.reload();
+    try{
+      setLoading(true)
+      const response = await axios.post(`/api/promocodes/${currentUser.accessToken}`, JSON.stringify(
+        {
+          company_id: companyIdToAddProm,
+          event_id: +chosenEvent.value,
+          title: codeProm,
+          discount: discountProm,
+          expiresAt: expiresAtProm,
+          used: 1,
+          count: countProm
+        }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        })
+      console.log(response)
+      setLoading(false);
+      document.location.reload();
+    }
+    catch(e){
+      setLoading(false)
+      console.log(e)
+      navigate('/500')
+    }
+ 
   }
 
 
@@ -286,6 +296,9 @@ const Company = () => {
                   </div>
                   <Button onClick={() => openTheModalToAddProm(company.id)} type="button" variant="secondary" className="me-2 ">
                     {lang === 'ua' ? 'Додати промокод' : 'Add promocode'}
+                  </Button>
+                  <Button onClick={() => navigate(`/company-promocodes/${company.id}`)} type="button" variant="secondary" className="me-2 ">
+                    {lang === 'ua' ? 'Всі промокоди' : 'All Promocodes'}
                   </Button>
                   <Button onClick={() => openTheModal(company.id)} type="button" className="btn btn-warning me-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -449,7 +462,8 @@ const Company = () => {
 
                   </Modal.Body>
                   <Modal.Footer className="bg-dark">
-                    <Button disabled={!validDiscount} variant="secondary" onClick={() => addPromocode(company.id)}>{lang === 'ua' ? 'Додати промокод' : 'Add Promocode'}</Button>
+                    <Button disabled={!validDiscount} variant="secondary" onClick={() => addPromocode(company.id)}>{isLoading ? lang === 'ua' ? 'Завантаження...' : 'Loading...' : lang === 'ua' ? 'Додати промокод' : 'Add Promocode'}</Button>
+                    
                   </Modal.Footer>
                 </div>
               </Modal>

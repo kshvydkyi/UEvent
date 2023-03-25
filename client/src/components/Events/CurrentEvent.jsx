@@ -204,21 +204,23 @@ const CurrentEvent = () => {
                       <h3 className="d-block">{events.title}</h3>
                       <p className="h6 ms-3">{events.formatName}</p>
                     </div>
-                    <div className="d-flex align-items-center">
+                    <div className="mt-2 d-flex align-items-center">
                       <span className="bi bi-calendar-date">
                         <span className="ms-1">{formatedDate} - {formatedDateEnd}</span>
                       </span>
                     </div>
                     <div>
+                      <div className="mt-2">
                       <span className="bi bi-geo">
                         <span className="ms-1">
                           {`${events?.location?.title} - ${events?.location?.country},
                         ${events?.location?.city}, ${lang === 'ua' ? 'вул. ' : 'st. '}${events?.location?.street} ${events?.location?.house}`}
                         </span>
                       </span>
+                      </div>
                     </div>
 
-                    <div className="mt-3 d-flex text-align-justify">
+                    <div className="mt-2 d-flex text-align-justify">
                       <span className="bi bi-card-text ">
                         <span className="ms-1 ">{events.description}</span>
                       </span>
@@ -251,7 +253,7 @@ const CurrentEvent = () => {
                       }
                     </div>
 
-                    <Button variant="outline-light" className="mb-3" onClick={() => navigate(`/company/${events.company_id}`)}>{events.companyName}</Button>
+                    <Button variant="outline-light" className="mb-2" onClick={() => navigate(`/company/${events.company_id}`)}>{events.companyName}</Button>
                     <div>
                       <p>{events.ticketsCount === 0 ? lang === 'ua' ? 'Усі квитки продані' : 'All tickets are sold' : ''}</p>
                     </div>

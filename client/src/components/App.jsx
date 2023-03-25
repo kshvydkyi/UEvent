@@ -27,6 +27,7 @@ import NotFound from './Other/NotFound';
 import ServerError from './Other/ServerError';
 import { CheckTicket } from './Ticket/CheckTicket';
 import { WelcomePage } from './Other/WelcomePage';
+import Promocodes from './Promocodes/Promocodes';
 
 
 function App() {
@@ -58,6 +59,8 @@ function App() {
 				<Route path='company/:id' element={<CurrentCompany />} />
 				<Route path='check-ticket/:secretCode' element={<CheckTicket />} />
 				<Route path='locations' element={<Location />} />
+				<Route path='company-promocodes/:id' element={<Promocodes />} />
+
 
 				<Route element={<RequreAuth allowedRoles={['user', 'admin']} />} >
 					<Route path='user/:id' element={<User />} />

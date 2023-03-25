@@ -24,7 +24,7 @@ const ChangeProfile = () => {
 
     const [changedFullName, setChangedFullName] = useState('');
     const [validChangedFullName, setValidChangedFullName] = useState(false);
-
+    const [isLoadingPage, setIsLoadingPage] = useState(true);
     const [changedEmail, setChangedEmail] = useState('');
     const [validChangedEmail, setValidChangedEmail] = useState(false);
 
@@ -82,15 +82,18 @@ const ChangeProfile = () => {
     }
     const getUserInfo = async () => {
         try {
+            setIsLoadingPage(true);
             const response = await axios.get(`/api/users/${user.userId}`);
             // console.log(response);
             setChangedLogin(response.data.values.values.login);
             setChangedFullName(response.data.values.values.full_name);
             setChangedEmail(response.data.values.values.email);
+            setIsLoadingPage(false);
 
 
         }
         catch (e) {
+            setIsLoadingPage(false);
             // console.log(e)
             if (e?.response.data.status === 404) {
                 navigate('/404');
@@ -103,7 +106,7 @@ const ChangeProfile = () => {
     useEffect(() => {
         getUserInfo();
     }, []);
-    return (
+    return isLoadingPage ? <SpinnerLoading style={{style: 'page-loading'}} /> : (
         <>
             <div className="form-background p-5 d-flex justify-content-center text-white">
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
