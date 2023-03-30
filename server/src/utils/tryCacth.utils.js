@@ -12,11 +12,11 @@ export const tryCatch =
     };
 
 export const tryCatchPagination =
-    (controller) => async (req, res, next) => {
+    (controller, count=8) => async (req, res, next) => {
         try {
             const { page } = req.query;
             const parsedPage = page ? Number(page) : 1;
-            const perPage = 8;
+            const perPage = count;
             const allPages = await controller(req, res);
 
             const promiseData = await Promise.all(allPages);

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {tryCatch} from "../../utils/tryCacth.utils.js";
+import {tryCatch, tryCatchPagination} from "../../utils/tryCacth.utils.js";
 import promocodeController from "../../controllers/promocodeController.js";
 import { isAutorised } from "../../middleware/isAuthorized.middleware.js";
 import { isAdmin } from "../../middleware/isAccess.middleware.js";
@@ -28,7 +28,7 @@ promocodeRouter.get(
 
 promocodeRouter.get(
     '/company/promocodes/:id',
-    tryCatch(promocodeController.selectByCompanyId.bind(promocodeController))
+    tryCatchPagination(promocodeController.selectByCompanyId.bind(promocodeController), 9)
 );
 
 promocodeRouter.post(
@@ -40,7 +40,7 @@ promocodeRouter.post(
 );
 
 promocodeRouter.patch(
-    '/:token',
+    '/:id/:token',
     isAutorised,
     isAdmin,
     validateRequestSchema,

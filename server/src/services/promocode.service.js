@@ -34,7 +34,11 @@ export default class PromocodeService {
 
     async update(body, id) {
         if(Object.entries(body).length !== 0){
-            await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => db.execute(`UPDATE promocodes SET ${key} = '${value}' WHERE id = ${id}`))
+            await Object.entries(body).filter(([key, value]) => value).map(([key, value]) => {
+            if(key === 'expiresAt') {
+                value = toSQLDate(new Date(value));
+            }
+            db.execute(`UPDATE promocodes SET ${key} = '${value}' WHERE id = ${id}`)})
         }
 	}
 
