@@ -9,7 +9,7 @@ export const createCompanyValidationChainMethod = [
     body('description')
     .exists({checkFalsy: true})
     .isString()
-    .isLength({min: 10, max: 100})
+    .isLength({min: 10, max: 10000})
     .withMessage('Invalid format in company description'),
     body('userId')
     .exists({checkFalsy: true})
@@ -34,6 +34,6 @@ export const updateCompanyValidationChainMethod = [
     body('description')
     .exists({checkFalsy: true})
     .isString()
-    .isLength({min: 10, max: 100})
+    .isLength({min: 10, max: 10000})
     .withMessage('Invalid format in company description'),
 ]

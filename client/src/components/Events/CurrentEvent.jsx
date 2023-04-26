@@ -1,29 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
 import Button from 'react-bootstrap/Button';
 import { Modal } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import ReactPaginate from 'react-paginate'
 import '../../App.css'
 import './Event.css'
 import moment from 'moment';
 import route from "../../api/route";
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker, { registerLocale } from 'react-datepicker';
-import Select from 'react-select'
 import StripeCheckout from 'react-stripe-checkout'
 import Toast from 'react-bootstrap/Toast';
-// import {toast} from 'react-toastify'
-// import 'react-toastify/dist/ReactToastify.css'
+
 
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,-=_!?%$#@^&*\\\.();:`~"/\s/\.]{10,10000}$/;
+
 
 
 
@@ -164,7 +158,7 @@ const CurrentEvent = () => {
           setErrMsg('Promocode expired')
         }
         else {
-          const response = await axios.patch(`/api/promocodes/decrease/${promocodes[i].id}`);
+          const response = await axios.patch(`/api/promocodes/decrease/minus-one/${promocodes[i].id}`);
           setIsPromocode(true)
           setChangedPrice(events.price - (events.price * (promocodes[i].discount / 100)))
         }
@@ -258,16 +252,15 @@ const CurrentEvent = () => {
                       <p>{events.ticketsCount === 0 ? lang === 'ua' ? 'Усі квитки продані' : 'All tickets are sold' : ''}</p>
                     </div>
                     <div>
-                      {events.price === 0 ?
-                        <Button onClick={() => handleToken()} className="" disabled={events.ticketsCount === 0 ? true : false}>
-                          {lang === 'ua' ? 'Записатися' : 'Sign up for the event'}
-                        </Button>
-                        :
-                        <>
                           <StripeCheckout
                             disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd) ? true : false}
                             className="text-black mb-5"
-                            panelLabel="Pay"
+                            panelLabel={
+                              events.price === 0 ? 
+                              lang === 'ua' ? 'Записатися' : 'Sign up'
+                              :
+                              lang === 'ua' ? 'Купити' : 'Pay'
+                            }
                             image={`${route.serverURL}/event-pic/${events.event_pic}`}
                             stripeKey='pk_test_51Mixi5EPLqByaBcpL2haakXv0c55d86UjBgpP7F9KxWVYE1mnedNH9PoCDftvaAfUAaBRcALgfODpCdWJERP8eH200XPb8qa6m'
                             amount={+events.price * 100}
@@ -276,16 +269,26 @@ const CurrentEvent = () => {
                             token={handleToken}
                           >
                             <Button variant="secondary" className="me-3" disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd) ? true : false}>
-                              {lang === 'ua' ? 'Купити квиток' : 'Buy ticket'}
+                              {
+                                events.price === 0 ?
+                                lang === 'ua' ? 'Записатися' : 'Sign up for the event'
+                                :
+                                lang === 'ua' ? 'Купити квиток' : 'Buy ticket'
+                              }
+                              
                             </Button>
                           </StripeCheckout>
-
+                            {
+                              events.price !== 0 ? 
                           <Button disabled={events.ticketsCount === 0 || new Date() > new Date(events.dateEnd) ? true : false} onClick={() => openTheModal()} variant="warning" className="">
                             {lang === 'ua' ? 'Використати промокод' : 'Use Promocode'}
                           </Button>
-                        </>
+                          :
+                          <></>
+                            }
+                        
 
-                      }
+                      
                       {
                         events.showUserList === 1 ?
                           <>
@@ -298,7 +301,7 @@ const CurrentEvent = () => {
                                     return (
                                       <>
 
-                                        <a href={`/user/${user.id}`} className="text-decoration-none"> <img src={user.profile_pic && user.profile_pic !== 'undefined' && user.profile_pic !== undefined ? `${route.serverURL}/avatars/${user.profile_pic}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle mb-3' height={40} width={40} alt='avatar' /></a>
+                                        <a href={`/user/${user.id}`} className="text-decoration-none"> <img src={user.profile_pic && user.profile_pic !== 'undefined' && user.profile_pic !== undefined ? `${route.serverURL}/avatars/${user.profile_pic}` : `${route.serverURL}/avatars/default_avatar.png`} className='link-header border border-secondary rounded-circle mb-3' height={40} width={40} alt='avatar' /> {user.login}</a>
 
                                       </>
                                     )

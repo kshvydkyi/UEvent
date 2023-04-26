@@ -1,21 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import Select from 'react-select'
 import moment from 'moment';
 import route from "../../api/route";
 import StripeCheckout from "react-stripe-checkout";
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,55}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,300}$/;
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,10000}$/;
 
 const PRICE_REGEX = /^[0-9]{1,5}$/;
 const COUNT_REGEX = /^[0-9]{1,4}$/;
@@ -65,7 +64,7 @@ const CreateEvent = () => {
     }, [companyName]);
 
     useEffect(() => {
-        setValidCompanyDescr(DESCR_REGEX.test(companyDescr));
+        setValidCompanyDescr(true);
     }, [companyDescr]);
 
     useEffect(() => {

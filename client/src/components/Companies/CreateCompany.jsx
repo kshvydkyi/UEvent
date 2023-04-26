@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,-_!?%$#@^&*\\\.();:`~"/\s/\.]{10,10000}$/;
 
 const CreateCompany = () => {
     const lang = localStorage.getItem('lang');
@@ -59,20 +58,22 @@ const CreateCompany = () => {
     }
     const createCompany = async (e) => {
         e.preventDefault();
+        console.log(companyDescr, companyName, currentUser.userId, companyLogo)
         try {
             setLoading(true);
             const response = await axios.post(`/api/companies/${currentUser.accessToken}`, JSON.stringify(
-                { description: companyDescr, title: companyName, userId: currentUser.userId, company_pic: companyLogo }), {
+                { description: companyDescr, title: companyName, userId: currentUser.userId, company_pic: companyLogo || 'default_company.png' }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             })
-            console.log(response);
+            // console.log(response);
             setLoading(false);
-            navigate(`/`);
+            navigate(`/companies/?page=1`);
             document.location.reload();
         }
         catch (err) {
             setLoading(false);
+            console.log(err);
             if (err?.response.data.status === 404) {
                 navigate('/404');
             }

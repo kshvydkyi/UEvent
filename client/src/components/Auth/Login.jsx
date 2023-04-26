@@ -59,7 +59,7 @@ const Login = () => {
                     withCredentials: true
                 }
             );
-            // console.log(response);
+            console.log(response);
             // console.log(response?.data.status, response?.data?.values);
             const accessToken = response?.data?.values?.values?.token;
             const role = response?.data?.values?.values?.userData?.title;
@@ -75,12 +75,13 @@ const Login = () => {
         }
         catch (err) {
             setLoading(false);
+            console.log(err)
             if (!err?.response) {
                 setErrMsg('Сервер спить');
             } else if (err.response.data.values.message === `User with login - ${user} does not exist`) {
                 setErrMsg('Користувача з таким логіном не існує');
             }
-            else if (err.response.data.values.message === 'Passwords do not match') {
+            else if (err.response?.data.status === 400) {
                 setErrMsg('Пароль не підходить');
             }
             else if (err.response?.status === 401) {

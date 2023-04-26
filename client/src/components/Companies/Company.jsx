@@ -1,22 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
-import Button from 'react-bootstrap/Button';
-import { Modal } from "react-bootstrap";
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import ReactPaginate from 'react-paginate'
+import { Modal, Button, Form } from "react-bootstrap";
 import '../../App.css'
 import route from "../../api/route";
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import Select from 'react-select'
 
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,10000}$/;
 
 const DISC_REGEX = /^[1-9][0-9]?$|^100$/;
 
@@ -44,7 +40,7 @@ const Company = () => {
   const [codeProm, setCodeProm] = useState('');
   const [discountProm, setDiscountProm] = useState('');
   const [expiresAtProm, setExpiresAt] = useState('');
-  const [usedProm, setUsedProm] = useState('');
+  // const [usedProm, setUsedProm] = useState('');
   const [countProm, setCountProm] = useState('');
 
   const [chosenEvent, setChosenEvent] = useState('')
@@ -280,8 +276,13 @@ const Company = () => {
                   <div className="d-flex mb-3">
 
                     <div>
+                      {
+                      company.company_pic === undefined || company.company_pic.length === 0  ?       
+                      <img src={`${route.serverURL}/company-pic/default_company.png`} alt="company pic" width={100} height={100} />
+                      :
                       <img src={`${route.serverURL}/company-pic/${company.company_pic}`} alt="company pic" width={100} height={100} />
-                    </div>
+                      }
+                      </div>
                     <div className="d-flex flex-column ms-3">
                       <a className="card-title text-white h3 text-decoration-none" href={`/company/${company.id}`}>{company.title}</a>
                       <div className="d-flex">

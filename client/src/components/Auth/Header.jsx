@@ -1,7 +1,6 @@
 // import logo from '../../assets/images/icon.png'
 import Container from 'react-bootstrap/Container';
 import { Nav, Navbar, Collapse, Alert } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next'
 import i18n from "i18next";
 import '../../App.css';
 import React, { useState } from 'react';
@@ -12,17 +11,17 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { NavDropdown } from 'react-bootstrap';
 import Select from 'react-select'
-const checkToken = async (token, setAuth) => {
-  try {
-    const response = await axios.get(`/api/users/check-token/${token}`);
-  }
-  catch (e) {
-    if (e?.response.data.status === 401) {
-      localStorage.removeItem('autorized');
-      setAuth(false);
-    }
-  }
-}
+// const checkToken = async (token, setAuth) => {
+//   try {
+//     const response = await axios.get(`/api/users/check-token/${token}`);
+//   }
+//   catch (e) {
+//     if (e?.response.data.status === 401) {
+//       localStorage.removeItem('autorized');
+//       setAuth(false);
+//     }
+//   }
+// }
 const langOptions = [{value: 'ua', label: 'UA'}, {value: 'en', label: 'ENG'}]
 function Header() {
   function langChange(option) {
@@ -65,9 +64,11 @@ function Header() {
 
   const getUserInfo = async () => {
     try {
+      if (currentUser.currentUser !== 'guest') {
       const response = await axios.get(`/api/users/${currentUser.userId}`);
       // console.log('userAvatar', response);
       setUserAvatar(response.data.values.values.profile_pic);
+      }
     }
     catch (e) {
       console.log(e)

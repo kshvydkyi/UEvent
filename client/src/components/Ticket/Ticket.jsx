@@ -1,17 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
 import Button from 'react-bootstrap/Button';
-import { Modal } from "react-bootstrap";
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
 import ReactPaginate from 'react-paginate'
 import '../../App.css'
 import route from "../../api/route";
-import Pagination from 'react-bootstrap/Pagination';
 import moment from 'moment';
 
 const Ticket = () => {
@@ -22,7 +16,6 @@ const Ticket = () => {
   const currentUser = JSON.parse(localStorage.getItem('autorized'));
   const { search } = useLocation();
   const page = search.split('=');
-  const [isLoading, setLoading] = useState(false);
 
 
   const getTickets = async () => {
@@ -87,26 +80,19 @@ const Ticket = () => {
                         <span className="bi bi-geo mt-5">
                           <span className='px-2'>{ticket?.location.title}</span>
                         </span>
-
                       </div>
-                      <Button variant="secondary" className="mt-2" target="_blank" href={`${route.serverURL}/tickets/${ticket?.secret_code}.pdf`} >{lang === 'ua' ? 'Подивитись квиток' : "See ticket"}</Button>
-                      
+                      <Button variant="secondary" className="mt-2" target="_blank" href={`${route.serverURL}/tickets/${ticket?.secret_code}.pdf`} >
+                        {lang === 'ua' ? 'Подивитись квиток' : "See ticket"}
+                      </Button>
                     </div>
                     <img src={`${route.serverURL}/qr-codes/${ticket?.secret_code}.png`} className="rounded ms-2" width='200px' height="200px" alt='Шарікс'></img>
-                    {/* <img src={`${route.serverURL}/qr-codes/${ticket?.secret_code}.png`} className="rounded" width='200px' height="200px" alt='Шарікс'></img> */}
-
-
-
-
                   </div>
-
                 </div>
-
               </>
             )
           })
           :
-           <h1 className="mt-2 text-center">{lang === 'ua' ? 'У вас поки що немає квитків' : 'You still have no tickets'}</h1>
+          <h1 className="mt-2 text-center">{lang === 'ua' ? 'У вас поки що немає квитків' : 'You still have no tickets'}</h1>
       }
 
       <ReactPaginate

@@ -22,7 +22,7 @@ export class EventController {
     }
 
     async selectAll(req, res) {
-        const result = await this.service.selectAll(req.query.filter, req.query.filterL, req.query.filterND);
+        const result = await this.service.selectAll(req.query.filter, req.query.filterL, req.query.filterT, req.query.filterND);
         const data = result.map(async (item) => {
             const company = await this.companyService.selectById(item.company_id);
             const format = await this.formatService.selectById(item.format_id);

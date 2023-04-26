@@ -3,7 +3,8 @@ import { Outlet } from 'react-router-dom';
 import { Translation } from "react-i18next";
 import '../../App.css';
 import '../../App.scss';
-import React, { useState,useEffect  } from 'react';
+import React, { useState } from 'react';
+import Footer from '../Other/Footer';
 
 const Layout = () => {
     // localStorage.setItem("theme", 'dark')
@@ -12,12 +13,14 @@ const Layout = () => {
 
     return (
         <div className={`App${theme}`}>
-        <header>
-            <Translation>{t => <Header t={t}> </Header>}</Translation>
-        </header>
-        <main>
+            <header>
+                <Translation>{t => <Header t={t}> </Header>}</Translation>
+            </header>
+            <main>
                 <Outlet />
-        </main>
+            </main>
+            <footer><Footer /></footer>
+
         </div>
     )
 }

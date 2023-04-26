@@ -44,14 +44,14 @@ const ResetPasswordWT = () =>{
         try {
             setLoading(true);
             console.log(pwd, matchPwd)
-            // const response = await axios.post(RESETPASS_URL + confirm_token,
-            //     JSON.stringify({password: pwd, confirmPassword: matchPwd}),
-            //     {
-            //         headers: { 'Content-Type': 'application/json' },
-            //         withCredentials: true
-            //     }
-            // );
-            // console.log(response?.data.status, response?.data.values.message);
+            const response = await axios.post(RESETPASS_URL + confirm_token,
+                JSON.stringify({password: pwd, confirmPassword: matchPwd}),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true
+                }
+            );
+            console.log(response?.data.status, response?.data.values.message);
             setSuccess(true);
             setLoading(false);
             setTimeout(()=> navigate('/login'), 5000);

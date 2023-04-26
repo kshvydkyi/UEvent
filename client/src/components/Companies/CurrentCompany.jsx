@@ -1,29 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
 import Button from 'react-bootstrap/Button';
 import { Modal } from "react-bootstrap";
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import ReactPaginate from 'react-paginate'
 import '../../App.css'
-// import './Event.css'
-import moment from 'moment';
 import route from "../../api/route";
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker, { registerLocale } from 'react-datepicker';
 import Select from 'react-select'
-import AsyncSelect from 'react-select/async';
-
-
-const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,23}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{10,150}$/;
-
-
-
 
 const CurrentCompany = () => {
   const location = useLocation().pathname.split('/');
@@ -49,8 +33,6 @@ const [isLoadingPage, setIsLoadingPage] = useState(true);
     setIsLoadingPage(false)
       navigate('/500')
     }
-    const response = await axios.get(`/api/companies/${currentId}`);
-    setCompanies(response.data.values.values);
   }
 
   useEffect(() => {
@@ -58,9 +40,7 @@ const [isLoadingPage, setIsLoadingPage] = useState(true);
   }, [])
 
 
-  function toRedirect(id) {
-    navigate(`/createEventItem/${id}`)
-  };
+ 
 
 
   const [openModal, setOpenModal] = useState(false);
@@ -162,7 +142,12 @@ const customStyles = {
       <div className="card d-flex justify-content-center w-25 mt-3 m-auto bg-dark text-white">
         <div className='d-flex card-body'>
             <div className='d-flex flex-column align-items-center me-2'>
+            {
+              companies.company_pic === undefined || companies.company_pic.length === 0  ?       
+              <img src={`${route.serverURL}/company-pic/default_company.png`} alt="company pic" width={100} height={100} />
+              :
               <img src={`${route.serverURL}/company-pic/${companies.company_pic}`} alt="company pic" width={100} height={100} />
+            }
             </div>
             <div className='d-flex flex-column'>
               <h5 className="card-title">{companies.title}</h5>
@@ -179,7 +164,7 @@ const customStyles = {
             <Button onClick={() => openTheModal()} id="btn_create_event" className="btn btn-secondary">{lang === 'ua' ? `Додати співробітника` : `Add employee`}</Button>
          
           </div>
-          : <div className = 'mx-auto'> <br/>  </div>
+          : <></>
       }
       </div>
 

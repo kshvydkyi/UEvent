@@ -65,14 +65,14 @@ export const isAccessCompanyOrAdmin = (Service) => async (req, res, next) => {
     const userData = jwt.verify(req.params.token, 'jwt-key');
 
     let check = false;
-    userlist.forEach(async (element) => {
+    // userlist.forEach(async (element) => {
         
-        if (element.user_id !== userData.userId) {
-            check = true;
-        }
-    });
+    //     if (element.user_id !== userData.userId) {
+    //         check = true;
+    //     }
+    // });
 
-    if ((result.user_id !== userData.userId || check === false) && userData.role !== 'admin') {
+    if (result.user_id !== userData.userId && userData.role !== 'admin') {
         return response(403, { message: 'access denied' }, res);
     }
     next();

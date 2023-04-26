@@ -9,7 +9,7 @@ const NotFound = () => {
         <p className="lead">
             The page you’re looking for doesn’t exist.
           </p>
-        <a href="/events" className="btn btn-primary">Go Home</a>
+        <a href="/events/?page=1" className="btn btn-primary">Go Home</a>
     </div>
 </div>
   )

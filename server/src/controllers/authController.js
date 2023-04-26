@@ -49,8 +49,11 @@ export class AuthController {
                 }
                 return data;
             }
+            else {
+                throw new Error('password do not match')
+            }
         }
-        return 'password do not match'
+       
     }
 
     async passwordReset(req, res) {

@@ -3,7 +3,6 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from '../../api/axios';
 import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
 import SpinnerLoading from "../Other/Spinner";
 import Button from 'react-bootstrap/Button';
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -35,14 +34,14 @@ const ResetPassword = () => {
         try{
             setLoading(true);
             console.log(email)
-            // const response = await axios.post(RESETPASS_URL, 
-            //     JSON.stringify({email: email}),
-            //     {
-            //         headers: { 'Content-Type': 'application/json' },
-            //         withCredentials: true
-            //     }
-            // )
-            // console.log(response?.data.status, response?.data.values.message);
+            const response = await axios.post(RESETPASS_URL, 
+                JSON.stringify({email: email}),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true
+                }
+            )
+            console.log(response?.data.status, response?.data.values.message);
             setSuccess(true);
             setLoading(false);
         }

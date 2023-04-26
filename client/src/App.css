@@ -2,7 +2,29 @@
 body{
   font-family: 'PT Sans', sans-serif;
 }
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+.Appnull, .Appdark{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+footer{
+  width: 100%;
+  height: 40px;
+  flex: 0 0 auto;
+}
+main{
+flex: 1 0 auto;
+}
 
+
+#root {
+    height: 100%;
+}
 .App {
   text-align: center;
 }
@@ -68,7 +90,9 @@ body{
   color: blueviolet;
   font-weight: bold;
 }
-
+.select-filers-width{
+  width: 22%;
+}
 .wrapper-navbar{
   height: 56px;
 }

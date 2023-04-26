@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate,useLocation } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import Select from 'react-select'
 import moment from 'moment';
 
@@ -79,12 +78,7 @@ const CreateEventItem = () => {
     useEffect(() => {
         setValidCount(COUNT_REGEX.test(countOfPeople));
     }, [countOfPeople]);
-
-
-    // const setHidden = () => {
-    //     setTimeout(() => setErrMsg(''), 5000);
-    // }
-
+    
     const addImage = async (e) => {
         const formData = new FormData();
         formData.append('image', e.target.files[0]);

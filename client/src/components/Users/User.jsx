@@ -2,8 +2,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../api/axios';
 import route from '../../api/route';
-import updateIcon from '../../assets/svg/pencil-square.svg';
-import Button from 'react-bootstrap/Button';
 import useAuth from '../../hooks/useAuth';
 import SpinnerLoading from "../Other/Spinner";
 import NavDropdown from 'react-bootstrap/NavDropdown';

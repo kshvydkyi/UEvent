@@ -1,26 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SpinnerLoading from "../Other/Spinner";
-import { Modal, Button, Form, ListGroup, ListGroupItem, ModalFooter, } from "react-bootstrap";
-import { Nav, Collapse, Alert } from "react-bootstrap";
+import { Modal, Button, Form, ListGroup } from "react-bootstrap";
 import '../../App.css'
 import './Event.css'
 import moment from 'moment';
 import route from "../../api/route";
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import Select from 'react-select'
-import Pagination from 'react-bootstrap/Pagination';
 import ReactPaginate from 'react-paginate'
 
-import { ToastContainer } from 'react-toastify';
-
-
 const COMPANY_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9_/\s/\.]{3,50}$/;
-const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,_!?%$#@^&\-*\\\.();:`~"/\s/\.]{10,1000}$/;
+const DESCR_REGEX = /^[a-zA-Zа-яА-Яє-їЄ-Ї0-9,-=_!?%$#@^&*\\\.();:`~"/\s/\.]{10,10000}$/;
+
 const PRICE_REGEX = /^[0-9]{1,5}$/;
 const COUNT_REGEX = /^[0-9]{1,4}$/;
 const Event = () => {
@@ -39,9 +35,13 @@ const Event = () => {
 
   const [locationsFilter, setAllLocationsFilter] = useState([])
 
+  const [themesFilter, setAllThemesFilter] = useState([])
+
   const [chosenLocation, setChosenLocation] = useState('')
 
   const [chosenLocationFilter, setChosenLocationFilter] = useState('All')
+  const [chosenThemesFilter, setChosenThemesFilter] = useState('All')
+
   const dateOptions = [{ value: 'ASC', label: 'Скоро початок' }, { value: 'DESC', label: 'Початок нескоро' }]
 
   const [dateFilter, setDateFilter] = useState();
@@ -110,6 +110,26 @@ const Event = () => {
     getLocations()
   }, [])
 
+
+  const getThemes1 = async () => {
+    const response = await axios.get(`/api/themes/`);
+    setAllThemes(response.data.values.values.map((value) => {
+      const data = { value: value.id, label: value.title }
+      return data
+    }))
+
+    setAllThemesFilter(response.data.values.values.map((value) => {
+      const data = { value: value.id, label: value.title }
+      return data
+    }))
+    setAllThemesFilter(themesFilter => [...themesFilter, { value: 'All', label: 'All' }]);
+  }
+
+  useEffect(() => {
+    getThemes1()
+  }, [])
+
+
   const addImage = async (e) => {
     const formData = new FormData();
     formData.append('image', e.target.files[0]);
@@ -126,14 +146,15 @@ const Event = () => {
     }
   }
 
-  const getEvents = async (dateFilter, locationFilter, pageNumber) => {
+  const getEvents = async (dateFilter, locationFilter, themeFilter, pageNumber) => {
     navigate(`/events/?page=${pageNumber}`)
     setIsLoadingPage(true);
     setChosenLocationFilter(locationFilter);
     setDateFilter(dateFilter);
-    // console.log(dateFilter.value)
-    console.log(searchEvents);
-    const response = await axios.get(`/api/events/?page=${pageNumber}&filter=${dateFilter.value}&filterL=${locationFilter.value}&filterND=${searchEvents}`)
+
+    setChosenThemesFilter(themeFilter)
+
+    const response = await axios.get(`/api/events/?page=${pageNumber}&filter=${dateFilter.value}&filterL=${locationFilter.value}&filterT=${themeFilter.value}&filterND=${searchEvents}`)
     setEvents(response.data.values.data);
     setPageCount(response.data.values.meta.totalPages);
     setIsLoadingPage(false);
@@ -143,7 +164,7 @@ const Event = () => {
     if (page[0] !== '?page') {
       navigate('/not-found');
     }
-    getEvents(dateOptions[0], { value: 'All', label: 'All' }, page[1]);
+    getEvents(dateOptions[0], { value: 'All', label: 'All' }, { value: 'All', label: 'All' }, page[1]);
   }, [])
 
 
@@ -256,17 +277,17 @@ const Event = () => {
 
   async function toDeleteEvent() {
     // console.log('aboba')
-    try{
+    try {
       setLoading(true);
-      const response = await axios.delete(`/api/events/${eventIdToDelete}/${companyIdToDelete}/${currentUser.accessToken}`);
+      await axios.delete(`/api/events/${eventIdToDelete}/${companyIdToDelete}/${currentUser.accessToken}`);
       setLoading(false);
       document.location.reload();
     }
-    catch(e){
+    catch (e) {
       setLoading(false);
       console.log(e)
     }
-    
+
   }
 
 
@@ -280,6 +301,7 @@ const Event = () => {
         company_id: +chosenCompany.value,
         format_id: +chosenFormat.value,
         dateStart: startAt,
+        dateEnd: endAt,
         event_pic: eventPosterPath,
         themes_id: themesId,
         price: +priceOfEvent,
@@ -358,58 +380,56 @@ const Event = () => {
 
   const [pageCount, setPageCount] = useState(0);
 
-  // const paginatePosts = async (currentPage) => {
-  //   console.log(currentPage)
-  //   const response = await axios.get(`/api/events/?page=${currentPage}&filter=${dateFilter}`);
-  //   return response;
-  // }
-
   const handlePageClick = async (data) => {
     navigate(`/events/?page=${data.selected + 1}`);
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
     setTimeout(async () => {
       setIsLoadingPage(true);
-    
-      const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter.value}&filterL=${chosenLocationFilter.value}&filterND=${searchEvents}`);
+
+      const response = await axios.get(`/api/events/?page=${data.selected + 1}&filter=${dateFilter.value}&filterL=${chosenLocationFilter.value}&filterT=${chosenThemesFilter.value}&filterND=${searchEvents}`);
       // console.log(response);
       setEvents(response.data.values.data);
       setIsLoadingPage(false);
-    }, 600) 
+    }, 600)
   }
 
-  return isLoadingPage ? <SpinnerLoading style={{style: 'page-loading'}} /> : (
+  return isLoadingPage ? <SpinnerLoading style={{ style: 'page-loading' }} /> : (
     <>
 
-      <div className="container-xxl d-flex flex-column mt-2 ">
+      <div className="container-xxl d-flex flex-column mt-3 ">
         <div className="d-flex flex-wrap align-items-center justify-content-between ms-3 me-5">
           <Select
             // placeholder={lang === 'ua' ? 'Час' : 'Date'}
             value={dateFilter}
             options={dateOptions}
-            className='w-25 bg-dark'
+            className='select-filers-width bg-dark'
             id='dateFilter'
-            onChange={(option) => getEvents(option, chosenLocationFilter, page[1])}
+            onChange={(option) => getEvents(option, chosenLocationFilter, { value: 'All', label: 'All' }, page[1])}
             styles={customStyles}
           />
-          {/* <select
-            value={dateFilter}
-            onChange={(e) => getEvents(e.target.value, chosenLocationFilter, page[1])} 
-            style={customStyles} 
-            className="form-select bg-dark text-white w-25" 
-            aria-label=".form-select-sm example">
-            <option selected value="ASC" className="p-3 bg-grey">Від нових до старих</option>
-            <option value="DESC" className="p-3 bg-grey">Від старих до нових</option>
-          </select> */}
+
           <Select
             placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
             value={chosenLocationFilter}
-            className='w-25 bg-dark'
+            className='select-filers-width bg-dark'
             styles={customStyles}
             id='location'
             options={locationsFilter}
-            onChange={(option) => getEvents(dateFilter, option, '1')}
+            onChange={(option) => getEvents(dateFilter, option, { value: 'All', label: 'All' }, '1')}
           />
-          <Form className="d-flex w-25 mt-3 mb-3">
+
+          {/* <Form.Label className="" htmlFor="themes">{lang === 'ua' ? 'Оберіть тему' : 'Choose theme'}</Form.Label> */}
+          <Select
+            placeholder={lang === 'ua' ? 'Оберіть тему' : 'Choose theme'}
+            value={chosenThemesFilter}
+            className='select-filers-width bg-dark '
+            styles={customStyles}
+            id='themes'
+            options={themesFilter}
+            onChange={(option) => getEvents(dateFilter, { value: 'All', label: 'All' }, option, '1')}
+          />
+
+          <Form className="d-flex select-filers-width mt-3 mb-3">
             <Form.Control
               type="input"
               placeholder="Search"
@@ -418,7 +438,7 @@ const Event = () => {
               value={searchEvents}
               onChange={(e) => setSearchEvents(e.target.value)}
             />
-            <Button variant="secondary" onClick={() => getEvents(dateFilter, chosenLocationFilter,'1')}>Search</Button>
+            <Button variant="secondary" onClick={() => getEvents(dateFilter, { value: 'All', label: 'All' }, chosenLocationFilter, '1')}>Search</Button>
           </Form>
 
         </div>
@@ -435,11 +455,6 @@ const Event = () => {
                 // console.log(event)
                 const normalFormatStart = moment(event.dateStart, moment.defaultFormat).toDate();
                 const formatedDateStart = moment(normalFormatStart).format('D MMMM, HH:mm');
-                const normalFormatEnd = moment(event.dateEnd, moment.defaultFormat).toDate();
-                const formatedDateEnd = moment(normalFormatEnd).format('D MMMM, HH:mm');
-
-                const normalcurrentDate = moment(new Date(), moment.defaultFormat).toDate();
-                const formatedCurrentDate = moment(normalcurrentDate).format('D MMMM, HH:mm');
                 return (
                   <>
 
@@ -461,26 +476,24 @@ const Event = () => {
 
                           </div>
                           <div className="card-body">
-                            {/* {
-                              new Date() > new Date(event.dateEnd) ? 
-                              
-                              <p>{lang === 'ua' ? 'Подія закінчилась' : 'The events is over'}</p>
-                              :
-                              <></>
-                            } */}
-                             <span className="bi bi-book">
-                              <span className="card-title px-2 fs-4">{event.title.length < 17 ? event.title : <>
-                                {event.title.slice(0, 17)}
+                            <span className="bi bi-book">
+                              <span className="card-title px-2 fs-5">{event.title.length < 20 ? event.title : <>
+                                {event.title.slice(0, 20)}
                                 <a className="text-decoration-none text-white" href={`/events/${event.id}`} target={`_blank`}>...</a>
                               </>}</span>
                             </span> <br />
                             <span className="bi bi-calendar-date">
                               <span className='px-2'>{formatedDateStart}</span>
                             </span> <br />
-                           
+
 
                             <span className="bi bi-geo">
-                              <span className="px-2">{event.location.title}</span>
+                              <span className="px-2">{event.location.title.length < 25 ? event.location.title :
+                                <>
+                                  <a className="text-decoration-none text-white">{event.location.title.slice(0, 25)}...</a>
+                                </>
+                              }
+                              </span>
                             </span> <br />
 
                             <span className="bi bi-card-list">
@@ -524,159 +537,159 @@ const Event = () => {
                             <Modal.Title className="text-white">{lang === 'ua' ? 'Зміна даних' : 'Change Event'}</Modal.Title>
                           </Modal.Header>
                           <Modal.Body className="bg-dark text-white">
-                          {isModalLoading ? <div className='d-flex justify-content-center'> <SpinnerLoading style={{style: 'modal-loading'}}/> </div> :
-                            <Form className="d-flex flex-column  justify-content-center">
-                              <Form.Label className="form_label text-white" htmlFor="compName">{lang === 'ua' ? 'Назва Події' : 'Event Name'}
-                                <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
-                                <FontAwesomeIcon icon={faTimes} className={validCompanyName || !eventName ? "hide" : "invalid"} />
-                              </Form.Label>
-                              <Form.Control
-                                type="text"
-                                className="bg-dark text-white mb-3"
-                                id="compName"
-                                autoComplete="off"
-                                onChange={(e) => setEventName(e.target.value)}
-                                value={eventName}
-                              />
+                            {isModalLoading ? <div className='d-flex justify-content-center'> <SpinnerLoading style={{ style: 'modal-loading' }} /> </div> :
+                              <Form className="d-flex flex-column  justify-content-center">
+                                <Form.Label className="form_label text-white" htmlFor="compName">{lang === 'ua' ? 'Назва Події' : 'Event Name'}
+                                  <FontAwesomeIcon icon={faCheck} className={validCompanyName ? "valid" : "hide"} />
+                                  <FontAwesomeIcon icon={faTimes} className={validCompanyName || !eventName ? "hide" : "invalid"} />
+                                </Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  className="bg-dark text-white mb-3"
+                                  id="compName"
+                                  autoComplete="off"
+                                  onChange={(e) => setEventName(e.target.value)}
+                                  value={eventName}
+                                />
 
-                              <Form.Label className=" text-White" htmlFor="compDescr">{lang === 'ua' ? 'Опис Події' : 'Event Description'}
-                                <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
-                                <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !eventDescr ? "hide" : "invalid"} />
-                              </Form.Label>
-                              <textarea
-                                className="bg-dark text-white mb-3 p-2"
-                                id="compDescr"
-                                rows="3"
-                                autoComplete="off"
-                                onChange={(e) => setEventDescr(e.target.value)}
-                                value={eventDescr}
-                              >
-                              </textarea>
+                                <Form.Label className=" text-White" htmlFor="compDescr">{lang === 'ua' ? 'Опис Події' : 'Event Description'}
+                                  <FontAwesomeIcon icon={faCheck} className={validcompanyDescr ? "valid" : "hide"} />
+                                  <FontAwesomeIcon icon={faTimes} className={validcompanyDescr || !eventDescr ? "hide" : "invalid"} />
+                                </Form.Label>
+                                <textarea
+                                  className="bg-dark text-white mb-3 p-2"
+                                  id="compDescr"
+                                  rows="3"
+                                  autoComplete="off"
+                                  onChange={(e) => setEventDescr(e.target.value)}
+                                  value={eventDescr}
+                                >
+                                </textarea>
 
-                              <Form.Label className="" htmlFor="posteer">{lang === 'ua' ? 'Постер' : 'Poster'}</Form.Label>
-                              <Form.Control
-                                type="file"
-                                className="bg-dark text-white mb-3"
-                                id="posteer"
-                                autoComplete="off"
-                                accept="image/jpeg,image/png,image/jpg"
-                                onChange={addImage}
-                              // value={eventPoster}
-                              />
-                            
-                              <Form.Label className="mt-2" htmlFor="location">{lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}</Form.Label>
-                              <Select
+                                <Form.Label className="" htmlFor="posteer">{lang === 'ua' ? 'Постер' : 'Poster'}</Form.Label>
+                                <Form.Control
+                                  type="file"
+                                  className="bg-dark text-white mb-3"
+                                  id="posteer"
+                                  autoComplete="off"
+                                  accept="image/jpeg,image/png,image/jpg"
+                                  onChange={addImage}
 
-                                placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
-                                value={chosenLocation}
-                                styles={customStyles}
-                                id='location'
-                                options={locations}
-                                onChange={(option) => {
-                                  setChosenLocation(option);
-                                }}
-                              />
-                              <Form.Label className="mt-2" htmlFor="companies">{lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}</Form.Label>
-                              <Select
-                                placeholder={lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}
-                                value={chosenCompany}
-                                styles={customStyles}
-                                id='companies'
-                                options={allCompanies}
-                                onChange={(option) => {
-                                  setChosenCompany(option);
-                                }}
-                              />
-                              <Form.Label className="mt-2" htmlFor="formats">{lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}</Form.Label>
-                              <Select
+                                />
 
-                                placeholder={lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}
-                                value={chosenFormat}
-                                styles={customStyles}
-                                id='formats'
-                                options={allFormat}
-                                onChange={(option) => {
-                                  setChosenFormat(option);
-                                }}
-                              />
-                              <Form.Label className="mt-2" htmlFor="themes">{lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}</Form.Label>
-                              <Select
-                                styles={customStyles}
-                                placeholder={lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}
-                                id="themes"
-                                options={allThemes}
-                                onChange={(option) => {
-                                  setSelectedThemes(option);
-                                }}
-                                isMulti
-                                value={selectedThemes}
-                              // isClearable
-                              />
-                              <Form.Label className="mt-2"> {lang === 'ua' ? 'Початок події' : 'Start of Event'}</Form.Label>
-                              <DatePicker
-                                className="rounded w-100 p-1 me-1 mb-2 bg-dark text-white border"
-                                selected={startAt}
-                                timeFormat="HH:mm"
-                                minDate={moment().toDate()}
-                                onChange={date => setStartDate(date)}
-                                timeIntervals={15}
-                                dateFormat="d MMMM yyyy, HH:mm "
-                                timeCaption="time"
-                                showTimeInput
-                                required
-                              />
-                              <Form.Label className="mt-2"> {lang === 'ua' ? 'Кінець події' : 'End of Event'}</Form.Label>
-                              <DatePicker
-                                className="rounded w-100 p-1 bg-dark text-white border"
-                                selected={endAt}
-                                timeFormat="HH:mm"
-                                minDate={new Date(startAt)}
-                                onChange={date => setEndDate(date)}
-                                timeIntervals={15}
-                                dateFormat="d MMMM yyyy, HH:mm "
-                                timeCaption="time"
-                                showTimeInput
-                                required
-                              />
-                              <Form.Label className="mt-2" htmlFor="price">
-                                {lang === 'ua' ? 'Ціна у грн.' : 'Price ₴'}
-                                <FontAwesomeIcon icon={faCheck} className={validPrice ? "valid" : "hide"} />
-                                <FontAwesomeIcon icon={faTimes} className={validPrice || !priceOfEvent ? "hide" : "invalid"} />
-                              </Form.Label>
-                              <Form.Control
-                                type="number"
-                                className="bg-dark text-white"
-                                id="price"
-                                autoComplete="off"
-                                onChange={(e) => setPriceOfEvent(e.target.value)}
-                                value={priceOfEvent}
-                                min={0}
-                                max={10000}
-                              />
-                              <Form.Label className="mt-2" htmlFor="countPeople">
-                                {lang === 'ua' ? 'Кількість квитків' : 'Amount of tickets'}
-                                <FontAwesomeIcon icon={faCheck} className={validCount ? "valid" : "hide"} />
-                                <FontAwesomeIcon icon={faTimes} className={validCount || !countOfPeople ? "hide" : "invalid"} />
-                              </Form.Label>
-                              <Form.Control
-                                type="number"
-                                className="bg-dark text-white"
-                                id="countPeople"
-                                autoComplete="off"
-                                onChange={(e) => setCountOfPeople(e.target.value)}
-                                value={countOfPeople}
-                                min={1}
-                                max={3000}
-                              />
-                              <Form.Label className="mt-2" htmlFor="isShow">{lang === 'ua' ? 'Показувати користувачів, що записались на подію?' : 'Show users that signed in at the event?'}</Form.Label>
-                              <Form.Check id="isShow" className="mb-2" type='switch' checked={showSignedInUsers} onChange={(e) => setShowSignedInUsers(e.target.checked)} />
+                                <Form.Label className="mt-2" htmlFor="location">{lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}</Form.Label>
+                                <Select
 
-                            </Form>
+                                  placeholder={lang === 'ua' ? 'Оберіть локацію' : 'Choose location'}
+                                  value={chosenLocation}
+                                  styles={customStyles}
+                                  id='location'
+                                  options={locations}
+                                  onChange={(option) => {
+                                    setChosenLocation(option);
+                                  }}
+                                />
+                                <Form.Label className="mt-2" htmlFor="companies">{lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}</Form.Label>
+                                <Select
+                                  placeholder={lang === 'ua' ? 'Вибрати компанію' : 'Choose Company'}
+                                  value={chosenCompany}
+                                  styles={customStyles}
+                                  id='companies'
+                                  options={allCompanies}
+                                  onChange={(option) => {
+                                    setChosenCompany(option);
+                                  }}
+                                />
+                                <Form.Label className="mt-2" htmlFor="formats">{lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}</Form.Label>
+                                <Select
 
-                          }</Modal.Body>
+                                  placeholder={lang === 'ua' ? 'Оберіть Формат' : 'Choose Format'}
+                                  value={chosenFormat}
+                                  styles={customStyles}
+                                  id='formats'
+                                  options={allFormat}
+                                  onChange={(option) => {
+                                    setChosenFormat(option);
+                                  }}
+                                />
+                                <Form.Label className="mt-2" htmlFor="themes">{lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}</Form.Label>
+                                <Select
+                                  styles={customStyles}
+                                  placeholder={lang === 'ua' ? 'Оберіть теми' : 'Choose themes'}
+                                  id="themes"
+                                  options={allThemes}
+                                  onChange={(option) => {
+                                    setSelectedThemes(option);
+                                  }}
+                                  isMulti
+                                  value={selectedThemes}
+                                // isClearable
+                                />
+                                <Form.Label className="mt-2"> {lang === 'ua' ? 'Початок події' : 'Start of Event'}</Form.Label>
+                                <DatePicker
+                                  className="rounded w-100 p-1 me-1 mb-2 bg-dark text-white border"
+                                  selected={startAt}
+                                  timeFormat="HH:mm"
+                                  minDate={moment().toDate()}
+                                  onChange={date => setStartDate(date)}
+                                  timeIntervals={15}
+                                  dateFormat="d MMMM yyyy, HH:mm "
+                                  timeCaption="time"
+                                  showTimeInput
+                                  required
+                                />
+                                <Form.Label className="mt-2"> {lang === 'ua' ? 'Кінець події' : 'End of Event'}</Form.Label>
+                                <DatePicker
+                                  className="rounded w-100 p-1 bg-dark text-white border"
+                                  selected={endAt}
+                                  timeFormat="HH:mm"
+                                  minDate={new Date(startAt)}
+                                  onChange={date => setEndDate(date)}
+                                  timeIntervals={15}
+                                  dateFormat="d MMMM yyyy, HH:mm "
+                                  timeCaption="time"
+                                  showTimeInput
+                                  required
+                                />
+                                <Form.Label className="mt-2" htmlFor="price">
+                                  {lang === 'ua' ? 'Ціна у грн.' : 'Price ₴'}
+                                  <FontAwesomeIcon icon={faCheck} className={validPrice ? "valid" : "hide"} />
+                                  <FontAwesomeIcon icon={faTimes} className={validPrice || !priceOfEvent ? "hide" : "invalid"} />
+                                </Form.Label>
+                                <Form.Control
+                                  type="number"
+                                  className="bg-dark text-white"
+                                  id="price"
+                                  autoComplete="off"
+                                  onChange={(e) => setPriceOfEvent(e.target.value)}
+                                  value={priceOfEvent}
+                                  min={0}
+                                  max={10000}
+                                />
+                                <Form.Label className="mt-2" htmlFor="countPeople">
+                                  {lang === 'ua' ? 'Кількість квитків' : 'Amount of tickets'}
+                                  <FontAwesomeIcon icon={faCheck} className={validCount ? "valid" : "hide"} />
+                                  <FontAwesomeIcon icon={faTimes} className={validCount || !countOfPeople ? "hide" : "invalid"} />
+                                </Form.Label>
+                                <Form.Control
+                                  type="number"
+                                  className="bg-dark text-white"
+                                  id="countPeople"
+                                  autoComplete="off"
+                                  onChange={(e) => setCountOfPeople(e.target.value)}
+                                  value={countOfPeople}
+                                  min={1}
+                                  max={3000}
+                                />
+                                <Form.Label className="mt-2" htmlFor="isShow">{lang === 'ua' ? 'Показувати користувачів, що записались на подію?' : 'Show users that signed in at the event?'}</Form.Label>
+                                <Form.Check id="isShow" className="mb-2" type='switch' checked={showSignedInUsers} onChange={(e) => setShowSignedInUsers(e.target.checked)} />
+
+                              </Form>
+
+                            }</Modal.Body>
                           <Modal.Footer className="bg-dark">
-                         
-                          <Button disabled={!validCompanyName || !validcompanyDescr || isLoading || isModalLoading ? true : false} variant="secondary" onClick={() => updateEvent(event.id)}>{isLoading ? <SpinnerLoading style={{style: 'd-flex justify-content-center'}} /> : lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
+
+                            <Button disabled={!validCompanyName || !validcompanyDescr || isLoading || isModalLoading ? true : false} variant="secondary" onClick={() => updateEvent(event.id)}>{isLoading ? <SpinnerLoading style={{ style: 'd-flex justify-content-center' }} /> : lang === 'ua' ? 'Змінитити' : 'Save changes'}</Button>
 
                           </Modal.Footer>
                         </div>
@@ -693,7 +706,7 @@ const Event = () => {
                           </Modal.Body>
                           <Modal.Footer className="bg-dark">
                             <Button variant="secondary" onClick={() => closeTheModalToDelete()}>{lang === 'ua' ? 'Відміна' : 'Cancel'}</Button>
-                            <Button disabled={isLoading ? true : false } variant="danger" onClick={() => toDeleteEvent()}>{isLoading ? <SpinnerLoading style={{style: 'd-flex justify-content-center'}}/> : lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
+                            <Button disabled={isLoading ? true : false} variant="danger" onClick={() => toDeleteEvent()}>{isLoading ? <SpinnerLoading style={{ style: 'd-flex justify-content-center' }} /> : lang === 'ua' ? 'Видалити' : 'Delete'}</Button>
 
                           </Modal.Footer>
                         </div>

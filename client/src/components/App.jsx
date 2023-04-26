@@ -2,7 +2,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './Auth/Layout';
-import { Translation } from "react-i18next";
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 import ConfirmEmail from './Auth/ConfirmEmail';
@@ -17,12 +16,9 @@ import CurrentCompany from './Companies/CurrentCompany';
 import Event from './Events/Event';
 import CurrentEvent from './Events/CurrentEvent';
 import CreateEventItem from './Events/CreateEventItem';
-
 import Ticket from './Ticket/Ticket';
-
 import Location from './Locations/Location';
 import CreateLocation from './Locations/CreateLocation';
-
 import NotFound from './Other/NotFound';
 import ServerError from './Other/ServerError';
 import { CheckTicket } from './Ticket/CheckTicket';

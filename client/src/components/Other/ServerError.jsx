@@ -9,7 +9,7 @@ const ServerError = () => {
                 <p className="lead">
                 We are trying to resolve a problem that occurred on the server
                 </p>
-                <a href="/events" className="btn btn-primary">Go Home</a>
+                <a href="/events/?page=1" className="btn btn-primary">Go Home</a>
             </div>
         </div>
     )

@@ -2,17 +2,26 @@ import db from '../config/db.connection.js';
 import toSQLDate from 'js-date-to-sql-datetime';
 
 export default class EventService {
-    async selectAll(filterByDate, filterLoc, filterND) {
+    async selectAll(filterByDate, filterLoc, filterThemes, filterND) {
+        
         let sql;
+
         if(filterByDate === 'undefined' || filterByDate === undefined) filterByDate='ASC';
         if(filterLoc === 'All') {
-            sql = `SELECT * FROM events WHERE (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
+            if(filterThemes !== 'All') {
+                sql = `SELECT e.* FROM events e INNER JOIN themes_events ON e.id = themes_events.event_id WHERE themes_events.theme_id = ${filterThemes} AND  (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
+            }
+            else {
+                sql = `SELECT * FROM events WHERE (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
+            }
         }
         else {
-            sql = `SELECT * FROM events WHERE location_id=${filterLoc} AND (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
+            // sql = `SELECT * FROM events INNER JOIN themes_events ON events.id = themes_events.event_id WHERE location_id=${filterLoc} OR themes_events.theme_id = ${filterThemes} AND  (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
+            sql = `SELECT * FROM events WHERE location_id=${filterLoc} AND  (title LIKE '%${filterND}%' OR description LIKE '%${filterND}%') ORDER BY dateStart ${filterByDate}`;
         }
-        
+
         const [row] = await db.execute(sql);
+        
         return row;
     }
 
